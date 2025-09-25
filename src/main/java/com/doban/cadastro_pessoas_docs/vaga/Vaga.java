@@ -3,23 +3,33 @@ package com.doban.cadastro_pessoas_docs.vaga;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.doban.cadastro_pessoas_docs.carro.Carro;
 import com.doban.cadastro_pessoas_docs.pessoa.Pessoa;
+import com.doban.cadastro_pessoas_docs.recurso.Recurso;
 
-import jakarta.persistence.Column;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "vagas")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Vaga {
 
     @Id
@@ -33,37 +43,29 @@ public class Vaga {
     private String cidade;
     private String uf;
     private BigDecimal salario;
-
     private LocalDate dataAdmissao;
     private LocalDate dataDemissao;
-
-    private String tipoContrato;     // "acresc." ou "substit."
-    private Regime regime;           // "CLT", "PJ" ou "TEMPORAIO"
-    private String tipo;             // ex: "1 - clt_ce_cj"
-
+    
+    private String acrescOuSubst; // Acresc ou substituição
+    private TipoContrato tipoContrato;   // CLT ou TEMP
+    
     private String numeroCnh;
     private String registroCnh;
     private String categoriaCnh;
     private LocalDate validadeCnh;
-
-    @Column(name = "horario_entrada")
     private LocalTime horarioEntrada;
-    @Column(name = "horario_saida")
     private LocalTime horarioSaida;
-
     private String motivoContratacao;
-
-    private boolean optanteVt;
-
-    @Enumerated(EnumType.STRING)
-    private AtestadoSaudeOcupacional atestadoSaudeOcupacional;
+    private Boolean optanteVT;
+    private String aso; // AD, DEM, RET
     private String matricula;
 
-    @ManyToOne
-    @JoinColumn(name = "pessoa_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pessoa_id", nullable = false)
     private Pessoa pessoa;
 
-    @ManyToOne
-    @JoinColumn(name = "carro_id")
-    private Carro carro;
+    @Builder.Default
+    @OneToMany(mappedBy = "vaga", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Recurso> recursos = new ArrayList<>();
 }
+

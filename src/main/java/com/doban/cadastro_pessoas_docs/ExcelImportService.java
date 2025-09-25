@@ -1,12 +1,18 @@
 package com.doban.cadastro_pessoas_docs;
 
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -16,8 +22,10 @@ import org.springframework.stereotype.Service;
 import com.doban.cadastro_pessoas_docs.carro.Carro;
 import com.doban.cadastro_pessoas_docs.celular.Celular;
 import com.doban.cadastro_pessoas_docs.pessoa.Pessoa;
+import com.doban.cadastro_pessoas_docs.pessoa.PessoaExcelDTO;
 import com.doban.cadastro_pessoas_docs.pessoa.PessoaRepository;
-import com.doban.cadastro_pessoas_docs.vaga.Regime;
+import com.doban.cadastro_pessoas_docs.recurso.Recurso;
+import com.doban.cadastro_pessoas_docs.vaga.TipoContrato;
 import com.doban.cadastro_pessoas_docs.vaga.Vaga;
 
 import jakarta.transaction.Transactional;
@@ -27,132 +35,224 @@ public class ExcelImportService {
 
     private final PessoaRepository pessoaRepository;
 
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
     public ExcelImportService(PessoaRepository pessoaRepository) {
         this.pessoaRepository = pessoaRepository;
     }
 
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-    
     @Transactional
-    public void importarExcel(String caminhoArquivo) throws Exception {
-        List<Pessoa> pessoas = new ArrayList<>();
-
+    public void importar(String caminhoArquivo) throws IOException {
         try (FileInputStream fis = new FileInputStream(caminhoArquivo);
              Workbook workbook = new XSSFWorkbook(fis)) {
 
             Sheet sheet = workbook.getSheetAt(4);
+            Set<String> cpfsImportados = new HashSet<>();
 
-            // Pular cabeçalho (linha 0)
             for (int i = 12; i <= sheet.getLastRowNum(); i++) {
                 Row row = sheet.getRow(i);
                 if (row == null) continue;
 
-                Pessoa pessoa = new Pessoa();
+                PessoaExcelDTO dto = lerLinhaDTO(row);
 
-                // Colunas fixas (baseado no layout que você mandou)
-                pessoa.setNome(getString(row, 3));
-                pessoa.setEndereco(getString(row, 3));
-                pessoa.setBairro(getString(row, 4));
-                pessoa.setCidade(getString(row, 5));
-                pessoa.setUf(getString(row, 6));
-                pessoa.setCep(getString(row, 7));
-                pessoa.setFone(getString(row, 9));
-                pessoa.setCpf(getString(row, 17));
-                pessoa.setNumeroRg(getString(row, 13));
-                pessoa.setDataNascimento(parseDate(getString(row, 20)));
-                pessoa.setLocalNascimento(getString(row, 21));
-                pessoa.setMae(getString(row, 22));
-                pessoa.setPai(getString(row, 23));
+                if (dto.getCpf() == null || cpfsImportados.contains(dto.getCpf())) {
+                    System.out.println("Ignorando duplicado: " + dto.getNome());
+                    continue;
+                }
 
-                // CTPS
-                pessoa.setNumeroCtps(getString(row, 11));
-                pessoa.setSerieCtps(getString(row, 12));
-                pessoa.setDataEmissaoCtps(parseDate(getString(row, 13)));
-
-                // PIS
-                pessoa.setPis(getString(row, 18));
-                pessoa.setDataPis(parseDate(getString(row, 19)));
-
-                // Título Eleitor
-                pessoa.setTituloEleitor(getString(row, 20));
-
-                // Criar Vaga associada
-                Vaga vaga = new Vaga();
-                vaga.setCliente(getString(row, 25));
-                vaga.setCidade(getString(row, 26));
-                vaga.setUf(getString(row, 27));
-                vaga.setCargo(getString(row, 28));
-                vaga.setSetor(getString(row, 29));
-                vaga.setSalario(parseSalario(getString(row, 30)));
-                vaga.setTipo(getString(row, 31));
-                vaga.setDataAdmissao(parseDate(getString(row, 32)));
-                vaga.setDataDemissao(parseDate(getString(row, 33)));
-                vaga.setRegime(getString(row, 35).equalsIgnoreCase("X") ? Regime.TEMPORARIO : Regime.CLT);
-                
-                String horario = getString(row, 55);
-                String[] horarios = horario.split("-");
-                vaga.setHorarioEntrada(LocalTime.parse(horarios[0].trim(), formatter));
-                vaga.setHorarioSaida(LocalTime.parse(horarios[1].trim(), formatter));
-                
-                vaga.setMotivoContratacao(getString(row, 57));
-                vaga.setContratante(getString(row, 58));
-                vaga.setMatricula(getString(row, 66));
-
-                vaga.setPessoa(pessoa);
-                pessoa.getVagas().add(vaga);
-
-                // Criar Carro (se houver dados)
-                Carro carro = new Carro();
-                carro.setMarca(getString(row, 59));
-                carro.setCor(getString(row, 60));
-                carro.setChassi(getString(row, 61));
-                carro.setPlaca(getString(row, 62));
-                carro.setModelo(getString(row, 63));
-                carro.setDdd(getString(row, 64));
-                carro.setTelefone(getString(row, 65));
-                carro.setAnoModelo(getString(row, 66));
-                carro.getVagas().add(vaga);
-                vaga.setCarro(carro);
-
-                // Criar Celular
-                Celular celular = new Celular();
-                celular.setMarca(getString(row, 67));
-                celular.setModelo(getString(row, 68));
-                celular.setChip(getString(row, 69));
-                celular.setImei(getString(row, 70));
-                celular.setPessoa(pessoa);
-                pessoa.setCelular(celular);
-
-                pessoas.add(pessoa);
+                importarPessoa(dto);
+                cpfsImportados.add(dto.getCpf());
             }
         }
-
-        // Salvar todas no banco
-        pessoaRepository.saveAll(pessoas);
     }
 
-    // Métodos auxiliares
-    private String getString(Row row, int index) {
-        if (row.getCell(index) == null) return "";
-        return row.getCell(index).toString().trim();
+    private PessoaExcelDTO lerLinhaDTO(Row row) {
+        PessoaExcelDTO dto = new PessoaExcelDTO();
+
+        // ===== Pessoa =====
+        dto.setNome(getString(row, 2));
+        dto.setEndereco(getString(row, 3));
+        dto.setBairro(getString(row, 4));
+        dto.setCidade(getString(row, 5));
+        dto.setUf(getString(row, 6));
+        dto.setCep(getString(row, 7));
+        dto.setFone(getString(row, 9));
+        dto.setCpf(getString(row, 17));
+        dto.setNumeroRg(getString(row, 13));
+        dto.setDataNascimento(parseDate(row, 20));
+        dto.setLocalNascimento(getString(row, 21));
+        dto.setMae(getString(row, 22));
+        dto.setPai(getString(row, 23));
+        dto.setNumeroCtps(getString(row, 11));
+        dto.setSerieCtps(getString(row, 12));
+        dto.setDataEmissaoCtps(parseDate(row, 13));
+        dto.setPis(getString(row, 18));
+        dto.setDataPis(parseDate(row, 19));
+        dto.setTituloEleitor(getString(row, 20));
+
+        // ===== Vaga =====
+        dto.setCliente(getString(row, 25));
+        dto.setCidadeVaga(getString(row, 26));
+        dto.setUfVaga(getString(row, 27));
+        dto.setCargo(getString(row, 28));
+        dto.setSetor(getString(row, 29));
+        dto.setSalario(parseBigDecimal(getString(row, 30)));
+        dto.setDataAdmissao(parseDate(row, 32));
+        dto.setDataDemissao(parseDate(row, 33));
+
+
+        String tipoContratoStr = Optional.ofNullable(getString(row, 35))
+        		.map(String::trim)
+        		.orElse("6");
+        switch (tipoContratoStr) {
+            case "1" -> dto.setTipoContrato(TipoContrato.CLT_CE_CJ);
+            case "2" -> dto.setTipoContrato(TipoContrato.CLT_CE_SJ);
+            case "4" -> dto.setTipoContrato(TipoContrato.CLT_SE_SJ);
+            case "5" -> dto.setTipoContrato(TipoContrato.TEMP_CJ);
+            default  -> dto.setTipoContrato(TipoContrato.INDEFINIDO);
+        }
+
+        // Horários
+        String horario = getString(row, 55);
+        if (horario != null && horario.contains("-")) {
+            String[] partes = horario.split("-");
+            dto.setHorarioEntrada(LocalTime.parse(partes[0].trim(), timeFormatter));
+            dto.setHorarioSaida(LocalTime.parse(partes[1].trim(), timeFormatter));
+        }
+
+        dto.setMotivoContratacao(getString(row, 57));
+        dto.setContratante(getString(row, 58));
+        dto.setMatricula(getString(row, 66));
+
+        // ===== Carro =====
+        dto.setCarroMarca(getString(row, 59));
+        dto.setCarroCor(getString(row, 60));
+        dto.setCarroChassi(getString(row, 61));
+        dto.setCarroPlaca(getString(row, 62));
+        dto.setCarroModelo(getString(row, 63));
+        dto.setCarroDdd(getString(row, 64));
+        dto.setCarroTelefone(getString(row, 65));
+        dto.setCarroAnoModelo(getString(row, 66));
+
+        // ===== Celular =====
+        dto.setCelularMarca(getString(row, 67));
+        dto.setCelularModelo(getString(row, 68));
+        dto.setCelularChip(getString(row, 69));
+        dto.setCelularImei(getString(row, 70));
+
+        return dto;
     }
 
-    private LocalDate parseDate(String value) {
-        try {
-            if (value == null || value.isBlank()) return null;
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy"); // ajuste ao formato do Excel
-            return LocalDate.parse(value, formatter);
-        } catch (Exception e) {
-            return null;
+    private void importarPessoa(PessoaExcelDTO dto) {
+        Optional<Pessoa> existente = pessoaRepository.findByCpf(dto.getCpf());
+
+        if (existente.isPresent()) {
+            System.out.println("Pessoa já existe: " + dto.getNome());
+            // Aqui você poderia atualizar dados da pessoa ou criar nova Vaga/Recurso
+        } else {
+            // Criar Pessoa
+            Pessoa pessoa = dto.toEntity();
+
+            // Criar Vaga
+            Vaga vaga = Vaga.builder()
+                    .pessoa(pessoa)
+                    .contratante(dto.getContratante())
+                    .cliente(dto.getCliente())
+                    .setor(dto.getSetor())
+                    .cargo(dto.getCargo())
+                    .cidade(dto.getCidadeVaga())
+                    .uf(dto.getUfVaga())
+                    .salario(dto.getSalario())
+                    .dataAdmissao(dto.getDataAdmissao())
+                    .dataDemissao(dto.getDataDemissao())
+                    .tipoContrato(dto.getTipoContrato())
+                    .horarioEntrada(dto.getHorarioEntrada())
+                    .horarioSaida(dto.getHorarioSaida())
+                    .motivoContratacao(dto.getMotivoContratacao())
+                    .matricula(dto.getMatricula())
+                    .build();
+            pessoa.getVagas().add(vaga);
+
+            // Criar Carro e Recurso se houver dados
+            if (dto.getCarroMarca() != null || dto.getCarroModelo() != null) {
+                Carro carro = Carro.builder()
+                        .pessoa(pessoa)
+                        .marca(dto.getCarroMarca())
+                        .modelo(dto.getCarroModelo())
+                        .cor(dto.getCarroCor())
+                        .chassi(dto.getCarroChassi())
+                        .placa(dto.getCarroPlaca())
+                        .anoModelo(dto.getCarroAnoModelo())
+                        .ddd(dto.getCarroDdd())
+                        .telefone(dto.getCarroTelefone())
+                        .build();
+
+                Recurso recursoCarro = Recurso.builder()
+                        .vaga(vaga)
+                        .carro(carro)
+                        .build();
+
+                vaga.getRecursos().add(recursoCarro);
+                pessoa.getCarros().add(carro);
+            }
+
+            // Criar Celular e Recurso se houver dados
+            if (dto.getCelularMarca() != null || dto.getCelularModelo() != null) {
+                Celular celular = Celular.builder()
+                        .pessoa(pessoa)
+                        .marca(dto.getCelularMarca())
+                        .modelo(dto.getCelularModelo())
+                        .chip(dto.getCelularChip())
+                        .imei(dto.getCelularImei())
+                        .build();
+
+                Recurso recursoCelular = Recurso.builder()
+                        .vaga(vaga)
+                        .celular(celular)
+                        .build();
+
+                vaga.getRecursos().add(recursoCelular);
+                pessoa.getCelulares().add(celular);
+            }
+
+            // Salvar no banco
+            pessoaRepository.save(pessoa);
         }
     }
 
-    private java.math.BigDecimal parseSalario(String value) {
+    private String getString(Row row, int index) {
+        Cell cell = row.getCell(index);
+        return cell != null ? cell.toString().trim() : null;
+    }
+
+    private LocalDate parseDate(Row row, int index) {
+        Cell cell = row.getCell(index);
+        if (cell == null) return null;
+        if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
+            return cell.getLocalDateTimeCellValue().toLocalDate();
+        } else {
+            try {
+                String valor = cell.toString().trim();
+                if (valor.isEmpty()) return null;
+                return LocalDate.parse(valor, dtf);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+    }
+
+    private BigDecimal parseBigDecimal(String value) {
         if (value == null || value.isBlank()) return null;
         try {
-            return new java.math.BigDecimal(value.replace("R$", "").replace(",", ".").trim());
+            return new BigDecimal(value.replace("R$", "").replace(".", "").replace(",", ".").trim());
         } catch (Exception e) {
             return null;
         }
     }
+    
+    public boolean hasPessoas() {
+    	return pessoaRepository.count() > 0;
+    }
+
 }

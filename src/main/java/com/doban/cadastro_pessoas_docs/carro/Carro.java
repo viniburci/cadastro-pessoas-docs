@@ -1,19 +1,25 @@
 package com.doban.cadastro_pessoas_docs.carro;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import com.doban.cadastro_pessoas_docs.vaga.Vaga;
+import com.doban.cadastro_pessoas_docs.pessoa.Pessoa;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "carros")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Carro {
 
     @Id
@@ -21,14 +27,15 @@ public class Carro {
     private Long id;
 
     private String marca;
+    private String modelo;
     private String cor;
     private String chassi;
     private String placa;
-    private String modelo;
-    private String ddd;
-    private String telefone;
     private String anoModelo;
+    private String telefone;
+    private String ddd;
 
-    @OneToMany(mappedBy = "carro")
-    private List<Vaga> vagas = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pessoa_id", nullable = false)
+    private Pessoa pessoa;
 }
