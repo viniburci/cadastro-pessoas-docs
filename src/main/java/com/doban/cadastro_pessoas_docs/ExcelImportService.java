@@ -72,32 +72,32 @@ public class ExcelImportService {
 
         // ===== Pessoa =====
 
-        //0 -> id + nome
-        //1 ->id
-        //2 ->nome
-        //3 ->endereço
-        //4 ->bairro
-        //5 ->cidade
-        //6 ->estado
-        //7 ->cep
-        //8 ->ddd
-        //telefone
-        //email
-        //numero ctps
-        //serie ctps
-        //data emissao ctps
-        //rg
-        //data emissao rg
-        //uf
-        //cpf
-        //pis
-        //data emissao pis
-        //titulo eleitor
-        //data nascimento
-        //local nascimento
-        //nome mae
-        //nome pai
-        //estado civil
+//0  -> id + nome  
+//1  -> id  
+//2  -> nome  
+//3  -> endereço  
+//4  -> bairro  
+//5  -> cidade  
+//6  -> estado  
+//7  -> cep  
+//8  -> ddd  
+//9  -> telefone  
+//10 -> email  
+//11 -> numero ctps  
+//12 -> serie ctps  
+//13 -> data emissao ctps  
+//14 -> rg  
+//15 -> data emissao rg  
+//16 -> uf  
+//17 -> cpf  
+//18 -> pis  
+//19 -> data emissao pis  
+//20 -> titulo eleitor  
+//21 -> data nascimento  
+//22 -> local nascimento  
+//23 -> nome mae  
+//24 -> nome pai  
+//25 -> estado civil  
 
         dto.setNome(getString(row, 2));
         dto.setEndereco(getString(row, 3));
@@ -121,52 +121,52 @@ public class ExcelImportService {
 
 
         // ===== Vaga =====
-        //cliente
-        //cidade
-        //estado
-        //cargo
-        //setor
-        //salario
-        //tipo contrato
-        //data admissao
-        //data demissao
-        //clt
-        //temp
-        //acresc
-        //subst
-        //admissional
-        //demissional
-        //retorno
-        //post
-        //ruido
-        //outro
-        //numero pep
-        //numero lotaçao
-        //sim(vale transporte)
-        //nao(vale transporte)
-        //nada(vale transporte)
-        //horario entrada
-        //horario saida
-        //motivo contratacao
-        //contratante (1, 2)
+//26 -> cliente  
+//27 -> cidade (cliente)  
+//28 -> estado (cliente)  
+//29 -> cargo  
+//30 -> setor  
+//31 -> salario  
+//32 -> tipo contrato  
+//33 -> data admissao  
+//34 -> data demissao  
+//35 -> clt  
+//36 -> temp  
+//37 -> acresc  
+//38 -> subst  
+//39 -> admissional  
+//40 -> demissional  
+//41 -> retorno  
+//42 -> post  
+//43 -> ruido  
+//44 -> outro  
+//45 -> numero pep  
+//46 -> numero lotação  
+//47 -> sim (vale transporte)  
+//48 -> nao (vale transporte)  
+//49 -> nada (vale transporte)  
+//50 -> horario entrada  
+//51 -> horario saída  
+//52 -> motivo contratação  
+//53 -> contratante (1, 2)  
 
-        //marca (carro)
-        //cor
-        //chassi
-        //placa
-        //modelo
-        //ddd
-        //telefone
-        //ano/modelo
+//54 -> marca (carro)  
+//55 -> cor  
+//56 -> chassi  
+//57 -> placa  
+//58 -> modelo (carro)  
+//59 -> ddd (carro)  
+//60 -> telefone (carro)  
+//61 -> ano/modelo  
 
-        //marca(celular)
-        //modelo
-        //chip
-        //imei
-        
-        //categoria cnh
-        //validade cnh
-        //matricula
+//62 -> marca (celular)  
+//63 -> modelo (celular)  
+//64 -> chip  
+//65 -> imei  
+
+//66 -> categoria cnh  
+//67 -> validade cnh  
+//68 -> matrícula  
 
 
 

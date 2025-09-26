@@ -33,29 +33,30 @@ public class Pessoa {
     private Long id;
 
     private String nome;
-    private String cpf;
     private String endereco;
     private String bairro;
     private String cidade;
-    private String uf;
+    private String estado;
     private String cep;
-    private String fone;
-    private String numeroRg;
-    private LocalDate dataEmissaoRg;
-    private String ufRg;
+    private String ddd;
+    private String telefone;
+    private String email;
     private String numeroCtps;
     private String serieCtps;
     private LocalDate dataEmissaoCtps;
+    private String numeroRg;
+    private LocalDate dataEmissaoRg;
+    private String ufRg;
+    private String cpf;
     private String pis;
-    private LocalDate dataPis;
+    private LocalDate dataEmissaoPis;
     private String tituloEleitor;
     private LocalDate dataNascimento;
     private String localNascimento;
     private String mae;
     private String pai;
     private String estadoCivil;
-    private String email;
-
+  
     @Builder.Default
     @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Vaga> vagas = new ArrayList<>();
