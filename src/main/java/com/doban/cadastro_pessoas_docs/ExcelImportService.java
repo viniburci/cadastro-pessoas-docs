@@ -71,6 +71,34 @@ public class ExcelImportService {
         PessoaExcelDTO dto = new PessoaExcelDTO();
 
         // ===== Pessoa =====
+
+        //0 -> id + nome
+        //1 ->id
+        //2 ->nome
+        //3 ->endereço
+        //4 ->bairro
+        //5 ->cidade
+        //6 ->estado
+        //7 ->cep
+        //8 ->ddd
+        //telefone
+        //email
+        //numero ctps
+        //serie ctps
+        //data emissao ctps
+        //rg
+        //data emissao rg
+        //uf
+        //cpf
+        //pis
+        //data emissao pis
+        //titulo eleitor
+        //data nascimento
+        //local nascimento
+        //nome mae
+        //nome pai
+        //estado civil
+
         dto.setNome(getString(row, 2));
         dto.setEndereco(getString(row, 3));
         dto.setBairro(getString(row, 4));
@@ -91,7 +119,57 @@ public class ExcelImportService {
         dto.setDataPis(parseDate(row, 19));
         dto.setTituloEleitor(getString(row, 20));
 
+
         // ===== Vaga =====
+        //cliente
+        //cidade
+        //estado
+        //cargo
+        //setor
+        //salario
+        //tipo contrato
+        //data admissao
+        //data demissao
+        //clt
+        //temp
+        //acresc
+        //subst
+        //admissional
+        //demissional
+        //retorno
+        //post
+        //ruido
+        //outro
+        //numero pep
+        //numero lotaçao
+        //sim(vale transporte)
+        //nao(vale transporte)
+        //nada(vale transporte)
+        //horario entrada
+        //horario saida
+        //motivo contratacao
+        //contratante (1, 2)
+
+        //marca (carro)
+        //cor
+        //chassi
+        //placa
+        //modelo
+        //ddd
+        //telefone
+        //ano/modelo
+
+        //marca(celular)
+        //modelo
+        //chip
+        //imei
+        
+        //categoria cnh
+        //validade cnh
+        //matricula
+
+
+
         dto.setCliente(getString(row, 25));
         dto.setCidadeVaga(getString(row, 26));
         dto.setUfVaga(getString(row, 27));

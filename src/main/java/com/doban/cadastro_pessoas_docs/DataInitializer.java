@@ -1,7 +1,7 @@
 package com.doban.cadastro_pessoas_docs;
 
 
-import com.doban.cadastro_pessoas_docs.ExcelImportService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,12 +9,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DataInitializer {
 
+	@Value("${doban.excelFolder}")
+	private String excelFolder;
+
+
 	@Bean
 	CommandLineRunner initDatabase(ExcelImportService excelImportService) {
 	    return args -> {
 	        try {
 	            if (!excelImportService.hasPessoas()) {
-	                String caminhoArquivo = "E:/DOBAN.xlsm";
+	                String caminhoArquivo = excelFolder;
 	                excelImportService.importar(caminhoArquivo);
 	                System.out.println("Importação concluída com sucesso!");
 	            } else {
