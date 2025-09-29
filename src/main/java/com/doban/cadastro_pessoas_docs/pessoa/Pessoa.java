@@ -4,11 +4,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.doban.cadastro_pessoas_docs.carro.Carro;
-import com.doban.cadastro_pessoas_docs.celular.Celular;
+import org.hibernate.annotations.CascadeType;
+
+import com.doban.cadastro_pessoas_docs.recurso.Recurso;
 import com.doban.cadastro_pessoas_docs.vaga.Vaga;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -56,16 +56,18 @@ public class Pessoa {
     private String mae;
     private String pai;
     private String estadoCivil;
-  
+
+    private String categoriaCnh;
+    private LocalDate validadeCnh;
+    private String numeroCnh;
+    private String registroCnh;
+    private String matricula;
+
     @Builder.Default
     @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Vaga> vagas = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Celular> celulares = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Carro> carros = new ArrayList<>();
+    private List<Recurso> recursos = new ArrayList<>();
 }
