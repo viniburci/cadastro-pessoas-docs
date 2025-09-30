@@ -7,6 +7,8 @@ import java.time.LocalTime;
 import com.doban.cadastro_pessoas_docs.pessoa.Pessoa;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -41,7 +43,10 @@ public class Vaga {
     private LocalDate dataAdmissao;
     private LocalDate dataDemissao;
     private String acrescimoOuSubstituicao;
-    private String aso;
+
+    @Enumerated(EnumType.STRING)
+    private AtestadoSaudeOcupacional aso;
+    
     private Boolean optanteVT;
     private LocalTime horarioEntrada;
     private LocalTime horarioSaida;

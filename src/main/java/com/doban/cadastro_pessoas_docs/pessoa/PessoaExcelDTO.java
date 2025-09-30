@@ -3,8 +3,12 @@ package com.doban.cadastro_pessoas_docs.pessoa;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.doban.cadastro_pessoas_docs.carro.Carro;
+import com.doban.cadastro_pessoas_docs.celular.Celular;
+import com.doban.cadastro_pessoas_docs.recurso.Recurso;
 import com.doban.cadastro_pessoas_docs.vaga.TipoContrato;
 import com.doban.cadastro_pessoas_docs.vaga.Vaga;
 
@@ -13,7 +17,7 @@ import lombok.Data;
 @Data
 public class PessoaExcelDTO {
 
-    //Pessoa
+    // Pessoa
     private String nome;
     private String endereco;
     private String bairro;
@@ -39,50 +43,66 @@ public class PessoaExcelDTO {
     private String pai;
     private String estadoCivil;
 
+    // Vagas (histórico completo da pessoa)
+    private List<VagaDTO> vagas = new ArrayList<>();
 
-    //Vaga
+    // Recursos (diretamente na pessoa)
+    private List<CarroDTO> carros = new ArrayList<>();
+    private List<CelularDTO> celulares = new ArrayList<>();
 
-    private String contratante;
-    private String cliente;
-    private String setor;
-    private String cargo;
-    private String cidadeVaga;
-    private String ufVaga;
-    private BigDecimal salario;
-    private LocalDate dataAdmissao;
-    private LocalDate dataDemissao;
-    private String acrescOuSubst; // Acresc ou substituição
-    private TipoContrato tipoContrato;   // CLT ou TEMP
-    private String numeroCnh;
-    private String registroCnh;
-    private String categoriaCnh;
-    private LocalDate validadeCnh;
-    private LocalTime horarioEntrada;
-    private LocalTime horarioSaida;
-    private String motivoContratacao;
-    private Boolean optanteVT;
-    private String aso; // AD, DEM, RET, POST, RUIDO ou outro
-    private String matricula;
+    // -------------------- DTOs internos --------------------
 
-    //Carro (via Recurso)
-    private String carroMarca;
-    private String carroModelo;
-    private String carroCor;
-    private String carroChassi;
-    private String carroPlaca;
-    private String carroAnoModelo;
-    private String carroTelefone;
-    private String carroDdd;
+    @Data
+    public static class VagaDTO {
+        private String contratante;
+        private String cliente;
+        private String setor;
+        private String cargo;
+        private String cidadeVaga;
+        private String ufVaga;
+        private BigDecimal salario;
+        private LocalDate dataAdmissao;
+        private LocalDate dataDemissao;
+        private String acrescOuSubst;
+        private TipoContrato tipoContrato;
+        private String numeroCnh;
+        private String registroCnh;
+        private String categoriaCnh;
+        private LocalDate validadeCnh;
+        private LocalTime horarioEntrada;
+        private LocalTime horarioSaida;
+        private String motivoContratacao;
+        private Boolean optanteVT;
+        private String aso;
+        private String matricula;
+    }
 
-    //Celular (via Recurso)
-    private String celularMarca;
-    private String celularModelo;
-    private String celularChip;
-    private String celularImei;
+    @Data
+    public static class CarroDTO {
+        private String marca;
+        private String modelo;
+        private String cor;
+        private String chassi;
+        private String placa;
+        private String anoModelo;
+        private String telefone;
+        private String ddd;
+    }
+
+    @Data
+    public static class CelularDTO {
+        private String marca;
+        private String modelo;
+        private String chip;
+        private String imei;
+    }
+
+    // -------------------- Construtores --------------------
 
     public PessoaExcelDTO() {}
 
     public PessoaExcelDTO(Pessoa pessoa) {
+        // Pessoa
         this.nome = pessoa.getNome();
         this.endereco = pessoa.getEndereco();
         this.bairro = pessoa.getBairro();
@@ -108,56 +128,60 @@ public class PessoaExcelDTO {
         this.pai = pessoa.getPai();
         this.estadoCivil = pessoa.getEstadoCivil();
 
+        // Vagas
+        this.vagas = pessoa.getVagas().stream().map(vaga -> {
+            VagaDTO vdto = new VagaDTO();
+            vdto.setContratante(vaga.getContratante());
+            vdto.setCliente(vaga.getCliente());
+            vdto.setSetor(vaga.getSetor());
+            vdto.setCargo(vaga.getCargo());
+            vdto.setCidadeVaga(vaga.getCidade());
+            vdto.setUfVaga(vaga.getUf());
+            vdto.setSalario(vaga.getSalario());
+            vdto.setDataAdmissao(vaga.getDataAdmissao());
+            vdto.setDataDemissao(vaga.getDataDemissao());
+            vdto.setAcrescOuSubst(vaga.getAcrescOuSubst());
+            vdto.setTipoContrato(vaga.getTipoContrato());
+            vdto.setHorarioEntrada(vaga.getHorarioEntrada());
+            vdto.setHorarioSaida(vaga.getHorarioSaida());
+            vdto.setMotivoContratacao(vaga.getMotivoContratacao());
+            vdto.setOptanteVT(vaga.getOptanteVT());
+            vdto.setAso(vaga.getAso());
+            vdto.setMatricula(vaga.getMatricula());
+            return vdto;
+        }).toList();
 
-        // Vaga ativa (última ou conforme regra de negócio)
-        Optional<Vaga> vagaOpt = pessoa.getVagas().stream()
-                .filter(v -> v.getDataDemissao() == null || v.getDataDemissao().isAfter(LocalDate.now()))
-                .findFirst();
+        // Recursos
+        this.carros = pessoa.getRecursos().stream()
+                .filter(r -> r instanceof Carro)
+                .map(r -> {
+                    Carro c = (Carro) r;
+                    CarroDTO cdto = new CarroDTO();
+                    cdto.setMarca(c.getMarca());
+                    cdto.setModelo(c.getModelo());
+                    cdto.setCor(c.getCor());
+                    cdto.setChassi(c.getChassi());
+                    cdto.setPlaca(c.getPlaca());
+                    cdto.setAnoModelo(c.getAnoModelo());
+                    cdto.setTelefone(c.getTelefone());
+                    cdto.setDdd(c.getDdd());
+                    return cdto;
+                }).toList();
 
-        vagaOpt.ifPresent(vaga -> {
-            this.contratante = vaga.getContratante();
-            this.cliente = vaga.getCliente();
-            this.setor = vaga.getSetor();
-            this.cargo = vaga.getCargo();
-            this.cidadeVaga = vaga.getCidade();
-            this.ufVaga = vaga.getUf();
-            this.salario = vaga.getSalario();
-            this.dataAdmissao = vaga.getDataAdmissao();
-            this.dataDemissao = vaga.getDataDemissao();
-            this.acrescOuSubst = vaga.getAcrescOuSubst();
-            this.tipoContrato = vaga.getTipoContrato(); 
-            this.numeroCnh = vaga.getNumeroCnh();
-            this.registroCnh = vaga.getRegistroCnh();
-            this.categoriaCnh = vaga.getCategoriaCnh();
-            this.validadeCnh = vaga.getValidadeCnh();
-            this.horarioEntrada = vaga.getHorarioEntrada();
-            this.horarioSaida = vaga.getHorarioSaida();
-            this.motivoContratacao = vaga.getMotivoContratacao();
-            this.optanteVT = vaga.getOptanteVT();
-            this.aso = vaga.getAso();
-            this.matricula = vaga.getMatricula();
-
-            // Recursos vinculados
-            vaga.getRecursos().forEach(recurso -> {
-                if (recurso.getCarro() != null) {
-                    this.carroMarca = recurso.getCarro().getMarca();
-                    this.carroModelo = recurso.getCarro().getModelo();
-                    this.carroCor = recurso.getCarro().getCor();
-                    this.carroChassi = recurso.getCarro().getChassi();
-                    this.carroPlaca = recurso.getCarro().getPlaca();
-                    this.carroAnoModelo = recurso.getCarro().getAnoModelo();
-                    this.carroTelefone = recurso.getCarro().getTelefone();
-                    this.carroDdd = recurso.getCarro().getDdd();
-                }
-                if (recurso.getCelular() != null) {
-                    this.celularMarca = recurso.getCelular().getMarca();
-                    this.celularModelo = recurso.getCelular().getModelo();
-                    this.celularChip = recurso.getCelular().getChip();
-                    this.celularImei = recurso.getCelular().getImei();
-                }
-            });
-        });
+        this.celulares = pessoa.getRecursos().stream()
+                .filter(r -> r instanceof Celular)
+                .map(r -> {
+                    Celular cel = (Celular) r;
+                    CelularDTO cdto = new CelularDTO();
+                    cdto.setMarca(cel.getMarca());
+                    cdto.setModelo(cel.getModelo());
+                    cdto.setChip(cel.getChip());
+                    cdto.setImei(cel.getImei());
+                    return cdto;
+                }).toList();
     }
+
+    // -------------------- Conversão inversa --------------------
 
     public Pessoa toEntity() {
         Pessoa pessoa = new Pessoa();
@@ -185,6 +209,61 @@ public class PessoaExcelDTO {
         pessoa.setMae(this.mae);
         pessoa.setPai(this.pai);
         pessoa.setEstadoCivil(this.estadoCivil);
+
+        // Vagas
+        List<Vaga> vagasEntity = this.vagas.stream().map(vdto -> {
+            Vaga vaga = new Vaga();
+            vaga.setContratante(vdto.getContratante());
+            vaga.setCliente(vdto.getCliente());
+            vaga.setSetor(vdto.getSetor());
+            vaga.setCargo(vdto.getCargo());
+            vaga.setCidade(vdto.getCidadeVaga());
+            vaga.setUf(vdto.getUfVaga());
+            vaga.setSalario(vdto.getSalario());
+            vaga.setDataAdmissao(vdto.getDataAdmissao());
+            vaga.setDataDemissao(vdto.getDataDemissao());
+            vaga.setAcrescOuSubst(vdto.getAcrescOuSubst());
+            vaga.setTipoContrato(vdto.getTipoContrato());
+            vaga.setNumeroCnh(vdto.getNumeroCnh());
+            vaga.setRegistroCnh(vdto.getRegistroCnh());
+            vaga.setCategoriaCnh(vdto.getCategoriaCnh());
+            vaga.setValidadeCnh(vdto.getValidadeCnh());
+            vaga.setHorarioEntrada(vdto.getHorarioEntrada());
+            vaga.setHorarioSaida(vdto.getHorarioSaida());
+            vaga.setMotivoContratacao(vdto.getMotivoContratacao());
+            vaga.setOptanteVT(vdto.getOptanteVT());
+            vaga.setAso(vdto.getAso());
+            vaga.setMatricula(vdto.getMatricula());
+            return vaga;
+        }).toList();
+
+        pessoa.setVagas(vagasEntity);
+
+        // Recursos
+        List<Recurso> recursos = new ArrayList<>();
+        this.carros.forEach(cdto -> {
+            Carro carro = new Carro();
+            carro.setMarca(cdto.getMarca());
+            carro.setModelo(cdto.getModelo());
+            carro.setCor(cdto.getCor());
+            carro.setChassi(cdto.getChassi());
+            carro.setPlaca(cdto.getPlaca());
+            carro.setAnoModelo(cdto.getAnoModelo());
+            carro.setTelefone(cdto.getTelefone());
+            carro.setDdd(cdto.getDdd());
+            recursos.add(carro);
+        });
+        this.celulares.forEach(cdto -> {
+            Celular celular = new Celular();
+            celular.setMarca(cdto.getMarca());
+            celular.setModelo(cdto.getModelo());
+            celular.setChip(cdto.getChip());
+            celular.setImei(cdto.getImei());
+            recursos.add(celular);
+        });
+
+        pessoa.setRecursos(recursos);
+
         return pessoa;
     }
 }

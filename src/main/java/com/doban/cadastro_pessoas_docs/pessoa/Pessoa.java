@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.annotations.CascadeType;
+import jakarta.persistence.CascadeType;
 
 import com.doban.cadastro_pessoas_docs.recurso.Recurso;
 import com.doban.cadastro_pessoas_docs.vaga.Vaga;
