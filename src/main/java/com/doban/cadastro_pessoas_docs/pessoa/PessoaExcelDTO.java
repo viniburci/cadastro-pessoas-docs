@@ -1,19 +1,21 @@
 package com.doban.cadastro_pessoas_docs.pessoa;
+import com.doban.cadastro_pessoas_docs.vaga.TipoContrato;
+import com.doban.cadastro_pessoas_docs.vaga.Vaga;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Optional;
-
-import com.doban.cadastro_pessoas_docs.vaga.TipoContrato;
-import com.doban.cadastro_pessoas_docs.vaga.Vaga;
-
-import lombok.Data;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class PessoaExcelDTO {
 
-    //Pessoa
+    // Pessoa
     private String nome;
     private String endereco;
     private String bairro;
@@ -39,47 +41,13 @@ public class PessoaExcelDTO {
     private String pai;
     private String estadoCivil;
 
-
-    //Vaga
-
-    private String contratante;
-    private String cliente;
-    private String setor;
-    private String cargo;
-    private String cidadeVaga;
-    private String ufVaga;
-    private BigDecimal salario;
-    private LocalDate dataAdmissao;
-    private LocalDate dataDemissao;
-    private String acrescOuSubst; // Acresc ou substituição
-    private TipoContrato tipoContrato;   // CLT ou TEMP
     private String numeroCnh;
     private String registroCnh;
     private String categoriaCnh;
     private LocalDate validadeCnh;
-    private LocalTime horarioEntrada;
-    private LocalTime horarioSaida;
-    private String motivoContratacao;
-    private Boolean optanteVT;
-    private String aso; // AD, DEM, RET, POST, RUIDO ou outro
     private String matricula;
 
-    //Carro (via Recurso)
-    private String carroMarca;
-    private String carroModelo;
-    private String carroCor;
-    private String carroChassi;
-    private String carroPlaca;
-    private String carroAnoModelo;
-    private String carroTelefone;
-    private String carroDdd;
-
-    //Celular (via Recurso)
-    private String celularMarca;
-    private String celularModelo;
-    private String celularChip;
-    private String celularImei;
-
+    //++++++++++++++++++CONSTRUTORES++++++++++++++++++
     public PessoaExcelDTO() {}
 
     public PessoaExcelDTO(Pessoa pessoa) {
@@ -107,56 +75,27 @@ public class PessoaExcelDTO {
         this.mae = pessoa.getMae();
         this.pai = pessoa.getPai();
         this.estadoCivil = pessoa.getEstadoCivil();
+        this.numeroCnh = pessoa.getNumeroCnh();
+        this.registroCnh = pessoa.getRegistroCnh();
+        this.categoriaCnh = pessoa.getCategoriaCnh();
+        this.validadeCnh = pessoa.getValidadeCnh();
+        this.matricula = pessoa.getMatricula();
 
+        // Vagas
+        this.vagas = pessoa.getVagas().stream()
+                .map(VagaDTO::new)
+                .collect(Collectors.toList());
 
-        // Vaga ativa (última ou conforme regra de negócio)
-        Optional<Vaga> vagaOpt = pessoa.getVagas().stream()
-                .filter(v -> v.getDataDemissao() == null || v.getDataDemissao().isAfter(LocalDate.now()))
-                .findFirst();
+        // Recursos (carros e celulares)
+        this.carros = pessoa.getRecursos().stream()
+                .filter(r -> r instanceof RecursoCarro)
+                .map(r -> new RecursoCarroDTO((RecursoCarro) r))
+                .collect(Collectors.toList());
 
-        vagaOpt.ifPresent(vaga -> {
-            this.contratante = vaga.getContratante();
-            this.cliente = vaga.getCliente();
-            this.setor = vaga.getSetor();
-            this.cargo = vaga.getCargo();
-            this.cidadeVaga = vaga.getCidade();
-            this.ufVaga = vaga.getUf();
-            this.salario = vaga.getSalario();
-            this.dataAdmissao = vaga.getDataAdmissao();
-            this.dataDemissao = vaga.getDataDemissao();
-            this.acrescOuSubst = vaga.getAcrescOuSubst();
-            this.tipoContrato = vaga.getTipoContrato(); 
-            this.numeroCnh = vaga.getNumeroCnh();
-            this.registroCnh = vaga.getRegistroCnh();
-            this.categoriaCnh = vaga.getCategoriaCnh();
-            this.validadeCnh = vaga.getValidadeCnh();
-            this.horarioEntrada = vaga.getHorarioEntrada();
-            this.horarioSaida = vaga.getHorarioSaida();
-            this.motivoContratacao = vaga.getMotivoContratacao();
-            this.optanteVT = vaga.getOptanteVT();
-            this.aso = vaga.getAso();
-            this.matricula = vaga.getMatricula();
-
-            // Recursos vinculados
-            vaga.getRecursos().forEach(recurso -> {
-                if (recurso.getCarro() != null) {
-                    this.carroMarca = recurso.getCarro().getMarca();
-                    this.carroModelo = recurso.getCarro().getModelo();
-                    this.carroCor = recurso.getCarro().getCor();
-                    this.carroChassi = recurso.getCarro().getChassi();
-                    this.carroPlaca = recurso.getCarro().getPlaca();
-                    this.carroAnoModelo = recurso.getCarro().getAnoModelo();
-                    this.carroTelefone = recurso.getCarro().getTelefone();
-                    this.carroDdd = recurso.getCarro().getDdd();
-                }
-                if (recurso.getCelular() != null) {
-                    this.celularMarca = recurso.getCelular().getMarca();
-                    this.celularModelo = recurso.getCelular().getModelo();
-                    this.celularChip = recurso.getCelular().getChip();
-                    this.celularImei = recurso.getCelular().getImei();
-                }
-            });
-        });
+        this.celulares = pessoa.getRecursos().stream()
+                .filter(r -> r instanceof RecursoCelular)
+                .map(r -> new RecursoCelularDTO((RecursoCelular) r))
+                .collect(Collectors.toList());
     }
 
     public Pessoa toEntity() {
@@ -185,6 +124,140 @@ public class PessoaExcelDTO {
         pessoa.setMae(this.mae);
         pessoa.setPai(this.pai);
         pessoa.setEstadoCivil(this.estadoCivil);
+        pessoa.setNumeroCnh(this.numeroCnh);
+        pessoa.setRegistroCnh(this.registroCnh);
+        pessoa.setCategoriaCnh(this.categoriaCnh);
+        pessoa.setValidadeCnh(this.validadeCnh);
+
+        // Vagas
+        if (this.vagas != null) {
+            this.vagas.forEach(v -> pessoa.getVagas().add(v.toEntity(pessoa)));
+        }
+
+        // Carros
+        if (this.carros != null) {
+            this.carros.forEach(c -> pessoa.getRecursos().add(c.toEntity(pessoa)));
+        }
+
+        // Celulares
+        if (this.celulares != null) {
+            this.celulares.forEach(c -> pessoa.getRecursos().add(c.toEntity(pessoa)));
+        }
+
         return pessoa;
+    }
+
+    // --- DTOs internos ---
+    @Data
+    public static class VagaDTO {
+        private String contratante;
+        private String cliente;
+        private String setor;
+        private String cargo;
+        private String cidade;
+        private String uf;
+        private BigDecimal salario;
+        private LocalDate dataAdmissao;
+        private LocalDate dataDemissao;
+        private String acrescimoOuSubstituicao;
+        private TipoContrato tipoContrato;
+        private LocalTime horarioEntrada;
+        private LocalTime horarioSaida;
+        private String motivoContratacao;
+        private Boolean optanteVT;
+        private String aso;
+
+        public VagaDTO() {}
+        public VagaDTO(Vaga vaga) {
+            this.contratante = vaga.getContratante();
+            this.cliente = vaga.getCliente();
+            this.setor = vaga.getSetor();
+            this.cargo = vaga.getCargo();
+            this.cidade = vaga.getCidade();
+            this.uf = vaga.getUf();
+            this.salario = vaga.getSalario();
+            this.dataAdmissao = vaga.getDataAdmissao();
+            this.dataDemissao = vaga.getDataDemissao();
+            this.acrescimoOuSubstituicao = vaga.getAcrescimoOuSubstituicao();
+            this.tipoContrato = vaga.getTipoContrato();
+            this.horarioEntrada = vaga.getHorarioEntrada();
+            this.horarioSaida = vaga.getHorarioSaida();
+            this.motivoContratacao = vaga.getMotivoContratacao();
+            this.optanteVT = vaga.getOptanteVT();
+            this.aso = vaga.getAso();
+        }
+
+        public Vaga toEntity(Pessoa pessoa) {
+            return Vaga.builder()
+                    .contratante(this.contratante)
+                    .cliente(this.cliente)
+                    .setor(this.setor)
+                    .cargo(this.cargo)
+                    .cidade(this.cidade)
+                    .uf(this.uf)
+                    .salario(this.salario)
+                    .dataAdmissao(this.dataAdmissao)
+                    .dataDemissao(this.dataDemissao)
+                    .acrescimoOuSubstituicao(this.acrescimoOuSubstituicao)
+                    .tipoContrato(this.tipoContrato)
+                    .horarioEntrada(this.horarioEntrada)
+                    .horarioSaida(this.horarioSaida)
+                    .motivoContratacao(this.motivoContratacao)
+                    .optanteVT(this.optanteVT)
+                    .aso(this.aso)
+                    .pessoa(pessoa)
+                    .build();
+        }
+    }
+
+    @Data
+    public static class CarroDTO {
+        private String marca;
+        private String modelo;
+        private String cor;
+        private String chassi;
+        private String placa;
+        private String anoModelo;
+        private String telefone;
+        private String ddd;
+
+        public CarroDTO() {}
+        public CarroDTO(CarroDTO carro) {
+            this.marca = carro.getMarca();
+            this.modelo = carro.getModelo();
+            this.cor = carro.getCor();
+            this.chassi = carro.getChassi();
+            this.placa = carro.getPlaca();
+            this.anoModelo = carro.getAnoModelo();
+            this.telefone = carro.getTelefone();
+            this.ddd = carro.getDdd();
+        }
+
+        public CarroDTO toEntity(Pessoa pessoa) {
+            return new RecursoCarro(null, null, null, pessoa,
+                    this.marca, this.modelo, this.cor, this.chassi,
+                    this.placa, this.anoModelo, this.telefone, this.ddd);
+        }
+    }
+
+    @Data
+    public static class CelularDTO {
+        private String marca;
+        private String modelo;
+        private String chip;
+        private String imei;
+
+        public CelularDTO() {}
+        public CelularDTO(CelularDTO celular) {
+            this.marca = celular.getMarca();
+            this.modelo = celular.getModelo();
+            this.chip = celular.getChip();
+            this.imei = celular.getImei();
+        }
+
+        public CelularDTO toEntity(Pessoa pessoa) {
+            return new RecursoCelular(null, null, null, pessoa,
+                    this.marca, this.modelo, this.chip, this.imei);
+        }
     }
 }

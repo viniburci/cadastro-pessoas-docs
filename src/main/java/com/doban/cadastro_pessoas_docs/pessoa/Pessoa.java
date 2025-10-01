@@ -4,17 +4,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.annotations.CascadeType;
 
 import com.doban.cadastro_pessoas_docs.recurso.Recurso;
 import com.doban.cadastro_pessoas_docs.vaga.Vaga;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -61,7 +55,6 @@ public class Pessoa {
     private LocalDate validadeCnh;
     private String numeroCnh;
     private String registroCnh;
-    private String matricula;
 
     @Builder.Default
     @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = true)
