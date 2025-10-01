@@ -1,18 +1,16 @@
 package com.doban.cadastro_pessoas_docs.pessoa;
+import com.doban.cadastro_pessoas_docs.vaga.TipoContrato;
+import com.doban.cadastro_pessoas_docs.vaga.Vaga;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.doban.cadastro_pessoas_docs.carro.Carro;
-import com.doban.cadastro_pessoas_docs.celular.Celular;
-import com.doban.cadastro_pessoas_docs.recurso.Recurso;
-import com.doban.cadastro_pessoas_docs.vaga.TipoContrato;
-import com.doban.cadastro_pessoas_docs.vaga.Vaga;
-
-import lombok.Data;
+import java.util.stream.Collectors;
 
 @Data
 public class PessoaExcelDTO {
@@ -43,62 +41,13 @@ public class PessoaExcelDTO {
     private String pai;
     private String estadoCivil;
 
-    // Vagas (histórico completo da pessoa)
-    private List<VagaDTO> vagas = new ArrayList<>();
+    private String numeroCnh;
+    private String registroCnh;
+    private String categoriaCnh;
+    private LocalDate validadeCnh;
+    private String matricula;
 
-    // Recursos (diretamente na pessoa)
-    private List<CarroDTO> carros = new ArrayList<>();
-    private List<CelularDTO> celulares = new ArrayList<>();
-
-    // -------------------- DTOs internos --------------------
-
-    @Data
-    public static class VagaDTO {
-        private String contratante;
-        private String cliente;
-        private String setor;
-        private String cargo;
-        private String cidadeVaga;
-        private String ufVaga;
-        private BigDecimal salario;
-        private LocalDate dataAdmissao;
-        private LocalDate dataDemissao;
-        private String acrescOuSubst;
-        private TipoContrato tipoContrato;
-        private String numeroCnh;
-        private String registroCnh;
-        private String categoriaCnh;
-        private LocalDate validadeCnh;
-        private LocalTime horarioEntrada;
-        private LocalTime horarioSaida;
-        private String motivoContratacao;
-        private Boolean optanteVT;
-        private String aso;
-        private String matricula;
-    }
-
-    @Data
-    public static class CarroDTO {
-        private String marca;
-        private String modelo;
-        private String cor;
-        private String chassi;
-        private String placa;
-        private String anoModelo;
-        private String telefone;
-        private String ddd;
-    }
-
-    @Data
-    public static class CelularDTO {
-        private String marca;
-        private String modelo;
-        private String chip;
-        private String imei;
-    }
-
-    // -------------------- Construtores --------------------
-
+    //++++++++++++++++++CONSTRUTORES++++++++++++++++++
     public PessoaExcelDTO() {}
 
     public PessoaExcelDTO(Pessoa pessoa) {
@@ -127,58 +76,27 @@ public class PessoaExcelDTO {
         this.mae = pessoa.getMae();
         this.pai = pessoa.getPai();
         this.estadoCivil = pessoa.getEstadoCivil();
+        this.numeroCnh = pessoa.getNumeroCnh();
+        this.registroCnh = pessoa.getRegistroCnh();
+        this.categoriaCnh = pessoa.getCategoriaCnh();
+        this.validadeCnh = pessoa.getValidadeCnh();
+        this.matricula = pessoa.getMatricula();
 
         // Vagas
-        this.vagas = pessoa.getVagas().stream().map(vaga -> {
-            VagaDTO vdto = new VagaDTO();
-            vdto.setContratante(vaga.getContratante());
-            vdto.setCliente(vaga.getCliente());
-            vdto.setSetor(vaga.getSetor());
-            vdto.setCargo(vaga.getCargo());
-            vdto.setCidadeVaga(vaga.getCidade());
-            vdto.setUfVaga(vaga.getUf());
-            vdto.setSalario(vaga.getSalario());
-            vdto.setDataAdmissao(vaga.getDataAdmissao());
-            vdto.setDataDemissao(vaga.getDataDemissao());
-            vdto.setAcrescOuSubst(vaga.getAcrescOuSubst());
-            vdto.setTipoContrato(vaga.getTipoContrato());
-            vdto.setHorarioEntrada(vaga.getHorarioEntrada());
-            vdto.setHorarioSaida(vaga.getHorarioSaida());
-            vdto.setMotivoContratacao(vaga.getMotivoContratacao());
-            vdto.setOptanteVT(vaga.getOptanteVT());
-            vdto.setAso(vaga.getAso());
-            vdto.setMatricula(vaga.getMatricula());
-            return vdto;
-        }).toList();
+        this.vagas = pessoa.getVagas().stream()
+                .map(VagaDTO::new)
+                .collect(Collectors.toList());
 
-        // Recursos
+        // Recursos (carros e celulares)
         this.carros = pessoa.getRecursos().stream()
-                .filter(r -> r instanceof Carro)
-                .map(r -> {
-                    Carro c = (Carro) r;
-                    CarroDTO cdto = new CarroDTO();
-                    cdto.setMarca(c.getMarca());
-                    cdto.setModelo(c.getModelo());
-                    cdto.setCor(c.getCor());
-                    cdto.setChassi(c.getChassi());
-                    cdto.setPlaca(c.getPlaca());
-                    cdto.setAnoModelo(c.getAnoModelo());
-                    cdto.setTelefone(c.getTelefone());
-                    cdto.setDdd(c.getDdd());
-                    return cdto;
-                }).toList();
+                .filter(r -> r instanceof RecursoCarro)
+                .map(r -> new RecursoCarroDTO((RecursoCarro) r))
+                .collect(Collectors.toList());
 
         this.celulares = pessoa.getRecursos().stream()
-                .filter(r -> r instanceof Celular)
-                .map(r -> {
-                    Celular cel = (Celular) r;
-                    CelularDTO cdto = new CelularDTO();
-                    cdto.setMarca(cel.getMarca());
-                    cdto.setModelo(cel.getModelo());
-                    cdto.setChip(cel.getChip());
-                    cdto.setImei(cel.getImei());
-                    return cdto;
-                }).toList();
+                .filter(r -> r instanceof RecursoCelular)
+                .map(r -> new RecursoCelularDTO((RecursoCelular) r))
+                .collect(Collectors.toList());
     }
 
     // -------------------- Conversão inversa --------------------
@@ -209,61 +127,140 @@ public class PessoaExcelDTO {
         pessoa.setMae(this.mae);
         pessoa.setPai(this.pai);
         pessoa.setEstadoCivil(this.estadoCivil);
+        pessoa.setNumeroCnh(this.numeroCnh);
+        pessoa.setRegistroCnh(this.registroCnh);
+        pessoa.setCategoriaCnh(this.categoriaCnh);
+        pessoa.setValidadeCnh(this.validadeCnh);
 
         // Vagas
-        List<Vaga> vagasEntity = this.vagas.stream().map(vdto -> {
-            Vaga vaga = new Vaga();
-            vaga.setContratante(vdto.getContratante());
-            vaga.setCliente(vdto.getCliente());
-            vaga.setSetor(vdto.getSetor());
-            vaga.setCargo(vdto.getCargo());
-            vaga.setCidade(vdto.getCidadeVaga());
-            vaga.setUf(vdto.getUfVaga());
-            vaga.setSalario(vdto.getSalario());
-            vaga.setDataAdmissao(vdto.getDataAdmissao());
-            vaga.setDataDemissao(vdto.getDataDemissao());
-            vaga.setAcrescOuSubst(vdto.getAcrescOuSubst());
-            vaga.setTipoContrato(vdto.getTipoContrato());
-            vaga.setNumeroCnh(vdto.getNumeroCnh());
-            vaga.setRegistroCnh(vdto.getRegistroCnh());
-            vaga.setCategoriaCnh(vdto.getCategoriaCnh());
-            vaga.setValidadeCnh(vdto.getValidadeCnh());
-            vaga.setHorarioEntrada(vdto.getHorarioEntrada());
-            vaga.setHorarioSaida(vdto.getHorarioSaida());
-            vaga.setMotivoContratacao(vdto.getMotivoContratacao());
-            vaga.setOptanteVT(vdto.getOptanteVT());
-            vaga.setAso(vdto.getAso());
-            vaga.setMatricula(vdto.getMatricula());
-            return vaga;
-        }).toList();
+        if (this.vagas != null) {
+            this.vagas.forEach(v -> pessoa.getVagas().add(v.toEntity(pessoa)));
+        }
 
-        pessoa.setVagas(vagasEntity);
+        // Carros
+        if (this.carros != null) {
+            this.carros.forEach(c -> pessoa.getRecursos().add(c.toEntity(pessoa)));
+        }
 
-        // Recursos
-        List<Recurso> recursos = new ArrayList<>();
-        this.carros.forEach(cdto -> {
-            Carro carro = new Carro();
-            carro.setMarca(cdto.getMarca());
-            carro.setModelo(cdto.getModelo());
-            carro.setCor(cdto.getCor());
-            carro.setChassi(cdto.getChassi());
-            carro.setPlaca(cdto.getPlaca());
-            carro.setAnoModelo(cdto.getAnoModelo());
-            carro.setTelefone(cdto.getTelefone());
-            carro.setDdd(cdto.getDdd());
-            recursos.add(carro);
-        });
-        this.celulares.forEach(cdto -> {
-            Celular celular = new Celular();
-            celular.setMarca(cdto.getMarca());
-            celular.setModelo(cdto.getModelo());
-            celular.setChip(cdto.getChip());
-            celular.setImei(cdto.getImei());
-            recursos.add(celular);
-        });
-
-        pessoa.setRecursos(recursos);
+        // Celulares
+        if (this.celulares != null) {
+            this.celulares.forEach(c -> pessoa.getRecursos().add(c.toEntity(pessoa)));
+        }
 
         return pessoa;
+    }
+
+    // --- DTOs internos ---
+    @Data
+    public static class VagaDTO {
+        private String contratante;
+        private String cliente;
+        private String setor;
+        private String cargo;
+        private String cidade;
+        private String uf;
+        private BigDecimal salario;
+        private LocalDate dataAdmissao;
+        private LocalDate dataDemissao;
+        private String acrescimoOuSubstituicao;
+        private TipoContrato tipoContrato;
+        private LocalTime horarioEntrada;
+        private LocalTime horarioSaida;
+        private String motivoContratacao;
+        private Boolean optanteVT;
+        private String aso;
+
+        public VagaDTO() {}
+        public VagaDTO(Vaga vaga) {
+            this.contratante = vaga.getContratante();
+            this.cliente = vaga.getCliente();
+            this.setor = vaga.getSetor();
+            this.cargo = vaga.getCargo();
+            this.cidade = vaga.getCidade();
+            this.uf = vaga.getUf();
+            this.salario = vaga.getSalario();
+            this.dataAdmissao = vaga.getDataAdmissao();
+            this.dataDemissao = vaga.getDataDemissao();
+            this.acrescimoOuSubstituicao = vaga.getAcrescimoOuSubstituicao();
+            this.tipoContrato = vaga.getTipoContrato();
+            this.horarioEntrada = vaga.getHorarioEntrada();
+            this.horarioSaida = vaga.getHorarioSaida();
+            this.motivoContratacao = vaga.getMotivoContratacao();
+            this.optanteVT = vaga.getOptanteVT();
+            this.aso = vaga.getAso();
+        }
+
+        public Vaga toEntity(Pessoa pessoa) {
+            return Vaga.builder()
+                    .contratante(this.contratante)
+                    .cliente(this.cliente)
+                    .setor(this.setor)
+                    .cargo(this.cargo)
+                    .cidade(this.cidade)
+                    .uf(this.uf)
+                    .salario(this.salario)
+                    .dataAdmissao(this.dataAdmissao)
+                    .dataDemissao(this.dataDemissao)
+                    .acrescimoOuSubstituicao(this.acrescimoOuSubstituicao)
+                    .tipoContrato(this.tipoContrato)
+                    .horarioEntrada(this.horarioEntrada)
+                    .horarioSaida(this.horarioSaida)
+                    .motivoContratacao(this.motivoContratacao)
+                    .optanteVT(this.optanteVT)
+                    .aso(this.aso)
+                    .pessoa(pessoa)
+                    .build();
+        }
+    }
+
+    @Data
+    public static class CarroDTO {
+        private String marca;
+        private String modelo;
+        private String cor;
+        private String chassi;
+        private String placa;
+        private String anoModelo;
+        private String telefone;
+        private String ddd;
+
+        public CarroDTO() {}
+        public CarroDTO(CarroDTO carro) {
+            this.marca = carro.getMarca();
+            this.modelo = carro.getModelo();
+            this.cor = carro.getCor();
+            this.chassi = carro.getChassi();
+            this.placa = carro.getPlaca();
+            this.anoModelo = carro.getAnoModelo();
+            this.telefone = carro.getTelefone();
+            this.ddd = carro.getDdd();
+        }
+
+        public CarroDTO toEntity(Pessoa pessoa) {
+            return new RecursoCarro(null, null, null, pessoa,
+                    this.marca, this.modelo, this.cor, this.chassi,
+                    this.placa, this.anoModelo, this.telefone, this.ddd);
+        }
+    }
+
+    @Data
+    public static class CelularDTO {
+        private String marca;
+        private String modelo;
+        private String chip;
+        private String imei;
+
+        public CelularDTO() {}
+        public CelularDTO(CelularDTO celular) {
+            this.marca = celular.getMarca();
+            this.modelo = celular.getModelo();
+            this.chip = celular.getChip();
+            this.imei = celular.getImei();
+        }
+
+        public CelularDTO toEntity(Pessoa pessoa) {
+            return new RecursoCelular(null, null, null, pessoa,
+                    this.marca, this.modelo, this.chip, this.imei);
+        }
     }
 }

@@ -7,9 +7,10 @@ import lombok.*;
 @Entity
 @Table(name = "recursos_celulares")
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@Builder
 public class RecursoCelular extends Recurso {
 
     @ManyToOne(fetch = FetchType.LAZY)

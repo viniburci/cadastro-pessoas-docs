@@ -39,7 +39,10 @@ public class Vaga {
     private String cargo;
     private String setor;
     private BigDecimal salario;
+
+    @Enumerated(EnumType.STRING)
     private TipoContrato tipoContrato;
+
     private LocalDate dataAdmissao;
     private LocalDate dataDemissao;
     private String acrescimoOuSubstituicao;

@@ -33,6 +33,8 @@ import jakarta.transaction.Transactional;
 @Service
 public class ExcelImportService {
 
+    //NAO PRECISA DE MATRICULA
+
     private final PessoaRepository pessoaRepository;
 
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -72,40 +74,13 @@ public class ExcelImportService {
 
         // ===== Pessoa =====
 
-//0  -> id + nome  
-//1  -> id  
-//2  -> nome  
-//3  -> endereço  
-//4  -> bairro  
-//5  -> cidade  
-//6  -> estado  
-//7  -> cep  
-//8  -> ddd  
-//9  -> telefone  
-//10 -> email  
-//11 -> numero ctps  
-//12 -> serie ctps  
-//13 -> data emissao ctps  
-//14 -> rg  
-//15 -> data emissao rg  
-//16 -> uf  
-//17 -> cpf  
-//18 -> pis  
-//19 -> data emissao pis  
-//20 -> titulo eleitor  
-//21 -> data nascimento  
-//22 -> local nascimento  
-//23 -> nome mae  
-//24 -> nome pai  
-//25 -> estado civil  
-
         dto.setNome(getString(row, 2));
         dto.setEndereco(getString(row, 3));
         dto.setBairro(getString(row, 4));
         dto.setCidade(getString(row, 5));
-        dto.setUf(getString(row, 6));
+        dto.setUfRg(getString(row, 6));
         dto.setCep(getString(row, 7));
-        dto.setFone(getString(row, 9));
+        dto.setTelefone();one(getString(row, 9));
         dto.setCpf(getString(row, 17));
         dto.setNumeroRg(getString(row, 13));
         dto.setDataNascimento(parseDate(row, 20));
@@ -116,58 +91,11 @@ public class ExcelImportService {
         dto.setSerieCtps(getString(row, 12));
         dto.setDataEmissaoCtps(parseDate(row, 13));
         dto.setPis(getString(row, 18));
-        dto.setDataPis(parseDate(row, 19));
+        dto.setDataEmissaoPis(parseDate(row, 19));
         dto.setTituloEleitor(getString(row, 20));
 
 
         // ===== Vaga =====
-//26 -> cliente  
-//27 -> cidade (cliente)  
-//28 -> estado (cliente)  
-//29 -> cargo  
-//30 -> setor  
-//31 -> salario  
-//32 -> tipo contrato  
-//33 -> data admissao  
-//34 -> data demissao  
-//35 -> clt  
-//36 -> temp  
-//37 -> acresc  
-//38 -> subst  
-//39 -> admissional  
-//40 -> demissional  
-//41 -> retorno  
-//42 -> post  
-//43 -> ruido  
-//44 -> outro  
-//45 -> numero pep  
-//46 -> numero lotação  
-//47 -> sim (vale transporte)  
-//48 -> nao (vale transporte)  
-//49 -> nada (vale transporte)  
-//50 -> horario entrada  
-//51 -> horario saída  
-//52 -> motivo contratação  
-//53 -> contratante (1, 2)  
-
-//54 -> marca (carro)  
-//55 -> cor  
-//56 -> chassi  
-//57 -> placa  
-//58 -> modelo (carro)  
-//59 -> ddd (carro)  
-//60 -> telefone (carro)  
-//61 -> ano/modelo  
-
-//62 -> marca (celular)  
-//63 -> modelo (celular)  
-//64 -> chip  
-//65 -> imei  
-
-//66 -> categoria cnh  
-//67 -> validade cnh  
-//68 -> matrícula  
-
 
 
         dto.setCliente(getString(row, 25));
@@ -328,7 +256,7 @@ public class ExcelImportService {
             return null;
         }
     }
-    
+
     public boolean hasPessoas() {
     	return pessoaRepository.count() > 0;
     }
