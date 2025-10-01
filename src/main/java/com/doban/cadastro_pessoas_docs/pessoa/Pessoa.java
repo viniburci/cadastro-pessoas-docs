@@ -58,10 +58,10 @@ public class Pessoa {
     private String registroCnh;
 
     @Builder.Default
-    @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = false)
     private List<Vaga> vagas = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = false)
     private List<Recurso> recursos = new ArrayList<>();
 }

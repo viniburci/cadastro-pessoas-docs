@@ -16,7 +16,6 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class RecursoCarro extends Recurso {
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -6,6 +6,7 @@ import java.time.LocalTime;
 
 import com.doban.cadastro_pessoas_docs.pessoa.Pessoa;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -38,6 +39,8 @@ public class Vaga {
     private String uf;
     private String cargo;
     private String setor;
+
+    @Column(precision = 10, scale = 2)
     private BigDecimal salario;
 
     @Enumerated(EnumType.STRING)
@@ -45,7 +48,9 @@ public class Vaga {
 
     private LocalDate dataAdmissao;
     private LocalDate dataDemissao;
-    private String acrescimoOuSubstituicao;
+
+    @Enumerated(EnumType.STRING)
+    private TipoAcrescimoSubstituicao acrescimoOuSubstituicao;
 
     @Enumerated(EnumType.STRING)
     private AtestadoSaudeOcupacional aso;

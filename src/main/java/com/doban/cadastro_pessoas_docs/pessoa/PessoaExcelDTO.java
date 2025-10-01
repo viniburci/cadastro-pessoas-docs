@@ -1,18 +1,21 @@
 package com.doban.cadastro_pessoas_docs.pessoa;
+import com.doban.cadastro_pessoas_docs.carro.Carro;
+import com.doban.cadastro_pessoas_docs.celular.Celular;
+import com.doban.cadastro_pessoas_docs.vaga.AtestadoSaudeOcupacional;
+import com.doban.cadastro_pessoas_docs.vaga.TipoAcrescimoSubstituicao;
 import com.doban.cadastro_pessoas_docs.vaga.TipoContrato;
 import com.doban.cadastro_pessoas_docs.vaga.Vaga;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
+@Builder
+@AllArgsConstructor
 public class PessoaExcelDTO {
 
     // Pessoa
@@ -45,13 +48,11 @@ public class PessoaExcelDTO {
     private String registroCnh;
     private String categoriaCnh;
     private LocalDate validadeCnh;
-    private String matricula;
 
     //++++++++++++++++++CONSTRUTORES++++++++++++++++++
     public PessoaExcelDTO() {}
 
     public PessoaExcelDTO(Pessoa pessoa) {
-        // Pessoa
         this.nome = pessoa.getNome();
         this.endereco = pessoa.getEndereco();
         this.bairro = pessoa.getBairro();
@@ -80,26 +81,7 @@ public class PessoaExcelDTO {
         this.registroCnh = pessoa.getRegistroCnh();
         this.categoriaCnh = pessoa.getCategoriaCnh();
         this.validadeCnh = pessoa.getValidadeCnh();
-        this.matricula = pessoa.getMatricula();
-
-        // Vagas
-        this.vagas = pessoa.getVagas().stream()
-                .map(VagaDTO::new)
-                .collect(Collectors.toList());
-
-        // Recursos (carros e celulares)
-        this.carros = pessoa.getRecursos().stream()
-                .filter(r -> r instanceof RecursoCarro)
-                .map(r -> new RecursoCarroDTO((RecursoCarro) r))
-                .collect(Collectors.toList());
-
-        this.celulares = pessoa.getRecursos().stream()
-                .filter(r -> r instanceof RecursoCelular)
-                .map(r -> new RecursoCelularDTO((RecursoCelular) r))
-                .collect(Collectors.toList());
     }
-
-    // -------------------- Conversão inversa --------------------
 
     public Pessoa toEntity() {
         Pessoa pessoa = new Pessoa();
@@ -132,26 +114,12 @@ public class PessoaExcelDTO {
         pessoa.setCategoriaCnh(this.categoriaCnh);
         pessoa.setValidadeCnh(this.validadeCnh);
 
-        // Vagas
-        if (this.vagas != null) {
-            this.vagas.forEach(v -> pessoa.getVagas().add(v.toEntity(pessoa)));
-        }
-
-        // Carros
-        if (this.carros != null) {
-            this.carros.forEach(c -> pessoa.getRecursos().add(c.toEntity(pessoa)));
-        }
-
-        // Celulares
-        if (this.celulares != null) {
-            this.celulares.forEach(c -> pessoa.getRecursos().add(c.toEntity(pessoa)));
-        }
-
         return pessoa;
     }
 
     // --- DTOs internos ---
     @Data
+    @Builder
     public static class VagaDTO {
         private String contratante;
         private String cliente;
@@ -162,15 +130,35 @@ public class PessoaExcelDTO {
         private BigDecimal salario;
         private LocalDate dataAdmissao;
         private LocalDate dataDemissao;
-        private String acrescimoOuSubstituicao;
+        private TipoAcrescimoSubstituicao acrescimoOuSubstituicao;
         private TipoContrato tipoContrato;
         private LocalTime horarioEntrada;
         private LocalTime horarioSaida;
         private String motivoContratacao;
         private Boolean optanteVT;
-        private String aso;
+        private AtestadoSaudeOcupacional aso;
 
         public VagaDTO() {}
+
+        public VagaDTO(String contratante, String cliente, String setor, String cargo, String cidade, String uf, BigDecimal salario, LocalDate dataAdmissao, LocalDate dataDemissao, TipoAcrescimoSubstituicao acrescimoOuSubstituicao, TipoContrato tipoContrato, LocalTime horarioEntrada, LocalTime horarioSaida, String motivoContratacao, Boolean optanteVT, AtestadoSaudeOcupacional aso) {
+            this.contratante = contratante;
+            this.cliente = cliente;
+            this.setor = setor;
+            this.cargo = cargo;
+            this.cidade = cidade;
+            this.uf = uf;
+            this.salario = salario;
+            this.dataAdmissao = dataAdmissao;
+            this.dataDemissao = dataDemissao;
+            this.acrescimoOuSubstituicao = acrescimoOuSubstituicao;
+            this.tipoContrato = tipoContrato;
+            this.horarioEntrada = horarioEntrada;
+            this.horarioSaida = horarioSaida;
+            this.motivoContratacao = motivoContratacao;
+            this.optanteVT = optanteVT;
+            this.aso = aso;
+        }
+
         public VagaDTO(Vaga vaga) {
             this.contratante = vaga.getContratante();
             this.cliente = vaga.getCliente();
@@ -214,6 +202,7 @@ public class PessoaExcelDTO {
     }
 
     @Data
+    @Builder
     public static class CarroDTO {
         private String marca;
         private String modelo;
@@ -225,6 +214,18 @@ public class PessoaExcelDTO {
         private String ddd;
 
         public CarroDTO() {}
+        
+        public CarroDTO(String marca, String modelo, String cor, String chassi, String placa, String anoModelo, String telefone, String ddd) {
+            this.marca = marca;
+            this.modelo = modelo;
+            this.cor = cor;
+            this.chassi = chassi;
+            this.placa = placa;
+            this.anoModelo = anoModelo;
+            this.telefone = telefone;
+            this.ddd = ddd;
+        }
+
         public CarroDTO(CarroDTO carro) {
             this.marca = carro.getMarca();
             this.modelo = carro.getModelo();
@@ -236,14 +237,15 @@ public class PessoaExcelDTO {
             this.ddd = carro.getDdd();
         }
 
-        public CarroDTO toEntity(Pessoa pessoa) {
-            return new RecursoCarro(null, null, null, pessoa,
-                    this.marca, this.modelo, this.cor, this.chassi,
+        public Carro toEntity() {
+            return new Carro(
+                null, this.marca, this.modelo, this.cor, this.chassi,
                     this.placa, this.anoModelo, this.telefone, this.ddd);
         }
     }
 
     @Data
+    @Builder
     public static class CelularDTO {
         private String marca;
         private String modelo;
@@ -251,6 +253,14 @@ public class PessoaExcelDTO {
         private String imei;
 
         public CelularDTO() {}
+
+        public CelularDTO(String marca, String modelo, String chip, String imei) {
+            this.marca = marca;
+            this.modelo = modelo;
+            this.chip = chip;
+            this.imei = imei;
+        }
+
         public CelularDTO(CelularDTO celular) {
             this.marca = celular.getMarca();
             this.modelo = celular.getModelo();
@@ -258,9 +268,9 @@ public class PessoaExcelDTO {
             this.imei = celular.getImei();
         }
 
-        public CelularDTO toEntity(Pessoa pessoa) {
-            return new RecursoCelular(null, null, null, pessoa,
-                    this.marca, this.modelo, this.chip, this.imei);
+        public Celular toEntity() {
+            return new Celular(
+                    null, this.marca, this.modelo, this.chip, this.imei);
         }
     }
 }

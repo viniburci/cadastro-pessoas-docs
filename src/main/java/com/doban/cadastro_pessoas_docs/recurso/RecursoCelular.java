@@ -10,7 +10,6 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class RecursoCelular extends Recurso {
 
     @ManyToOne(fetch = FetchType.LAZY)
