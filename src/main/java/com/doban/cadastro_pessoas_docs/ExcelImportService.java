@@ -7,7 +7,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -27,16 +29,14 @@ import com.doban.cadastro_pessoas_docs.celular.Celular;
 import com.doban.cadastro_pessoas_docs.celular.CelularRepository;
 import com.doban.cadastro_pessoas_docs.pessoa.Pessoa;
 import com.doban.cadastro_pessoas_docs.pessoa.PessoaExcelDTO;
-import com.doban.cadastro_pessoas_docs.pessoa.PessoaRepository;
 import com.doban.cadastro_pessoas_docs.pessoa.PessoaExcelDTO.CarroDTO;
 import com.doban.cadastro_pessoas_docs.pessoa.PessoaExcelDTO.CelularDTO;
 import com.doban.cadastro_pessoas_docs.pessoa.PessoaExcelDTO.VagaDTO;
-import com.doban.cadastro_pessoas_docs.recurso.Recurso;
+import com.doban.cadastro_pessoas_docs.pessoa.PessoaRepository;
 import com.doban.cadastro_pessoas_docs.recurso.RecursoCarro;
 import com.doban.cadastro_pessoas_docs.recurso.RecursoCelular;
 import com.doban.cadastro_pessoas_docs.vaga.TipoContrato;
 import com.doban.cadastro_pessoas_docs.vaga.Vaga;
-import com.doban.cadastro_pessoas_docs.ImportacaoDTO;
 
 import jakarta.transaction.Transactional;
 
@@ -47,10 +47,12 @@ public class ExcelImportService {
     private final CarroRepository carroRepository;
     private final CelularRepository celularRepository;
 
-    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    // private final DateTimeFormatter dtf =
+    // DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H:mm");
 
-    private final DateTimeFormatter dtfPortuguese = DateTimeFormatter.ofPattern("dd-MMM-yyyy", new Locale("pt", "BR"));
+    // private final DateTimeFormatter dtfPortuguese =
+    // DateTimeFormatter.ofPattern("dd-MMM-yyyy", new Locale("pt", "BR"));
 
     public ExcelImportService(PessoaRepository pessoaRepository,
             CarroRepository carroRepository,
@@ -68,7 +70,7 @@ public class ExcelImportService {
             Sheet sheet = workbook.getSheetAt(4);
             Set<String> cpfsImportados = new HashSet<>();
 
-            for (int i = 12; i <= sheet.getLastRowNum(); i++) {
+            for (int i = 11; i <= sheet.getLastRowNum(); i++) {
                 Row row = sheet.getRow(i);
                 if (row == null)
                     continue;
@@ -115,6 +117,11 @@ public class ExcelImportService {
         pessoaDto.setPai(getString(row, 24));
         pessoaDto.setEstadoCivil(getString(row, 25));
 
+        pessoaDto.setNumeroCnh(getString(row, 45));
+        pessoaDto.setRegistroCnh(getString(row, 46));
+
+        pessoaDto.setCategoriaCnh(getString(row, 66));
+        pessoaDto.setValidadeCnh(parseDate(row, 67));
 
         VagaDTO vagaDto = VagaDTO.builder()
                 .cliente(getString(row, 26))
@@ -224,36 +231,57 @@ public class ExcelImportService {
         return cell != null ? cell.toString().trim() : null;
     }
 
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private final DateTimeFormatter dtfPortugueseAbbr = DateTimeFormatter.ofPattern("dd-MMM-yyyy",
+            new Locale("pt", "BR"));
+    private final DateTimeFormatter dtfPortugueseFull = DateTimeFormatter.ofPattern("dd-MMMM-yyyy",
+            new Locale("pt", "BR"));
+
     private LocalDate parseDate(Row row, int index) {
         Cell cell = row.getCell(index);
-        if (cell == null) {
+        if (cell == null || cell.getCellType() == CellType.BLANK) {
+            System.out.println("Célula vazia ou nula na coluna " + index);
             return null;
         }
 
-        if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
-            return cell.getLocalDateTimeCellValue().toLocalDate();
-        } else {
-            try {
-                String valor = cell.toString().trim();
+        try {
+            if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
+                LocalDate date = cell.getLocalDateTimeCellValue().toLocalDate();
+                System.out.println("Data numérica detectada: " + date);
+                return date;
+            }
 
-                // Limpa possíveis pontos extras e troca "dez." por "dez"
-                valor = valor.replace(".", "");
+            // Se for texto, limpa antes de qualquer verificação
+            String valorOriginal = cell.toString().trim();
+            System.out.println("Valor original da célula: '" + valorOriginal + "'");
 
-                if (valor.isEmpty()) {
-                    return null;
-                }
+            // Remove pontos e espaços extras
+            String valorLimpo = valorOriginal.replace(".", "").trim();
+            System.out.println("Valor limpo para parsing: '" + valorLimpo + "'");
 
-                // Tenta parse com formato dd/MM/yyyy
-                try {
-                    return LocalDate.parse(valor, dtf);
-                } catch (DateTimeParseException e) {
-                    // Se falhar, tenta com abreviação de mês em português
-                    return LocalDate.parse(valor, dtfPortuguese);
-                }
-
-            } catch (Exception e) {
+            if (valorLimpo.isEmpty()) {
+                System.out.println("Valor da célula está vazio após limpeza.");
                 return null;
             }
+
+            // Tenta parsing com diferentes formatos
+            List<DateTimeFormatter> formatters = Arrays.asList(dtf, dtfPortugueseAbbr, dtfPortugueseFull);
+            for (DateTimeFormatter formatter : formatters) {
+                try {
+                    LocalDate parsedDate = LocalDate.parse(valorLimpo, formatter);
+                    System.out.println("Data convertida com formato '" + formatter + "': " + parsedDate);
+                    return parsedDate;
+                } catch (DateTimeParseException e) {
+                    System.out.println("Falha ao tentar converter com formato '" + formatter + "': " + e.getMessage());
+                }
+            }
+
+            System.out.println("❌ Nenhum formato conseguiu converter a data: '" + valorOriginal + "'");
+            return null;
+
+        } catch (Exception e) {
+            System.out.println("Erro inesperado ao processar data na coluna " + index + ": " + e.getMessage());
+            return null;
         }
     }
 
@@ -269,9 +297,23 @@ public class ExcelImportService {
 
     public LocalTime parseHorario(String horarioStr) {
         if (horarioStr == null || horarioStr.isBlank()) {
+            return null; // Retorna null se a string estiver vazia ou nula
+        }
+
+        try {
+            // Tente fazer o parse para LocalTime
+            return LocalTime.parse(horarioStr.trim(), timeFormatter);
+        } catch (DateTimeParseException e) {
+            System.out.println("Erro ao tentar converter horário: '" + horarioStr + "'. Erro: " + e.getMessage());
+
+            // Verifique se a string é de fato uma data, como o valor '31-dez.-1899'
+            if (horarioStr.contains("-") || horarioStr.contains("/")) {
+                System.out.println("Valor parece ser uma data, ignorando: " + horarioStr);
+            }
+
+            // Retorna null ou algum valor padrão
             return null;
         }
-        return LocalTime.parse(horarioStr.trim(), timeFormatter);
     }
 
     public boolean hasPessoas() {
