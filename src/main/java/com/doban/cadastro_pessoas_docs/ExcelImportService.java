@@ -37,6 +37,7 @@ import com.doban.cadastro_pessoas_docs.recurso.RecursoCarro;
 import com.doban.cadastro_pessoas_docs.recurso.RecursoCelular;
 import com.doban.cadastro_pessoas_docs.vaga.TipoContrato;
 import com.doban.cadastro_pessoas_docs.vaga.Vaga;
+import com.doban.cadastro_pessoas_docs.vaga.VagaRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -46,20 +47,23 @@ public class ExcelImportService {
     private final PessoaRepository pessoaRepository;
     private final CarroRepository carroRepository;
     private final CelularRepository celularRepository;
+    private final VagaRepository vagaRepository;
 
-    // private final DateTimeFormatter dtf =
-    // DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private final DateTimeFormatter dtfPortugueseAbbr = DateTimeFormatter.ofPattern("dd-MMM-yyyy",
+            new Locale("pt", "BR"));
+    private final DateTimeFormatter dtfPortugueseFull = DateTimeFormatter.ofPattern("dd-MMMM-yyyy",
+            new Locale("pt", "BR"));
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H:mm");
-
-    // private final DateTimeFormatter dtfPortuguese =
-    // DateTimeFormatter.ofPattern("dd-MMM-yyyy", new Locale("pt", "BR"));
 
     public ExcelImportService(PessoaRepository pessoaRepository,
             CarroRepository carroRepository,
-            CelularRepository celularRepository) {
+            CelularRepository celularRepository,
+            VagaRepository vagaRepository) {
         this.pessoaRepository = pessoaRepository;
         this.carroRepository = carroRepository;
         this.celularRepository = celularRepository;
+        this.vagaRepository = vagaRepository;
     }
 
     @Transactional
@@ -185,16 +189,11 @@ public class ExcelImportService {
 
         Pessoa pessoa = importacaoDto.getPessoa().toEntity();
 
-        if (importacaoDto.getVaga() != null) {
-
-            Vaga vaga = importacaoDto.getVaga().toEntity(pessoa);
-            pessoa.getVagas().add(vaga);
-        }
-
         if (importacaoDto.getCarro() != null) {
             Carro carro = carroRepository.findByPlaca(importacaoDto.getCarro().getPlaca())
                     .orElseGet(() -> {
                         Carro novoCarro = importacaoDto.getCarro().toEntity();
+                        System.out.println(novoCarro);
                         return carroRepository.save(novoCarro);
                     });
 
@@ -211,6 +210,7 @@ public class ExcelImportService {
             Celular celular = celularRepository.findByImei(importacaoDto.getCelular().getImei())
                     .orElseGet(() -> {
                         Celular novoCelular = importacaoDto.getCelular().toEntity();
+                        System.out.println(novoCelular);
                         return celularRepository.save(novoCelular);
                     });
 
@@ -223,19 +223,23 @@ public class ExcelImportService {
             pessoa.getRecursos().add(recursoCelular);
         }
 
-        pessoaRepository.save(pessoa);
+        Pessoa pessoaBanco = pessoaRepository.save(pessoa);
+
+        if (importacaoDto.getVaga() != null) {
+
+            Vaga vaga = importacaoDto.getVaga().toEntity(pessoa);
+            vagaRepository.save(vaga);
+            pessoaBanco.getVagas().add(vaga);
+
+            pessoaRepository.save(pessoaBanco);
+        }
+
     }
 
     private String getString(Row row, int index) {
         Cell cell = row.getCell(index);
         return cell != null ? cell.toString().trim() : null;
     }
-
-    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private final DateTimeFormatter dtfPortugueseAbbr = DateTimeFormatter.ofPattern("dd-MMM-yyyy",
-            new Locale("pt", "BR"));
-    private final DateTimeFormatter dtfPortugueseFull = DateTimeFormatter.ofPattern("dd-MMMM-yyyy",
-            new Locale("pt", "BR"));
 
     private LocalDate parseDate(Row row, int index) {
         Cell cell = row.getCell(index);
