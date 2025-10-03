@@ -3,6 +3,7 @@ package com.doban.cadastro_pessoas_docs;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -295,9 +296,37 @@ public class ExcelImportService {
     private BigDecimal parseBigDecimal(String value) {
         if (value == null || value.isBlank())
             return null;
+
         try {
-            return new BigDecimal(value.replace("R$", "").replace(".", "").replace(",", ".").trim());
+            String cleaned = value.trim();
+
+            // Detecta formato brasileiro: tem vírgula e ponto
+            boolean temVirgula = cleaned.contains(",");
+            boolean temPonto = cleaned.contains(".");
+
+            if (temVirgula && temPonto) {
+                // Formato brasileiro: remove ponto (milhar), troca vírgula por ponto (decimal)
+                cleaned = cleaned.replace(".", "").replace(",", ".");
+            } else if (temVirgula && !temPonto) {
+                // Só vírgula: troca vírgula por ponto
+                cleaned = cleaned.replace(",", ".");
+            } else if (!temVirgula && temPonto) {
+                // Só ponto: pode ser americano (decimal) → deixar como está
+                // ou pode ser milhar sem vírgula (ex: 1.400) → nesse caso, depende do contexto.
+                // Para garantir, não mexer.
+            }
+
+            BigDecimal parsed = new BigDecimal(cleaned);
+
+            // Ajuste para valores errados (exemplo 82048 vs 820.48)
+            if (parsed.compareTo(BigDecimal.valueOf(10000)) > 0) {
+                parsed = parsed.divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
+            }
+
+            return parsed.setScale(2, RoundingMode.HALF_UP);
+
         } catch (Exception e) {
+            System.out.println("Erro ao parsear valor monetário: " + value);
             return null;
         }
     }
