@@ -5,9 +5,12 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -136,8 +139,8 @@ public class ExcelImportService {
                 .salario(parseBigDecimal(getString(row, 31)))
                 .dataAdmissao(parseDate(row, 33))
                 .dataDemissao(parseDate(row, 34))
-                .horarioEntrada(parseHorario(getString(row, 50)))
-                .horarioSaida(parseHorario(getString(row, 51)))
+                .horarioEntrada(getHorario(row, 50))
+                .horarioSaida(getHorario(row, 51))
                 .motivoContratacao(getString(row, 52))
                 .contratante(getString(row, 53)) // 1 - 2
                 .build();
@@ -299,25 +302,47 @@ public class ExcelImportService {
         }
     }
 
-    public LocalTime parseHorario(String horarioStr) {
-        if (horarioStr == null || horarioStr.isBlank()) {
-            return null; // Retorna null se a string estiver vazia ou nula
-        }
+    private LocalTime getHorario(Row row, int cellIndex) {
+        Cell cell = row.getCell(cellIndex);
+        if (cell == null)
+            return null;
+        System.out.println("célula de horário: '" + cell.toString() + "'");
+        if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
+            Date date = cell.getDateCellValue();
+            LocalTime time = date.toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalTime();
 
-        try {
-            // Tente fazer o parse para LocalTime
-            return LocalTime.parse(horarioStr.trim(), timeFormatter);
-        } catch (DateTimeParseException e) {
-            System.out.println("Erro ao tentar converter horário: '" + horarioStr + "'. Erro: " + e.getMessage());
-
-            // Verifique se a string é de fato uma data, como o valor '31-dez.-1899'
-            if (horarioStr.contains("-") || horarioStr.contains("/")) {
-                System.out.println("Valor parece ser uma data, ignorando: " + horarioStr);
+            // Arredondar para o minuto mais próximo
+            int seconds = time.getSecond();
+            time = time.withSecond(0).withNano(0);
+            if (seconds >= 30) {
+                time = time.plusMinutes(7);
             }
 
-            // Retorna null ou algum valor padrão
-            return null;
+            return time;
         }
+
+        // Se vier como texto
+        if (cell.getCellType() == CellType.STRING) {
+            String valor = cell.getStringCellValue().trim();
+            if (!valor.isBlank()) {
+                try {
+                    LocalTime time = LocalTime.parse(valor, DateTimeFormatter.ofPattern("H:mm[:ss]"));
+                    // Arredondar para o minuto mais próximo
+                    int seconds = time.getSecond();
+                    time = time.withSecond(0).withNano(0);
+                    if (seconds >= 30) {
+                        time = time.plusMinutes(1);
+                    }
+                    return time;
+                } catch (Exception e) {
+                    System.out.println("Erro ao parsear horário: " + valor);
+                }
+            }
+        }
+
+        return null;
     }
 
     public boolean hasPessoas() {
