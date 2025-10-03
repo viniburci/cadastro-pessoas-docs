@@ -39,6 +39,7 @@ import com.doban.cadastro_pessoas_docs.pessoa.PessoaExcelDTO.VagaDTO;
 import com.doban.cadastro_pessoas_docs.pessoa.PessoaRepository;
 import com.doban.cadastro_pessoas_docs.recurso.RecursoCarro;
 import com.doban.cadastro_pessoas_docs.recurso.RecursoCelular;
+import com.doban.cadastro_pessoas_docs.vaga.AtestadoSaudeOcupacional;
 import com.doban.cadastro_pessoas_docs.vaga.TipoContrato;
 import com.doban.cadastro_pessoas_docs.vaga.Vaga;
 import com.doban.cadastro_pessoas_docs.vaga.VagaRepository;
@@ -156,6 +157,16 @@ public class ExcelImportService {
             case "5" -> vagaDto.setTipoContrato(TipoContrato.TEMP_CJ);
             default -> vagaDto.setTipoContrato(TipoContrato.INDEFINIDO);
         }
+
+        AtestadoSaudeOcupacional aso = null;
+        if(getString(row, 39) != null && getString(row, 39).equals("X")) {
+            aso = AtestadoSaudeOcupacional.ADMISSIONAL;
+        } else if(getString(row, 40) != null && getString(row, 40).equals("X")) {
+            aso = AtestadoSaudeOcupacional.DEMISSIONAL;
+        } else if(getString(row, 41) != null && getString(row, 41).equals("X")) {
+            aso = AtestadoSaudeOcupacional.RETORNO;
+        }
+        vagaDto.setAso(aso);
 
         CarroDTO carroDto = CarroDTO.builder()
                 .marca(null)
