@@ -61,7 +61,6 @@ public class ExcelImportService {
             new Locale("pt", "BR"));
     private final DateTimeFormatter dtfPortugueseFull = DateTimeFormatter.ofPattern("dd-MMMM-yyyy",
             new Locale("pt", "BR"));
-    private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H:mm");
 
     public ExcelImportService(PessoaRepository pessoaRepository,
             CarroRepository carroRepository,
