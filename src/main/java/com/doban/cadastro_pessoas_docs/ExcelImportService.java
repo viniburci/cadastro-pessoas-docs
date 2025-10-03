@@ -9,7 +9,6 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -20,6 +19,7 @@ import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -41,6 +41,7 @@ import com.doban.cadastro_pessoas_docs.recurso.RecursoCarro;
 import com.doban.cadastro_pessoas_docs.recurso.RecursoCelular;
 import com.doban.cadastro_pessoas_docs.vaga.AtestadoSaudeOcupacional;
 import com.doban.cadastro_pessoas_docs.vaga.TipoAcrescimoSubstituicao;
+import com.doban.cadastro_pessoas_docs.vaga.TipoContratante;
 import com.doban.cadastro_pessoas_docs.vaga.TipoContrato;
 import com.doban.cadastro_pessoas_docs.vaga.Vaga;
 import com.doban.cadastro_pessoas_docs.vaga.VagaRepository;
@@ -80,7 +81,7 @@ public class ExcelImportService {
             Sheet sheet = workbook.getSheetAt(4);
             Set<String> cpfsImportados = new HashSet<>();
 
-            for (int i = 11; i <= sheet.getLastRowNum(); i++) {
+            for (int i = 11; i <= 45; i++) {
                 Row row = sheet.getRow(i);
                 if (row == null)
                     continue;
@@ -117,7 +118,7 @@ public class ExcelImportService {
         pessoaDto.setNumeroRg(getString(row, 14));
         pessoaDto.setDataEmissaoRg(parseDate(row, 15));
         pessoaDto.setUfRg(getString(row, 16));
-        pessoaDto.setCpf(getString(row, 17));
+
         pessoaDto.setPis(getString(row, 18));
         pessoaDto.setDataEmissaoPis(parseDate(row, 19));
         pessoaDto.setTituloEleitor(getString(row, 20));
@@ -133,6 +134,13 @@ public class ExcelImportService {
         pessoaDto.setCategoriaCnh(getString(row, 66));
         pessoaDto.setValidadeCnh(parseDate(row, 67));
 
+        String cpf = getString(row, 17);
+        if(cpf.length() < 11){
+            int n = 11 - cpf.length();
+            cpf = "0".repeat(n) + cpf;
+        }
+        pessoaDto.setCpf(cpf);
+
         VagaDTO vagaDto = VagaDTO.builder()
                 .cliente(getString(row, 26))
                 .cidade(getString(row, 27))
@@ -145,7 +153,7 @@ public class ExcelImportService {
                 .horarioEntrada(getHorario(row, 50))
                 .horarioSaida(getHorario(row, 51))
                 .motivoContratacao(getString(row, 52))
-                .contratante(getString(row, 53)) // 1 - 2
+                .contratante(TipoContratante.DOBAN_PRESTADORA_DE_SERVIÇOS_LTDA) // 1 - 2
                 .build();
 
         String tipoContratoStr = Optional.ofNullable(getString(row, 32))
@@ -160,27 +168,27 @@ public class ExcelImportService {
         }
 
         AtestadoSaudeOcupacional aso = null;
-        if(getString(row, 39) != null && getString(row, 39).equals("X")) {
+        if (getString(row, 39) != null && getString(row, 39).equals("X")) {
             aso = AtestadoSaudeOcupacional.ADMISSIONAL;
-        } else if(getString(row, 40) != null && getString(row, 40).equals("X")) {
+        } else if (getString(row, 40) != null && getString(row, 40).equals("X")) {
             aso = AtestadoSaudeOcupacional.DEMISSIONAL;
-        } else if(getString(row, 41) != null && getString(row, 41).equals("X")) {
+        } else if (getString(row, 41) != null && getString(row, 41).equals("X")) {
             aso = AtestadoSaudeOcupacional.RETORNO;
         }
         vagaDto.setAso(aso);
 
         Boolean optanteVT = null;
-        if(getString(row, 47) != null && getString(row, 47).equals("X")) {
+        if (getString(row, 47) != null && getString(row, 47).equals("X")) {
             optanteVT = true;
-        } else if(getString(row, 48) != null && getString(row, 48).equals("X")) {
+        } else if (getString(row, 48) != null && getString(row, 48).equals("X")) {
             optanteVT = false;
         }
         vagaDto.setOptanteVT(optanteVT);
 
         TipoAcrescimoSubstituicao tipoAcrescimoSubstituicao = null;
-        if(getString(row, 37) != null && getString(row, 37).equals("X")) {
+        if (getString(row, 37) != null && getString(row, 37).equals("X")) {
             tipoAcrescimoSubstituicao = TipoAcrescimoSubstituicao.ACRESCIMO;
-        } else if(getString(row, 38) != null && getString(row, 38).equals("X")) {
+        } else if (getString(row, 38) != null && getString(row, 38).equals("X")) {
             tipoAcrescimoSubstituicao = TipoAcrescimoSubstituicao.SUBSTITUICAO;
         }
         vagaDto.setAcrescimoOuSubstituicao(tipoAcrescimoSubstituicao);
@@ -268,9 +276,11 @@ public class ExcelImportService {
 
     }
 
+    private static final DataFormatter formatter = new DataFormatter();
+
     private String getString(Row row, int index) {
         Cell cell = row.getCell(index);
-        return cell != null ? cell.toString().trim() : null;
+        return (cell != null) ? formatter.formatCellValue(cell).trim() : null;
     }
 
     private LocalDate parseDate(Row row, int index) {

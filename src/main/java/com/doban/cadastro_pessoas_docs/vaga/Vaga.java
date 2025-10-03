@@ -59,7 +59,9 @@ public class Vaga {
     private LocalTime horarioEntrada;
     private LocalTime horarioSaida;
     private String motivoContratacao;
-    private String contratante;
+
+    @Enumerated(EnumType.STRING)
+    private TipoContratante contratante;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pessoa_id", nullable = false)

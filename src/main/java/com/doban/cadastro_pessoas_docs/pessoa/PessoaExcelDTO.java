@@ -3,6 +3,7 @@ import com.doban.cadastro_pessoas_docs.carro.Carro;
 import com.doban.cadastro_pessoas_docs.celular.Celular;
 import com.doban.cadastro_pessoas_docs.vaga.AtestadoSaudeOcupacional;
 import com.doban.cadastro_pessoas_docs.vaga.TipoAcrescimoSubstituicao;
+import com.doban.cadastro_pessoas_docs.vaga.TipoContratante;
 import com.doban.cadastro_pessoas_docs.vaga.TipoContrato;
 import com.doban.cadastro_pessoas_docs.vaga.Vaga;
 import lombok.AllArgsConstructor;
@@ -121,7 +122,7 @@ public class PessoaExcelDTO {
     @Data
     @Builder
     public static class VagaDTO {
-        private String contratante;
+        private TipoContratante contratante;
         private String cliente;
         private String setor;
         private String cargo;
@@ -140,7 +141,7 @@ public class PessoaExcelDTO {
 
         public VagaDTO() {}
 
-        public VagaDTO(String contratante, String cliente, String setor, String cargo, String cidade, String uf, BigDecimal salario, LocalDate dataAdmissao, LocalDate dataDemissao, TipoAcrescimoSubstituicao acrescimoOuSubstituicao, TipoContrato tipoContrato, LocalTime horarioEntrada, LocalTime horarioSaida, String motivoContratacao, Boolean optanteVT, AtestadoSaudeOcupacional aso) {
+        public VagaDTO(TipoContratante contratante, String cliente, String setor, String cargo, String cidade, String uf, BigDecimal salario, LocalDate dataAdmissao, LocalDate dataDemissao, TipoAcrescimoSubstituicao acrescimoOuSubstituicao, TipoContrato tipoContrato, LocalTime horarioEntrada, LocalTime horarioSaida, String motivoContratacao, Boolean optanteVT, AtestadoSaudeOcupacional aso) {
             this.contratante = contratante;
             this.cliente = cliente;
             this.setor = setor;
