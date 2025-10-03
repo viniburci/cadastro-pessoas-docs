@@ -40,6 +40,7 @@ import com.doban.cadastro_pessoas_docs.pessoa.PessoaRepository;
 import com.doban.cadastro_pessoas_docs.recurso.RecursoCarro;
 import com.doban.cadastro_pessoas_docs.recurso.RecursoCelular;
 import com.doban.cadastro_pessoas_docs.vaga.AtestadoSaudeOcupacional;
+import com.doban.cadastro_pessoas_docs.vaga.TipoAcrescimoSubstituicao;
 import com.doban.cadastro_pessoas_docs.vaga.TipoContrato;
 import com.doban.cadastro_pessoas_docs.vaga.Vaga;
 import com.doban.cadastro_pessoas_docs.vaga.VagaRepository;
@@ -175,6 +176,14 @@ public class ExcelImportService {
             optanteVT = false;
         }
         vagaDto.setOptanteVT(optanteVT);
+
+        TipoAcrescimoSubstituicao tipoAcrescimoSubstituicao = null;
+        if(getString(row, 37) != null && getString(row, 37).equals("X")) {
+            tipoAcrescimoSubstituicao = TipoAcrescimoSubstituicao.ACRESCIMO;
+        } else if(getString(row, 38) != null && getString(row, 38).equals("X")) {
+            tipoAcrescimoSubstituicao = TipoAcrescimoSubstituicao.SUBSTITUICAO;
+        }
+        vagaDto.setAcrescimoOuSubstituicao(tipoAcrescimoSubstituicao);
 
         CarroDTO carroDto = CarroDTO.builder()
                 .marca(null)
