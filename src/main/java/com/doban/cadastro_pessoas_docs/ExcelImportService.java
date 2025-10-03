@@ -168,6 +168,14 @@ public class ExcelImportService {
         }
         vagaDto.setAso(aso);
 
+        Boolean optanteVT = null;
+        if(getString(row, 47) != null && getString(row, 47).equals("X")) {
+            optanteVT = true;
+        } else if(getString(row, 48) != null && getString(row, 48).equals("X")) {
+            optanteVT = false;
+        }
+        vagaDto.setOptanteVT(optanteVT);
+
         CarroDTO carroDto = CarroDTO.builder()
                 .marca(null)
                 .modelo(null)
