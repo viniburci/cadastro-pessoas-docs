@@ -1,4 +1,5 @@
 package com.doban.cadastro_pessoas_docs.pessoa;
+
 import com.doban.cadastro_pessoas_docs.carro.Carro;
 import com.doban.cadastro_pessoas_docs.celular.Celular;
 import com.doban.cadastro_pessoas_docs.vaga.AtestadoSaudeOcupacional;
@@ -50,8 +51,9 @@ public class PessoaExcelDTO {
     private String categoriaCnh;
     private LocalDate validadeCnh;
 
-    //++++++++++++++++++CONSTRUTORES++++++++++++++++++
-    public PessoaExcelDTO() {}
+    // ++++++++++++++++++CONSTRUTORES++++++++++++++++++
+    public PessoaExcelDTO() {
+    }
 
     public PessoaExcelDTO(Pessoa pessoa) {
         this.nome = pessoa.getNome();
@@ -139,9 +141,13 @@ public class PessoaExcelDTO {
         private Boolean optanteVT;
         private AtestadoSaudeOcupacional aso;
 
-        public VagaDTO() {}
+        public VagaDTO() {
+        }
 
-        public VagaDTO(TipoContratante contratante, String cliente, String setor, String cargo, String cidade, String uf, BigDecimal salario, LocalDate dataAdmissao, LocalDate dataDemissao, TipoAcrescimoSubstituicao acrescimoOuSubstituicao, TipoContrato tipoContrato, LocalTime horarioEntrada, LocalTime horarioSaida, String motivoContratacao, Boolean optanteVT, AtestadoSaudeOcupacional aso) {
+        public VagaDTO(TipoContratante contratante, String cliente, String setor, String cargo, String cidade,
+                String uf, BigDecimal salario, LocalDate dataAdmissao, LocalDate dataDemissao,
+                TipoAcrescimoSubstituicao acrescimoOuSubstituicao, TipoContrato tipoContrato, LocalTime horarioEntrada,
+                LocalTime horarioSaida, String motivoContratacao, Boolean optanteVT, AtestadoSaudeOcupacional aso) {
             this.contratante = contratante;
             this.cliente = cliente;
             this.setor = setor;
@@ -212,8 +218,9 @@ public class PessoaExcelDTO {
         private String placa;
         private String anoModelo;
 
-        public CarroDTO() {}
-        
+        public CarroDTO() {
+        }
+
         public CarroDTO(String marca, String modelo, String cor, String chassi, String placa, String anoModelo) {
             this.marca = marca;
             this.modelo = modelo;
@@ -233,8 +240,12 @@ public class PessoaExcelDTO {
         }
 
         public Carro toEntity() {
+            if (placa == null || placa.trim().isEmpty() || placa.equalsIgnoreCase("null") || placa.isBlank()
+                    || placa.length() < 7) {
+                return null;
+            }
             return new Carro(
-                null, this.marca, this.modelo, this.cor, this.chassi,
+                    null, this.marca, this.modelo, this.cor, this.chassi,
                     this.placa, this.anoModelo);
         }
     }
@@ -247,7 +258,8 @@ public class PessoaExcelDTO {
         private String chip;
         private String imei;
 
-        public CelularDTO() {}
+        public CelularDTO() {
+        }
 
         public CelularDTO(String marca, String modelo, String chip, String imei) {
             this.marca = marca;
