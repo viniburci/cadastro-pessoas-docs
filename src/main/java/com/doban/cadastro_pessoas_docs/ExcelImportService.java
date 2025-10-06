@@ -80,7 +80,7 @@ public class ExcelImportService {
             Sheet sheet = workbook.getSheetAt(4);
             Set<String> cpfsImportados = new HashSet<>();
 
-            for (int i = 11; i <= 45; i++) {
+            for (int i = 45; i >= 11; i--) {
                 Row row = sheet.getRow(i);
                 if (row == null)
                     continue;
