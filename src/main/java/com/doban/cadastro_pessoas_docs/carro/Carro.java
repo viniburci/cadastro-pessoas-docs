@@ -27,6 +27,4 @@ public class Carro {
     private String chassi;
     private String placa;
     private String anoModelo;
-    private String telefone;
-    private String ddd;
 }

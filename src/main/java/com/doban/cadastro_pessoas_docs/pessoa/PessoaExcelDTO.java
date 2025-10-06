@@ -211,20 +211,16 @@ public class PessoaExcelDTO {
         private String chassi;
         private String placa;
         private String anoModelo;
-        private String telefone;
-        private String ddd;
 
         public CarroDTO() {}
         
-        public CarroDTO(String marca, String modelo, String cor, String chassi, String placa, String anoModelo, String telefone, String ddd) {
+        public CarroDTO(String marca, String modelo, String cor, String chassi, String placa, String anoModelo) {
             this.marca = marca;
             this.modelo = modelo;
             this.cor = cor;
             this.chassi = chassi;
             this.placa = placa;
             this.anoModelo = anoModelo;
-            this.telefone = telefone;
-            this.ddd = ddd;
         }
 
         public CarroDTO(CarroDTO carro) {
@@ -234,14 +230,12 @@ public class PessoaExcelDTO {
             this.chassi = carro.getChassi();
             this.placa = carro.getPlaca();
             this.anoModelo = carro.getAnoModelo();
-            this.telefone = carro.getTelefone();
-            this.ddd = carro.getDdd();
         }
 
         public Carro toEntity() {
             return new Carro(
                 null, this.marca, this.modelo, this.cor, this.chassi,
-                    this.placa, this.anoModelo, this.telefone, this.ddd);
+                    this.placa, this.anoModelo);
         }
     }
 
