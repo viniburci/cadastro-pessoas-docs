@@ -192,8 +192,6 @@ public class ExcelImportService {
                 .chassi(getString(row, 56))
                 .placa(getString(row, 57))
                 .modelo(getString(row, 58))
-                .ddd(getString(row, 59))
-                .telefone(getString(row, 60))
                 .anoModelo(getString(row, 61))
                 .build();
 
