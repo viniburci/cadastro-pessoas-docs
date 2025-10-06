@@ -80,18 +80,18 @@ public class ExcelImportService {
             Sheet sheet = workbook.getSheetAt(4);
             Set<String> cpfsImportados = new HashSet<>();
 
-            for (int i = 45; i >= 11; i--) {
+            for (int i = 245; i >= 11; i--) {
                 Row row = sheet.getRow(i);
                 if (row == null)
                     continue;
 
                 ImportacaoDTO importacaoDto = lerLinhaDTO(row);
 
-                if (importacaoDto.getPessoa().getCpf() == null
-                        || cpfsImportados.contains(importacaoDto.getPessoa().getCpf())) {
-                    System.out.println("Ignorando duplicado: " + importacaoDto.getPessoa().getNome());
-                    continue;
-                }
+                // if (importacaoDto.getPessoa().getCpf() == null
+                //         || cpfsImportados.contains(importacaoDto.getPessoa().getCpf())) {
+                //     System.out.println("Ignorando duplicado: " + importacaoDto.getPessoa().getNome());
+                //     continue;
+                // }
 
                 importarPessoa(importacaoDto);
                 cpfsImportados.add(importacaoDto.getPessoa().getCpf());
@@ -222,11 +222,15 @@ public class ExcelImportService {
     private void importarPessoa(ImportacaoDTO importacaoDto) {
         Optional<Pessoa> existente = pessoaRepository.findByCpf(importacaoDto.getPessoa().getCpf());
 
+        Pessoa pessoa = new Pessoa();
+
         if (existente.isPresent()) {
             System.out.println("Pessoa já existe: " + importacaoDto.getPessoa().getNome() + ". Atualizando dados...");
+            pessoa = atualizarPessoaExistente(existente.get(), importacaoDto.getPessoa().toEntity());
+        } else {
+            pessoa = importacaoDto.getPessoa().toEntity();
         }
 
-        Pessoa pessoa = importacaoDto.getPessoa().toEntity();
 
         if (importacaoDto.getCarro() != null) {
             Carro carro = carroRepository.findByPlaca(importacaoDto.getCarro().getPlaca())
@@ -272,7 +276,38 @@ public class ExcelImportService {
 
             pessoaRepository.save(pessoaBanco);
         }
+    }
 
+    private Pessoa atualizarPessoaExistente(Pessoa existente, Pessoa nova) {
+        existente.setNome(nova.getNome());
+        existente.setEndereco(nova.getEndereco());
+        existente.setBairro(nova.getBairro());
+        existente.setCidade(nova.getCidade());
+        existente.setEstado(nova.getEstado());
+        existente.setCep(nova.getCep());
+        existente.setDdd(nova.getDdd());
+        existente.setTelefone(nova.getTelefone());
+        existente.setEmail(nova.getEmail());
+        existente.setNumeroCtps(nova.getNumeroCtps());
+        existente.setSerieCtps(nova.getSerieCtps());
+        existente.setDataEmissaoCtps(nova.getDataEmissaoCtps());
+        existente.setNumeroRg(nova.getNumeroRg());
+        existente.setDataEmissaoRg(nova.getDataEmissaoRg());
+        existente.setUfRg(nova.getUfRg());
+        existente.setPis(nova.getPis());
+        existente.setDataEmissaoPis(nova.getDataEmissaoPis());
+        existente.setTituloEleitor(nova.getTituloEleitor());
+        existente.setDataNascimento(nova.getDataNascimento());
+        existente.setLocalNascimento(nova.getLocalNascimento());
+        existente.setMae(nova.getMae());
+        existente.setPai(nova.getPai());
+        existente.setEstadoCivil(nova.getEstadoCivil());
+        existente.setNumeroCnh(nova.getNumeroCnh());
+        existente.setRegistroCnh(nova.getRegistroCnh());
+        existente.setCategoriaCnh(nova.getCategoriaCnh());
+        existente.setValidadeCnh(nova.getValidadeCnh());
+
+        return pessoaRepository.save(existente);
     }
 
     private static final DataFormatter formatter = new DataFormatter();
@@ -285,14 +320,14 @@ public class ExcelImportService {
     private LocalDate parseDate(Row row, int index) {
         Cell cell = row.getCell(index);
         if (cell == null || cell.getCellType() == CellType.BLANK) {
-            System.out.println("Célula vazia ou nula na coluna " + index);
+            //System.out.println("Célula vazia ou nula na coluna " + index);
             return null;
         }
 
         try {
             if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
                 LocalDate date = cell.getLocalDateTimeCellValue().toLocalDate();
-                System.out.println("Data numérica detectada: " + date);
+                //System.out.println("Data numérica detectada: " + date);
                 return date;
             }
 
@@ -302,7 +337,7 @@ public class ExcelImportService {
 
             // Remove pontos e espaços extras
             String valorLimpo = valorOriginal.replace(".", "").trim();
-            System.out.println("Valor limpo para parsing: '" + valorLimpo + "'");
+            //System.out.println("Valor limpo para parsing: '" + valorLimpo + "'");
 
             if (valorLimpo.isEmpty()) {
                 System.out.println("Valor da célula está vazio após limpeza.");
@@ -314,10 +349,10 @@ public class ExcelImportService {
             for (DateTimeFormatter formatter : formatters) {
                 try {
                     LocalDate parsedDate = LocalDate.parse(valorLimpo, formatter);
-                    System.out.println("Data convertida com formato '" + formatter + "': " + parsedDate);
+                    //System.out.println("Data convertida com formato '" + formatter + "': " + parsedDate);
                     return parsedDate;
                 } catch (DateTimeParseException e) {
-                    System.out.println("Falha ao tentar converter com formato '" + formatter + "': " + e.getMessage());
+                    //System.out.println("Falha ao tentar converter com formato '" + formatter + "': " + e.getMessage());
                 }
             }
 
@@ -372,7 +407,7 @@ public class ExcelImportService {
         Cell cell = row.getCell(cellIndex);
         if (cell == null)
             return null;
-        System.out.println("célula de horário: '" + cell.toString() + "'");
+        //System.out.println("célula de horário: '" + cell.toString() + "'");
         if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
             Date date = cell.getDateCellValue();
             LocalTime time = date.toInstant()
