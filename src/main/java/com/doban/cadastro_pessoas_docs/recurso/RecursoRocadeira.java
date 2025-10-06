@@ -1,6 +1,6 @@
 package com.doban.cadastro_pessoas_docs.recurso;
 
-import com.doban.cadastro_pessoas_docs.celular.Celular;
+import com.doban.cadastro_pessoas_docs.rocadeira.Rocadeira;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,7 +12,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
-@jakarta.persistence.Table(name = "recursos_celulares")
+@jakarta.persistence.Table(name = "recursos_rocadeiras")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
@@ -20,6 +20,6 @@ import lombok.NoArgsConstructor;
 public class RecursoRocadeira extends Recurso {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "celular_id", nullable = false)
-    private Celular celular;
+    @JoinColumn(name = "rocadeira_id", nullable = false)
+    private Rocadeira rocadeira;
 }
