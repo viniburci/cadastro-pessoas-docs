@@ -80,18 +80,12 @@ public class ExcelImportService {
             Sheet sheet = workbook.getSheetAt(4);
             Set<String> cpfsImportados = new HashSet<>();
 
-            for (int i = 245; i >= 11; i--) {
+            for (int i = 45; i >= 11; i--) {
                 Row row = sheet.getRow(i);
                 if (row == null)
                     continue;
 
                 ImportacaoDTO importacaoDto = lerLinhaDTO(row);
-
-                // if (importacaoDto.getPessoa().getCpf() == null
-                //         || cpfsImportados.contains(importacaoDto.getPessoa().getCpf())) {
-                //     System.out.println("Ignorando duplicado: " + importacaoDto.getPessoa().getNome());
-                //     continue;
-                // }
 
                 importarPessoa(importacaoDto);
                 cpfsImportados.add(importacaoDto.getPessoa().getCpf());
@@ -193,21 +187,21 @@ public class ExcelImportService {
         vagaDto.setAcrescimoOuSubstituicao(tipoAcrescimoSubstituicao);
 
         CarroDTO carroDto = CarroDTO.builder()
-                .marca(null)
-                .modelo(null)
-                .cor(null)
-                .chassi(null)
-                .placa(null)
-                .anoModelo(null)
-                .ddd(null)
-                .telefone(null)
+                .marca(getString(row, 54))
+                .cor(getString(row, 55))
+                .chassi(getString(row, 56))
+                .placa(getString(row, 57))
+                .modelo(getString(row, 58))
+                .ddd(getString(row, 59))
+                .telefone(getString(row, 60))
+                .anoModelo(getString(row, 61))
                 .build();
 
         CelularDTO celularDto = CelularDTO.builder()
-                .marca(null)
-                .modelo(null)
-                .chip(null)
-                .imei(null)
+                .marca(getString(row, 62))
+                .modelo(getString(row, 63))
+                .chip(getString(row, 64))
+                .imei(getString(row, 65))
                 .build();
 
         ImportacaoDTO importacaoDto = new ImportacaoDTO();
@@ -233,6 +227,7 @@ public class ExcelImportService {
 
 
         if (importacaoDto.getCarro() != null) {
+            System.out.println("PLACA = " + importacaoDto.getCarro().getPlaca());
             Carro carro = carroRepository.findByPlaca(importacaoDto.getCarro().getPlaca())
                     .orElseGet(() -> {
                         Carro novoCarro = importacaoDto.getCarro().toEntity();
@@ -250,6 +245,7 @@ public class ExcelImportService {
         }
 
         if (importacaoDto.getCelular() != null) {
+            System.out.println("IMEI = " + importacaoDto.getCelular().getImei());
             Celular celular = celularRepository.findByImei(importacaoDto.getCelular().getImei())
                     .orElseGet(() -> {
                         Celular novoCelular = importacaoDto.getCelular().toEntity();
