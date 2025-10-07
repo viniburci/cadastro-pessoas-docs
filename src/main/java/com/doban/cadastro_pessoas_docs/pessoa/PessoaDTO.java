@@ -2,7 +2,13 @@ package com.doban.cadastro_pessoas_docs.pessoa;
 
 import java.time.LocalDate;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
 public class PessoaDTO {
+    private Long id;
     private String nome;
     private String endereco;
     private String bairro;
@@ -39,6 +45,7 @@ public class PessoaDTO {
     }
 
     public PessoaDTO(Pessoa pessoa) {
+        this.id = pessoa.getId();
         this.nome = pessoa.getNome();
         this.endereco = pessoa.getEndereco();
         this.bairro = pessoa.getBairro();
@@ -72,6 +79,9 @@ public class PessoaDTO {
 
     public Pessoa toEntity() {
         Pessoa pessoa = new Pessoa();
+        if (this.id != null) {
+            pessoa.setId(this.id);
+        }
         pessoa.setNome(this.nome);
         pessoa.setEndereco(this.endereco);
         pessoa.setBairro(this.bairro);

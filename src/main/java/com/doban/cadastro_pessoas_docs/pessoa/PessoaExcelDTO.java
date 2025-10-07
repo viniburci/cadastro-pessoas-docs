@@ -20,7 +20,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class PessoaExcelDTO {
 
-    // Pessoa
+    private Long id;
     private String nome;
     private String endereco;
     private String bairro;
