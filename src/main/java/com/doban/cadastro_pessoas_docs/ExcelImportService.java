@@ -237,8 +237,8 @@ public class ExcelImportService {
                 RecursoCarro recursoCarro = new RecursoCarro();
                 recursoCarro.setCarro(carro);
                 recursoCarro.setPessoa(pessoa);
-                recursoCarro.setDataEntrega(null);
-                recursoCarro.setDataDevolucao(null);
+                recursoCarro.setDataEntrega(importacaoDto.getVaga() != null ? importacaoDto.getVaga().getDataAdmissao() : null);
+                recursoCarro.setDataDevolucao(importacaoDto.getVaga() != null ? importacaoDto.getVaga().getDataDemissao() : null);
 
                 pessoa.getRecursos().add(recursoCarro);
             }
@@ -258,8 +258,8 @@ public class ExcelImportService {
                 RecursoCelular recursoCelular = new RecursoCelular();
                 recursoCelular.setCelular(celular);
                 recursoCelular.setPessoa(pessoa);
-                recursoCelular.setDataEntrega(null);
-                recursoCelular.setDataDevolucao(null);
+                recursoCelular.setDataEntrega(importacaoDto.getVaga() != null ? importacaoDto.getVaga().getDataAdmissao() : null);
+                recursoCelular.setDataDevolucao(importacaoDto.getVaga() != null ? importacaoDto.getVaga().getDataDemissao() : null);
 
                 pessoa.getRecursos().add(recursoCelular);
             }
