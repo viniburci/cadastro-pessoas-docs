@@ -245,7 +245,7 @@ public class ExcelImportService {
         }
 
         Celular celular = null;
-    if (importacaoDto.getCelular() != null && importacaoDto.getCelular().getImei().length() >=10) {
+        if (importacaoDto.getCelular() != null && importacaoDto.getCelular().getImei().length() >= 10) {
             celular = celularRepository.findByImei(importacaoDto.getCelular().getImei()).orElse(null);
             if (celular == null) {
                 Celular novoCelular = importacaoDto.getCelular().toEntity();
@@ -373,25 +373,26 @@ public class ExcelImportService {
         try {
             String cleaned = value.trim();
 
-            // Detecta formato brasileiro: tem vírgula e ponto
+            // Remove "R$", espaços e outros caracteres que não sejam dígitos, ponto ou
+            // vírgula
+            cleaned = cleaned.replaceAll("[^\\d.,]", "");
+
+            // Conta quantos pontos e vírgulas existem
             boolean temVirgula = cleaned.contains(",");
             boolean temPonto = cleaned.contains(".");
 
             if (temVirgula && temPonto) {
-                // Formato brasileiro: remove ponto (milhar), troca vírgula por ponto (decimal)
+                // Ex: 1.800,00 → 1800.00 (formato brasileiro)
                 cleaned = cleaned.replace(".", "").replace(",", ".");
-            } else if (temVirgula && !temPonto) {
-                // Só vírgula: troca vírgula por ponto
+            } else if (temVirgula) {
+                // Ex: 1800,00 → 1800.00
                 cleaned = cleaned.replace(",", ".");
-            } else if (!temVirgula && temPonto) {
-                // Só ponto: pode ser americano (decimal) → deixar como está
-                // ou pode ser milhar sem vírgula (ex: 1.400) → nesse caso, depende do contexto.
-                // Para garantir, não mexer.
             }
+            // Se só tiver ponto, pode ser americano ou milhar — deixamos como está
 
             BigDecimal parsed = new BigDecimal(cleaned);
 
-            // Ajuste para valores errados (exemplo 82048 vs 820.48)
+            // Corrige valores que vieram em centavos (ex: 180000 → 1800.00)
             if (parsed.compareTo(BigDecimal.valueOf(10000)) > 0) {
                 parsed = parsed.divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
             }
