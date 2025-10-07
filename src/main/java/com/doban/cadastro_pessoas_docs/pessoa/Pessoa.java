@@ -57,6 +57,8 @@ public class Pessoa {
     private String numeroCnh;
     private String registroCnh;
 
+    private String chavePix;
+
     @Builder.Default
     @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = false)
     private List<Vaga> vagas = new ArrayList<>();

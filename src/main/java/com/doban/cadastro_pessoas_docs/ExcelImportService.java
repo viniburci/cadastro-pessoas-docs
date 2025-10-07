@@ -127,6 +127,8 @@ public class ExcelImportService {
         pessoaDto.setCategoriaCnh(getString(row, 66));
         pessoaDto.setValidadeCnh(parseDate(row, 67));
 
+        pessoaDto.setChavePix(getString(row, 52));
+
         String cpf = getString(row, 17);
         if (cpf.length() < 11) {
             int n = 11 - cpf.length();
@@ -145,7 +147,6 @@ public class ExcelImportService {
                 .dataDemissao(parseDate(row, 34))
                 .horarioEntrada(getHorario(row, 50))
                 .horarioSaida(getHorario(row, 51))
-                .motivoContratacao(getString(row, 52))
                 .contratante(TipoContratante.DOBAN_PRESTADORA_DE_SERVIÇOS_LTDA) // 1 - 2
                 .build();
 

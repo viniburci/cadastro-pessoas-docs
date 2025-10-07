@@ -58,7 +58,6 @@ public class Vaga {
     private Boolean optanteVT;
     private LocalTime horarioEntrada;
     private LocalTime horarioSaida;
-    private String motivoContratacao;
 
     @Enumerated(EnumType.STRING)
     private TipoContratante contratante;

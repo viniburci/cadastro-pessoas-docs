@@ -51,6 +51,8 @@ public class PessoaExcelDTO {
     private String categoriaCnh;
     private LocalDate validadeCnh;
 
+    private String chavePix;
+
     // ++++++++++++++++++CONSTRUTORES++++++++++++++++++
     public PessoaExcelDTO() {
     }
@@ -84,6 +86,7 @@ public class PessoaExcelDTO {
         this.registroCnh = pessoa.getRegistroCnh();
         this.categoriaCnh = pessoa.getCategoriaCnh();
         this.validadeCnh = pessoa.getValidadeCnh();
+        this.chavePix = pessoa.getChavePix();
     }
 
     public Pessoa toEntity() {
@@ -116,6 +119,7 @@ public class PessoaExcelDTO {
         pessoa.setRegistroCnh(this.registroCnh);
         pessoa.setCategoriaCnh(this.categoriaCnh);
         pessoa.setValidadeCnh(this.validadeCnh);
+        pessoa.setChavePix(this.chavePix);
 
         return pessoa;
     }
@@ -137,7 +141,6 @@ public class PessoaExcelDTO {
         private TipoContrato tipoContrato;
         private LocalTime horarioEntrada;
         private LocalTime horarioSaida;
-        private String motivoContratacao;
         private Boolean optanteVT;
         private AtestadoSaudeOcupacional aso;
 
@@ -147,7 +150,7 @@ public class PessoaExcelDTO {
         public VagaDTO(TipoContratante contratante, String cliente, String setor, String cargo, String cidade,
                 String uf, BigDecimal salario, LocalDate dataAdmissao, LocalDate dataDemissao,
                 TipoAcrescimoSubstituicao acrescimoOuSubstituicao, TipoContrato tipoContrato, LocalTime horarioEntrada,
-                LocalTime horarioSaida, String motivoContratacao, Boolean optanteVT, AtestadoSaudeOcupacional aso) {
+                LocalTime horarioSaida, Boolean optanteVT, AtestadoSaudeOcupacional aso) {
             this.contratante = contratante;
             this.cliente = cliente;
             this.setor = setor;
@@ -161,7 +164,6 @@ public class PessoaExcelDTO {
             this.tipoContrato = tipoContrato;
             this.horarioEntrada = horarioEntrada;
             this.horarioSaida = horarioSaida;
-            this.motivoContratacao = motivoContratacao;
             this.optanteVT = optanteVT;
             this.aso = aso;
         }
@@ -180,7 +182,6 @@ public class PessoaExcelDTO {
             this.tipoContrato = vaga.getTipoContrato();
             this.horarioEntrada = vaga.getHorarioEntrada();
             this.horarioSaida = vaga.getHorarioSaida();
-            this.motivoContratacao = vaga.getMotivoContratacao();
             this.optanteVT = vaga.getOptanteVT();
             this.aso = vaga.getAso();
         }
@@ -200,7 +201,6 @@ public class PessoaExcelDTO {
                     .tipoContrato(this.tipoContrato)
                     .horarioEntrada(this.horarioEntrada)
                     .horarioSaida(this.horarioSaida)
-                    .motivoContratacao(this.motivoContratacao)
                     .optanteVT(this.optanteVT)
                     .aso(this.aso)
                     .pessoa(pessoa)
