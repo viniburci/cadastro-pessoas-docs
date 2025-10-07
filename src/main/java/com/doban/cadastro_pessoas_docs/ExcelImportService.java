@@ -223,20 +223,17 @@ public class ExcelImportService {
             pessoa = importacaoDto.getPessoa().toEntity();
         }
 
-        if (importacaoDto.getCarro() != null && importacaoDto.getCarro().getPlaca() != null
-                && !importacaoDto.getCarro().getPlaca().isBlank()) {
-            Carro carro = carroRepository.findByPlaca(importacaoDto.getCarro().getPlaca())
-                    .orElseGet(() -> {
-                        Carro novoCarro = importacaoDto.getCarro().toEntity();
-                        System.out.println(novoCarro);
-                        if(novoCarro != null) {
-                            return carroRepository.save(novoCarro);
-                        }
-                        return null;
-                    });
+        Carro carro = null;
+        if (importacaoDto.getCarro() != null) {
+            carro = carroRepository.findByPlaca(importacaoDto.getCarro().getPlaca()).orElse(null);
+            if (carro == null) {
+                Carro novoCarro = importacaoDto.getCarro().toEntity();
+                if (novoCarro != null) {
+                    carro = carroRepository.save(novoCarro);
+                }
+            }
 
             if (carro != null) {
-
                 RecursoCarro recursoCarro = new RecursoCarro();
                 recursoCarro.setCarro(carro);
                 recursoCarro.setPessoa(pessoa);
@@ -247,22 +244,25 @@ public class ExcelImportService {
             }
         }
 
-        if (importacaoDto.getCelular() != null) {
-            System.out.println("IMEI = " + importacaoDto.getCelular().getImei());
-            Celular celular = celularRepository.findByImei(importacaoDto.getCelular().getImei())
-                    .orElseGet(() -> {
-                        Celular novoCelular = importacaoDto.getCelular().toEntity();
-                        System.out.println(novoCelular);
-                        return celularRepository.save(novoCelular);
-                    });
+        Celular celular = null;
+    if (importacaoDto.getCelular() != null && importacaoDto.getCelular().getImei().length() >=10) {
+            celular = celularRepository.findByImei(importacaoDto.getCelular().getImei()).orElse(null);
+            if (celular == null) {
+                Celular novoCelular = importacaoDto.getCelular().toEntity();
+                if (novoCelular != null) {
+                    celular = celularRepository.save(novoCelular);
+                }
+            }
 
-            RecursoCelular recursoCelular = new RecursoCelular();
-            recursoCelular.setCelular(celular);
-            recursoCelular.setPessoa(pessoa);
-            recursoCelular.setDataEntrega(null);
-            recursoCelular.setDataDevolucao(null);
+            if (celular != null) {
+                RecursoCelular recursoCelular = new RecursoCelular();
+                recursoCelular.setCelular(celular);
+                recursoCelular.setPessoa(pessoa);
+                recursoCelular.setDataEntrega(null);
+                recursoCelular.setDataDevolucao(null);
 
-            pessoa.getRecursos().add(recursoCelular);
+                pessoa.getRecursos().add(recursoCelular);
+            }
         }
 
         Pessoa pessoaBanco = pessoaRepository.save(pessoa);
