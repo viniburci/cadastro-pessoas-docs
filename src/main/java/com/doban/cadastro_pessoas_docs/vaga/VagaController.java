@@ -3,6 +3,7 @@ package com.doban.cadastro_pessoas_docs.vaga;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,10 +38,16 @@ public class VagaController {
         return ResponseEntity.ok(vagaService.criarVaga(pessoaId, vagaDTO));
     }
 
-    @PutMapping("path/{vagaId}")
+    @PutMapping("atualizar/{vagaId}")
     public ResponseEntity<VagaDTO> atualizarVaga(@PathVariable Long vagaId, @RequestBody VagaDTO vagaDTO) {    
         return ResponseEntity.ok(vagaService.atualizarVaga(vagaId, vagaDTO));
         
+    }
+
+    @DeleteMapping("/{vagaId}")
+    public ResponseEntity<Void> deletarVaga(@PathVariable Long vagaId) {
+        vagaService.deletarVaga(vagaId);
+        return ResponseEntity.noContent().build();
     }
     
 
