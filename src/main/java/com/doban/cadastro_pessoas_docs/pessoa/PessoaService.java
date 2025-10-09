@@ -2,6 +2,7 @@ package com.doban.cadastro_pessoas_docs.pessoa;
 
 import java.util.List;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -30,9 +31,15 @@ public class PessoaService {
     }
 
     public PessoaDTO salvarPessoa(PessoaDTO pessoaDTO) {
-        Pessoa pessoa = pessoaDTO.toEntity();
-        Pessoa pessoaSalva = pessoaRepository.save(pessoa);
-        return new PessoaDTO(pessoaSalva);
+        try {
+            Pessoa pessoa = pessoaDTO.toEntity();
+            Pessoa pessoaSalva = pessoaRepository.save(pessoa);
+            return new PessoaDTO(pessoaSalva);
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("Violação de integridade: dados inválidos ou duplicados.");
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao salvar pessoa: " + e.getMessage(), e);
+        }
     }
 
     public PessoaDTO atualizarPessoa(Long id, PessoaDTO dto) {
@@ -44,6 +51,7 @@ public class PessoaService {
                 .orElseThrow(() -> new RuntimeException("Pessoa não encontrada com id: " + id));
 
         pessoa.updateFromDTO(dto);
+        
         Pessoa atualizada = pessoaRepository.save(pessoa);
         return new PessoaDTO(atualizada);
     }

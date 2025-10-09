@@ -114,4 +114,36 @@ public class PessoaDTO {
 
         return pessoa;
     }
+
+    public void atualizarEntidade(Pessoa pessoa) {
+        pessoa.setNome(this.nome);
+        pessoa.setEndereco(this.endereco);
+        pessoa.setBairro(this.bairro);
+        pessoa.setCidade(this.cidade);
+        pessoa.setEstado(this.estado);
+        pessoa.setCep(this.cep);
+        pessoa.setDdd(this.ddd);
+        pessoa.setTelefone(this.telefone);
+        pessoa.setEmail(this.email);
+        pessoa.setNumeroCtps(this.numeroCtps);
+        pessoa.setSerieCtps(this.serieCtps);
+        pessoa.setDataEmissaoCtps(this.dataEmissaoCtps);
+        pessoa.setNumeroRg(this.numeroRg);
+        pessoa.setDataEmissaoRg(this.dataEmissaoRg);
+        pessoa.setUfRg(this.ufRg);
+        pessoa.setCpf(this.cpf);
+        pessoa.setPis(this.pis);
+        pessoa.setDataEmissaoPis(this.dataEmissaoPis);
+        pessoa.setTituloEleitor(this.tituloEleitor);
+        pessoa.setDataNascimento(this.dataNascimento);
+        pessoa.setLocalNascimento(this.localNascimento);
+        pessoa.setMae(this.mae);
+        pessoa.setPai(this.pai);
+        pessoa.setEstadoCivil(this.estadoCivil);
+        pessoa.setNumeroCnh(this.numeroCnh);
+        pessoa.setRegistroCnh(this.registroCnh);
+        pessoa.setCategoriaCnh(this.categoriaCnh);
+        pessoa.setValidadeCnh(this.validadeCnh);
+        pessoa.setChavePix(this.chavePix);
+    }
 }
