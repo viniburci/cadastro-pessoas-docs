@@ -90,4 +90,21 @@ public class VagaDTO {
                 .pessoa(pessoa)
                 .build();
     }
+
+    public void atualizarEntidade(Vaga vaga) {
+        vaga.setCliente(this.cliente);
+        vaga.setCidade(this.cidade);
+        vaga.setUf(this.uf);
+        vaga.setCargo(this.cargo);
+        vaga.setSetor(this.setor);
+        vaga.setSalario(this.salario);
+        vaga.setTipoContrato(this.tipoContrato);
+        vaga.setDataAdmissao(this.dataAdmissao);
+        vaga.setDataDemissao(this.dataDemissao);
+        vaga.setAcrescimoOuSubstituicao(this.acrescimoOuSubstituicao);
+        vaga.setAso(this.aso);
+        vaga.setOptanteVT(this.optanteVT);
+        vaga.setHorarioEntrada(this.horarioEntrada);
+        vaga.setHorarioSaida(this.horarioSaida);
+    }
 }

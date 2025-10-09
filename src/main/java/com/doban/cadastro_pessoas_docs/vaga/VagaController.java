@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 
 @RestController
@@ -30,11 +32,15 @@ public class VagaController {
         return ResponseEntity.ok(vagaService.obterVagaMaisRecentePorPessoa(pessoaId));
     }
 
-    @PostMapping("/criar")
-    public ResponseEntity<Vaga> criarVagaParaPessoa (@RequestBody String entity, @PathVariable Long pessoaId) {
-        //vagaService;
+    @PostMapping("/criar/{pessoaId}")
+    public ResponseEntity<VagaDTO> criarVagaParaPessoa (@PathVariable Long pessoaId, @RequestBody VagaDTO vagaDTO) {
+        return ResponseEntity.ok(vagaService.criarVaga(pessoaId, vagaDTO));
+    }
+
+    @PutMapping("path/{vagaId}")
+    public ResponseEntity<VagaDTO> atualizarVaga(@PathVariable Long vagaId, @RequestBody VagaDTO vagaDTO) {    
+        return ResponseEntity.ok(vagaService.atualizarVaga(vagaId, vagaDTO));
         
-        return ResponseEntity.ok().build();
     }
     
 

@@ -3,6 +3,7 @@ package com.doban.cadastro_pessoas_docs.vaga;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.doban.cadastro_pessoas_docs.pessoa.Pessoa;
@@ -23,7 +24,7 @@ public class VagaService {
         return vagas.stream().map(vaga -> {
             VagaDTO vagaDTO = new VagaDTO(vaga);
             return vagaDTO;
-        }).toList(); 
+        }).toList();
     }
 
     public VagaDTO obterVagaMaisRecentePorPessoa(Long pessoaId) {
@@ -33,32 +34,38 @@ public class VagaService {
         return vagaDTO;
     }
 
-    public VagaDTO criarVaga(Vaga vaga, Long pessoaId) {
+    public VagaDTO criarVaga(Long pessoaId, VagaDTO vagaDTO) {
+        if (vagaDTO == null) {
+            throw new IllegalArgumentException("Dados da vaga não podem ser nulos.");
+        }
+
+        if (pessoaId == null) {
+            throw new IllegalArgumentException("ID da pessoa não pode ser nulo.");
+        }
+
         Pessoa pessoa = pessoaService.buscarEntidadePessoaPorId(pessoaId);
-        vaga.setPessoa(pessoa);
-        VagaDTO vagaDTO = new VagaDTO(vagaRepository.save(vaga));
-        return vagaDTO;
+        if (pessoa == null) {
+            throw new EntityNotFoundException("Pessoa com ID " + pessoaId + " não encontrada.");
+        }
+
+        Vaga vaga = vagaDTO.toEntity(pessoa);
+
+        Vaga vagaSalva;
+        try {
+            vagaSalva = vagaRepository.save(vaga);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException(
+                    "Erro ao salvar a vaga: dados inválidos ou violação de integridade.");
+        }
+
+        return new VagaDTO(vagaSalva);
     }
 
-    public VagaDTO atualizarVaga(Long vagaId, Vaga vagaAtualizada) {
+    public VagaDTO atualizarVaga(Long vagaId, VagaDTO vagaAtualizada) {
         Vaga vagaExistente = vagaRepository.findById(vagaId)
                 .orElseThrow(() -> new EntityNotFoundException("Vaga não encontrada"));
 
-        vagaExistente.setCliente(vagaAtualizada.getCliente());
-        vagaExistente.setCidade(vagaAtualizada.getCidade());
-        vagaExistente.setUf(vagaAtualizada.getUf());
-        vagaExistente.setCargo(vagaAtualizada.getCargo());
-        vagaExistente.setSetor(vagaAtualizada.getSetor());
-        vagaExistente.setSalario(vagaAtualizada.getSalario());
-        vagaExistente.setTipoContrato(vagaAtualizada.getTipoContrato());
-        vagaExistente.setDataAdmissao(vagaAtualizada.getDataAdmissao());
-        vagaExistente.setDataDemissao(vagaAtualizada.getDataDemissao());
-        vagaExistente.setAcrescimoOuSubstituicao(vagaAtualizada.getAcrescimoOuSubstituicao());
-        vagaExistente.setAso(vagaAtualizada.getAso());
-        vagaExistente.setOptanteVT(vagaAtualizada.getOptanteVT());
-        vagaExistente.setHorarioEntrada(vagaAtualizada.getHorarioEntrada());
-        vagaExistente.setHorarioSaida(vagaAtualizada.getHorarioSaida());
-    
+        vagaAtualizada.atualizarEntidade(vagaExistente);
         return new VagaDTO(vagaRepository.save(vagaExistente));
     }
 
