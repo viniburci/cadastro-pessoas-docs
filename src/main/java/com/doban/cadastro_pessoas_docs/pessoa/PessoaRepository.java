@@ -10,4 +10,6 @@ public interface PessoaRepository extends JpaRepository<Pessoa, Long>{
 	
 	Optional<Pessoa> findByCpf(String cpf);
 
+	boolean existsById(Long id);
+
 }

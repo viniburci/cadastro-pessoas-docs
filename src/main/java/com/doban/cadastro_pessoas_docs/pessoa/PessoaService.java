@@ -19,9 +19,13 @@ public class PessoaService {
         return pessoaRepository.findAll().stream().map(PessoaDTO::new).toList();
     }
 
+    public Pessoa buscarEntidadePessoaPorId(Long id) {
+        return pessoaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada"));
+    }
+
     public PessoaDTO buscarPessoaPorId(Long id) {
-        Pessoa pessoa = pessoaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada com id: " + id));
+        Pessoa pessoa = buscarEntidadePessoaPorId(id);
         return new PessoaDTO(pessoa);
     }
 

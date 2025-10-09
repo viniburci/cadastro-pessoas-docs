@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.doban.cadastro_pessoas_docs.recurso.Recurso;
 import com.doban.cadastro_pessoas_docs.vaga.Vaga;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -59,6 +60,7 @@ public class Pessoa {
 
     @Builder.Default
     @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = false)
+    @JsonManagedReference
     private List<Vaga> vagas = new ArrayList<>();
 
     @Builder.Default
