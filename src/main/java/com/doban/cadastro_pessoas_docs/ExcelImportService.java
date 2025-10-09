@@ -35,7 +35,6 @@ import com.doban.cadastro_pessoas_docs.pessoa.Pessoa;
 import com.doban.cadastro_pessoas_docs.pessoa.PessoaExcelDTO;
 import com.doban.cadastro_pessoas_docs.pessoa.PessoaExcelDTO.CarroDTO;
 import com.doban.cadastro_pessoas_docs.pessoa.PessoaExcelDTO.CelularDTO;
-import com.doban.cadastro_pessoas_docs.pessoa.PessoaExcelDTO.VagaDTO;
 import com.doban.cadastro_pessoas_docs.pessoa.PessoaRepository;
 import com.doban.cadastro_pessoas_docs.recurso.RecursoCarro;
 import com.doban.cadastro_pessoas_docs.recurso.RecursoCelular;
@@ -44,6 +43,7 @@ import com.doban.cadastro_pessoas_docs.vaga.TipoAcrescimoSubstituicao;
 import com.doban.cadastro_pessoas_docs.vaga.TipoContratante;
 import com.doban.cadastro_pessoas_docs.vaga.TipoContrato;
 import com.doban.cadastro_pessoas_docs.vaga.Vaga;
+import com.doban.cadastro_pessoas_docs.vaga.VagaDTO;
 import com.doban.cadastro_pessoas_docs.vaga.VagaRepository;
 
 import jakarta.transaction.Transactional;
@@ -153,7 +153,7 @@ public class ExcelImportService {
         String tipoContratoStr = Optional.ofNullable(getString(row, 32))
                 .map(String::trim)
                 .orElse("6");
-        switch (tipoContratoStr) {
+        switch (String.valueOf(tipoContratoStr.charAt(0))) {
             case "1" -> vagaDto.setTipoContrato(TipoContrato.CLT_CE_CJ);
             case "2" -> vagaDto.setTipoContrato(TipoContrato.CLT_CE_SJ);
             case "4" -> vagaDto.setTipoContrato(TipoContrato.CLT_SE_SJ);

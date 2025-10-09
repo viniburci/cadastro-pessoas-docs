@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import com.doban.cadastro_pessoas_docs.pessoa.Pessoa;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -64,5 +65,6 @@ public class Vaga {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pessoa_id", nullable = false)
+    @JsonBackReference
     private Pessoa pessoa;
 }
