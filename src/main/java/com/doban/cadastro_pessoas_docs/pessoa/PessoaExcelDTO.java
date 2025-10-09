@@ -1,7 +1,5 @@
 package com.doban.cadastro_pessoas_docs.pessoa;
 
-import com.doban.cadastro_pessoas_docs.carro.Carro;
-import com.doban.cadastro_pessoas_docs.celular.Celular;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -115,79 +113,5 @@ public class PessoaExcelDTO {
         pessoa.setChavePix(this.chavePix);
 
         return pessoa;
-    }
-
-    // --- DTOs internos ---
-    @Data
-    @Builder
-    public static class CarroDTO {
-        private String marca;
-        private String modelo;
-        private String cor;
-        private String chassi;
-        private String placa;
-        private String anoModelo;
-
-        public CarroDTO() {
-        }
-
-        public CarroDTO(String marca, String modelo, String cor, String chassi, String placa, String anoModelo) {
-            this.marca = marca;
-            this.modelo = modelo;
-            this.cor = cor;
-            this.chassi = chassi;
-            this.placa = placa;
-            this.anoModelo = anoModelo;
-        }
-
-        public CarroDTO(CarroDTO carro) {
-            this.marca = carro.getMarca();
-            this.modelo = carro.getModelo();
-            this.cor = carro.getCor();
-            this.chassi = carro.getChassi();
-            this.placa = carro.getPlaca();
-            this.anoModelo = carro.getAnoModelo();
-        }
-
-        public Carro toEntity() {
-            if (placa == null || placa.trim().isEmpty() || placa.equalsIgnoreCase("null") || placa.isBlank()
-                    || placa.length() < 7) {
-                return null;
-            }
-            return new Carro(
-                    null, this.marca, this.modelo, this.cor, this.chassi,
-                    this.placa, this.anoModelo);
-        }
-    }
-
-    @Data
-    @Builder
-    public static class CelularDTO {
-        private String marca;
-        private String modelo;
-        private String chip;
-        private String imei;
-
-        public CelularDTO() {
-        }
-
-        public CelularDTO(String marca, String modelo, String chip, String imei) {
-            this.marca = marca;
-            this.modelo = modelo;
-            this.chip = chip;
-            this.imei = imei;
-        }
-
-        public CelularDTO(CelularDTO celular) {
-            this.marca = celular.getMarca();
-            this.modelo = celular.getModelo();
-            this.chip = celular.getChip();
-            this.imei = celular.getImei();
-        }
-
-        public Celular toEntity() {
-            return new Celular(
-                    null, this.marca, this.modelo, this.chip, this.imei);
-        }
     }
 }

@@ -28,13 +28,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import com.doban.cadastro_pessoas_docs.carro.Carro;
+import com.doban.cadastro_pessoas_docs.carro.CarroDTO;
 import com.doban.cadastro_pessoas_docs.carro.CarroRepository;
 import com.doban.cadastro_pessoas_docs.celular.Celular;
+import com.doban.cadastro_pessoas_docs.celular.CelularDTO;
 import com.doban.cadastro_pessoas_docs.celular.CelularRepository;
 import com.doban.cadastro_pessoas_docs.pessoa.Pessoa;
 import com.doban.cadastro_pessoas_docs.pessoa.PessoaExcelDTO;
-import com.doban.cadastro_pessoas_docs.pessoa.PessoaExcelDTO.CarroDTO;
-import com.doban.cadastro_pessoas_docs.pessoa.PessoaExcelDTO.CelularDTO;
 import com.doban.cadastro_pessoas_docs.pessoa.PessoaRepository;
 import com.doban.cadastro_pessoas_docs.recurso.RecursoCarro;
 import com.doban.cadastro_pessoas_docs.recurso.RecursoCelular;
