@@ -67,36 +67,4 @@ public class Pessoa {
     @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = false)
     private List<Recurso> recursos = new ArrayList<>();
 
-    public void updateFromDTO(PessoaDTO dto) {
-        this.nome = dto.getNome();
-        this.endereco = dto.getEndereco();
-        this.bairro = dto.getBairro();
-        this.cidade = dto.getCidade();
-        this.estado = dto.getEstado();
-        this.cep = dto.getCep();
-        this.ddd = dto.getDdd();
-        this.telefone = dto.getTelefone();
-        this.email = dto.getEmail();
-        this.numeroCtps = dto.getNumeroCtps();
-        this.serieCtps = dto.getSerieCtps();
-        this.dataEmissaoCtps = dto.getDataEmissaoCtps();
-        this.numeroRg = dto.getNumeroRg();
-        this.dataEmissaoRg = dto.getDataEmissaoRg();
-        this.ufRg = dto.getUfRg();
-        this.cpf = dto.getCpf();
-        this.pis = dto.getPis();
-        this.dataEmissaoPis = dto.getDataEmissaoPis();
-        this.tituloEleitor = dto.getTituloEleitor();
-        this.dataNascimento = dto.getDataNascimento();
-        this.localNascimento = dto.getLocalNascimento();
-        this.mae = dto.getMae();
-        this.pai = dto.getPai();
-        this.estadoCivil = dto.getEstadoCivil();
-        this.numeroCnh = dto.getNumeroCnh();
-        this.registroCnh = dto.getRegistroCnh();
-        this.categoriaCnh = dto.getCategoriaCnh();
-        this.validadeCnh = dto.getValidadeCnh();
-        this.chavePix = dto.getChavePix();
-    }
-
 }

@@ -6,12 +6,15 @@ import java.time.LocalTime;
 
 import com.doban.cadastro_pessoas_docs.pessoa.Pessoa;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
+@AllArgsConstructor
 public class VagaDTO {
+    private Long id;
     private TipoContratante contratante;
     private String cliente;
     private String setor;
@@ -31,28 +34,8 @@ public class VagaDTO {
     public VagaDTO() {
     }
 
-    public VagaDTO(TipoContratante contratante, String cliente, String setor, String cargo, String cidade,
-            String uf, BigDecimal salario, LocalDate dataAdmissao, LocalDate dataDemissao,
-            TipoAcrescimoSubstituicao acrescimoOuSubstituicao, TipoContrato tipoContrato, LocalTime horarioEntrada,
-            LocalTime horarioSaida, Boolean optanteVT, AtestadoSaudeOcupacional aso) {
-        this.contratante = contratante;
-        this.cliente = cliente;
-        this.setor = setor;
-        this.cargo = cargo;
-        this.cidade = cidade;
-        this.uf = uf;
-        this.salario = salario;
-        this.dataAdmissao = dataAdmissao;
-        this.dataDemissao = dataDemissao;
-        this.acrescimoOuSubstituicao = acrescimoOuSubstituicao;
-        this.tipoContrato = tipoContrato;
-        this.horarioEntrada = horarioEntrada;
-        this.horarioSaida = horarioSaida;
-        this.optanteVT = optanteVT;
-        this.aso = aso;
-    }
-
     public VagaDTO(Vaga vaga) {
+        this.id = vaga.getId();
         this.contratante = vaga.getContratante();
         this.cliente = vaga.getCliente();
         this.setor = vaga.getSetor();
@@ -71,7 +54,7 @@ public class VagaDTO {
     }
 
     public Vaga toEntity(Pessoa pessoa) {
-        return Vaga.builder()
+        Vaga.VagaBuilder vagaBuilder = Vaga.builder()
                 .contratante(this.contratante)
                 .cliente(this.cliente)
                 .setor(this.setor)
@@ -87,8 +70,13 @@ public class VagaDTO {
                 .horarioSaida(this.horarioSaida)
                 .optanteVT(this.optanteVT)
                 .aso(this.aso)
-                .pessoa(pessoa)
-                .build();
+                .pessoa(pessoa);
+
+        if (this.id != null) {
+            vagaBuilder.id(this.id);
+        }
+
+        return vagaBuilder.build();
     }
 
     public void atualizarEntidade(Vaga vaga) {

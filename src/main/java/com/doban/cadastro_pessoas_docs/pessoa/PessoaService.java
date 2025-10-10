@@ -50,10 +50,10 @@ public class PessoaService {
         Pessoa pessoa = pessoaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pessoa não encontrada com id: " + id));
 
-        pessoa.updateFromDTO(dto);
+        dto.atualizarEntidade(pessoa);
         
-        Pessoa atualizada = pessoaRepository.save(pessoa);
-        return new PessoaDTO(atualizada);
+        pessoa = pessoaRepository.save(pessoa);
+        return new PessoaDTO(pessoa);
     }
 
     public void deletarPessoa(Long id) {
