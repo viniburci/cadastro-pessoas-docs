@@ -23,7 +23,7 @@ public class PessoaController {
 
     private final PessoaService pessoaService;
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<PessoaDTO>> buscarTodasPessoas() {
         List<PessoaDTO> pessoas = pessoaService.buscarTodasPessoas();
         return pessoas.isEmpty()
@@ -36,7 +36,7 @@ public class PessoaController {
         return ResponseEntity.ok(pessoaService.buscarPessoaPorId(pessoaId));
     }
 
-    @PostMapping("/criar")
+    @PostMapping
     public ResponseEntity<PessoaDTO> criarPessoa(@RequestBody PessoaDTO pessoaDTO) {
         PessoaDTO pessoaSalva = pessoaService.salvarPessoa(pessoaDTO);
         return ResponseEntity.ok(pessoaSalva);
