@@ -36,7 +36,7 @@ import com.doban.cadastro_pessoas_docs.celular.CelularRepository;
 import com.doban.cadastro_pessoas_docs.pessoa.Pessoa;
 import com.doban.cadastro_pessoas_docs.pessoa.PessoaExcelDTO;
 import com.doban.cadastro_pessoas_docs.pessoa.PessoaRepository;
-import com.doban.cadastro_pessoas_docs.recurso.RecursoCarro;
+import com.doban.cadastro_pessoas_docs.recurso.recurso_carro.RecursoCarro;
 import com.doban.cadastro_pessoas_docs.recurso.recurso_celular.RecursoCelular;
 import com.doban.cadastro_pessoas_docs.vaga.AtestadoSaudeOcupacional;
 import com.doban.cadastro_pessoas_docs.vaga.TipoAcrescimoSubstituicao;

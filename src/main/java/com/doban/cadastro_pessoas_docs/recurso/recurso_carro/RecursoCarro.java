@@ -1,7 +1,8 @@
-package com.doban.cadastro_pessoas_docs.recurso;
+package com.doban.cadastro_pessoas_docs.recurso.recurso_carro;
 
 
 import com.doban.cadastro_pessoas_docs.carro.Carro;
+import com.doban.cadastro_pessoas_docs.recurso.Recurso;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
