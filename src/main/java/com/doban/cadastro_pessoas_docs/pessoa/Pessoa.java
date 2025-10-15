@@ -33,7 +33,6 @@ public class Pessoa {
     private String cidade;
     private String estado;
     private String cep;
-    private String ddd;
     private String telefone;
     private String email;
     private String numeroCtps;

@@ -102,8 +102,7 @@ public class ExcelImportService {
         pessoaDto.setCidade(getString(row, 5));
         pessoaDto.setEstado(getString(row, 6));
         pessoaDto.setCep(getString(row, 7));
-        pessoaDto.setDdd(getString(row, 8));
-        pessoaDto.setTelefone(getString(row, 9));
+        pessoaDto.setTelefone(getString(row, 8).trim() + getString(row, 9));
         pessoaDto.setEmail(getString(row, 10));
         pessoaDto.setNumeroCtps(getString(row, 11));
         pessoaDto.setSerieCtps(getString(row, 12));
@@ -281,11 +280,11 @@ public class ExcelImportService {
     private Pessoa atualizarPessoaExistente(Pessoa existente, Pessoa nova) {
         existente.setNome(nova.getNome());
         existente.setEndereco(nova.getEndereco());
+        existente.setComplemento(nova.getComplemento());
         existente.setBairro(nova.getBairro());
         existente.setCidade(nova.getCidade());
         existente.setEstado(nova.getEstado());
         existente.setCep(nova.getCep());
-        existente.setDdd(nova.getDdd());
         existente.setTelefone(nova.getTelefone());
         existente.setEmail(nova.getEmail());
         existente.setNumeroCtps(nova.getNumeroCtps());

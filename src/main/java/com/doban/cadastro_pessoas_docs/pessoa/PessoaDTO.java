@@ -18,7 +18,6 @@ public class PessoaDTO {
     private String cidade;
     private String estado;
     private String cep;
-    private String ddd;
     private String telefone;
     private String email;
     private String numeroCtps;
@@ -56,7 +55,6 @@ public class PessoaDTO {
         this.cidade = pessoa.getCidade();
         this.estado = pessoa.getEstado();
         this.cep = pessoa.getCep();
-        this.ddd = pessoa.getDdd();
         this.telefone = pessoa.getTelefone();
         this.email = pessoa.getEmail();
         this.numeroCtps = pessoa.getNumeroCtps();
@@ -93,7 +91,6 @@ public class PessoaDTO {
         pessoa.setCidade(this.cidade);
         pessoa.setEstado(this.estado);
         pessoa.setCep(this.cep);
-        pessoa.setDdd(this.ddd);
         pessoa.setTelefone(this.telefone);
         pessoa.setEmail(this.email);
         pessoa.setNumeroCtps(this.numeroCtps);
@@ -128,7 +125,6 @@ public class PessoaDTO {
         pessoa.setCidade(this.cidade);
         pessoa.setEstado(this.estado);
         pessoa.setCep(this.cep);
-        pessoa.setDdd(this.ddd);
         pessoa.setTelefone(this.telefone);
         pessoa.setEmail(this.email);
         pessoa.setNumeroCtps(this.numeroCtps);
