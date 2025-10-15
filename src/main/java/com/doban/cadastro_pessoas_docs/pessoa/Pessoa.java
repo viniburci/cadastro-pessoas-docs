@@ -28,6 +28,7 @@ public class Pessoa {
 
     private String nome;
     private String endereco;
+    private String complemento;
     private String bairro;
     private String cidade;
     private String estado;

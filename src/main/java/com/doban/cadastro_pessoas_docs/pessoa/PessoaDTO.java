@@ -13,6 +13,7 @@ public class PessoaDTO {
     private Long id;
     private String nome;
     private String endereco;
+    private String complemento;
     private String bairro;
     private String cidade;
     private String estado;
@@ -50,6 +51,7 @@ public class PessoaDTO {
         this.id = pessoa.getId();
         this.nome = pessoa.getNome();
         this.endereco = pessoa.getEndereco();
+        this.complemento = pessoa.getComplemento();
         this.bairro = pessoa.getBairro();
         this.cidade = pessoa.getCidade();
         this.estado = pessoa.getEstado();
@@ -86,6 +88,7 @@ public class PessoaDTO {
         }
         pessoa.setNome(this.nome);
         pessoa.setEndereco(this.endereco);
+        pessoa.setComplemento(this.complemento);
         pessoa.setBairro(this.bairro);
         pessoa.setCidade(this.cidade);
         pessoa.setEstado(this.estado);
@@ -120,6 +123,7 @@ public class PessoaDTO {
     public void atualizarEntidade(Pessoa pessoa) {
         pessoa.setNome(this.nome);
         pessoa.setEndereco(this.endereco);
+        pessoa.setComplemento(this.complemento);
         pessoa.setBairro(this.bairro);
         pessoa.setCidade(this.cidade);
         pessoa.setEstado(this.estado);
