@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 public class RecursoCarroResponseDTO {
 
     private Long id;
+    private Long pessoaId;
+    private Long carroId;
     private String nomePessoa;
     private String modeloCarro;
     private String placa;
@@ -20,6 +22,8 @@ public class RecursoCarroResponseDTO {
 
     public RecursoCarroResponseDTO(RecursoCarro recursoCarro) {
         this.id = recursoCarro.getId();
+        this.pessoaId = recursoCarro.getPessoa().getId();
+        this.carroId = recursoCarro.getCarro().getId();
         this.nomePessoa = recursoCarro.getPessoa().getNome();
         this.modeloCarro = recursoCarro.getCarro().getModelo();
         this.placa = recursoCarro.getCarro().getPlaca();
