@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.doban.cadastro_pessoas_docs.recurso.DevolucaoDTO;
 
+
 @RestController
 @RequestMapping("/recursos/carros")
 @CrossOrigin(origins = "http://localhost:4200")
@@ -40,6 +41,15 @@ public class RecursoCarroController {
     public ResponseEntity<RecursoCarroResponseDTO> buscar(@PathVariable Long id) {
         RecursoCarro recurso = recursoCarroService.buscarPorId(id);
         return ResponseEntity.ok(new RecursoCarroResponseDTO(recurso));
+    }
+
+    @GetMapping("/pessoa/{pessoaId}")
+    public ResponseEntity<List<RecursoCarroResponseDTO>> buscarPorPessoaId(@PathVariable Long pessoaId) {
+        List<RecursoCarro> recursos = recursoCarroService.buscarPorPessoaId(pessoaId);
+        List<RecursoCarroResponseDTO> response = recursos.stream()
+                .map(RecursoCarroResponseDTO::new)
+                .toList();
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping

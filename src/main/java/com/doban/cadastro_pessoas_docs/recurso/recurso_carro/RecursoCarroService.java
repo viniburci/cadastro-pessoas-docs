@@ -34,6 +34,10 @@ public class RecursoCarroService {
                 .orElseThrow(() -> new RuntimeException("Recurso não encontrado com id: " + id));
     }
 
+    public List<RecursoCarro> buscarPorPessoaId(Long pessoaId) {
+        return recursoCarroRepository.findByPessoaId(pessoaId);
+    }
+
     public RecursoCarroResponseDTO criar(RecursoCarroRequestDTO dto) {
         Pessoa pessoa = pessoaRepository.findById(dto.getPessoaId())
                 .orElseThrow(() -> new RuntimeException("Pessoa não encontrada com id: " + dto.getPessoaId()));

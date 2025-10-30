@@ -41,6 +41,15 @@ public class RecursoCelularController {
         return ResponseEntity.ok(new RecursoCelularResponseDTO(recurso));
     }
 
+    @GetMapping("/pessoa/{pessoaId}")
+    public ResponseEntity<List<RecursoCelularResponseDTO>> buscarPorPessoaId(@PathVariable Long pessoaId) {
+        List<RecursoCelular> recursos = recursoCelularService.buscarPorPessoaId(pessoaId);
+        List<RecursoCelularResponseDTO> response = recursos.stream()
+                .map(RecursoCelularResponseDTO::new)
+                .toList();
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping
     public ResponseEntity<RecursoCelularResponseDTO> criar(@RequestBody RecursoCelularRequestDTO dto) {
         RecursoCelularResponseDTO response = recursoCelularService.criar(dto);

@@ -23,12 +23,16 @@ public class RecursoCelularService {
     public List<RecursoCelular> listarTodos() {
         return recursoCelularRepository.findAll();
     }
-
+    
     public RecursoCelular buscarPorId(Long id) {
         return recursoCelularRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Recurso não encontrado com id: " + id));
+        .orElseThrow(() -> new RuntimeException("Recurso não encontrado com id: " + id));
     }
-
+    
+    public List<RecursoCelular> buscarPorPessoaId(Long pessoaId) {
+        return recursoCelularRepository.findByPessoaId(pessoaId);
+    }
+    
     public RecursoCelular salvar(RecursoCelular recursoCelular) {
         return recursoCelularRepository.save(recursoCelular);
     }
