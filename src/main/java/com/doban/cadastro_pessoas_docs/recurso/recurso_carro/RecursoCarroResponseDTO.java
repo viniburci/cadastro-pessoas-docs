@@ -17,6 +17,11 @@ public class RecursoCarroResponseDTO {
     private String nomePessoa;
     private String modeloCarro;
     private String placa;
+
+    private String cor;
+    private String chassi;
+    private String anoModelo;
+
     private LocalDate dataEntrega;
     private LocalDate dataDevolucao;
 
@@ -27,6 +32,9 @@ public class RecursoCarroResponseDTO {
         this.nomePessoa = recursoCarro.getPessoa().getNome();
         this.modeloCarro = recursoCarro.getCarro().getModelo();
         this.placa = recursoCarro.getCarro().getPlaca();
+        this.cor = recursoCarro.getCarro().getCor();
+        this.chassi = recursoCarro.getCarro().getChassi();
+        this.anoModelo = recursoCarro.getCarro().getAnoModelo();
         this.dataEntrega = recursoCarro.getDataEntrega();
         this.dataDevolucao = recursoCarro.getDataDevolucao();
     }
