@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Contrato de Prestação de Serviços</title>
+    <style>
+        /* Define o formato A4 e margens */
+        @page {
+            size: A4;
+            margin: 2cm;
+            @top-center { content: "Página " counter(page) " de " counter(pages); }
+        }
+        body { font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.5; }
+        h1 { font-size: 14pt; text-align: center; margin-bottom: 20px; }
+        .clausula { margin-bottom: 15px; text-align: justify; }
+        .titulo-clausula { font-weight: bold; text-decoration: underline; }
+        
+        /* Estilo para as Assinaturas */
+        .assinatura-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 80px;
+        }
+        .bloco-assinatura {
+            width: 45%;
+            text-align: center;
+        }
+        .linha-assinatura {
+            display: block;
+            border-bottom: 1px solid black;
+            margin-bottom: 5px;
+        }
+        .espaco-vazio {
+            width: 10%;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>CONTRATO DE PRESTAÇÃO DE SERVIÇOS Nº <span th:text="${contrato.numero}">123/2025</span></h1>
+
+    <p>
+        Pelo presente instrumento particular de Contrato de Prestação de Serviços, de um lado
+        **<span th:text="${cliente.nome}">NOME DO CLIENTE</span>**,
+        inscrito no CPF sob o nº **<span th:text="${cliente.cpf}">123.456.789-00</span>**,
+        residente e domiciliado em **<span th:text="${cliente.endereco}">Rua das Flores, 100</span>**,
+        doravante denominado **CONTRATANTE**.
+    </p>
+
+    <div class="clausula">
+        <div class="titulo-clausula">1. DO OBJETO DO CONTRATO</div>
+        <p>O presente contrato tem como objeto a prestação de serviços de <span th:text="${servico.descricao}">Desenvolvimento de Software</span>, conforme especificações em anexo.</p>
+    </div>
+
+    <div class="clausula">
+        <div class="titulo-clausula">2. DO PRAZO</div>
+        <p>O prazo de execução será de <span th:text="${servico.prazoDias}">90</span> dias corridos, contados a partir da data de assinatura.</p>
+    </div>
+
+    <p style="margin-top: 50px;">E por estarem justos e contratados, assinam o presente em 02 (duas) vias de igual teor e forma.</p>
+
+    <div class="assinatura-container">
+        <div class="bloco-assinatura">
+            <span class="linha-assinatura"></span>
+            <p>CONTRATANTE<br/><span th:text="${cliente.nome}">NOME DO CLIENTE</span></p>
+        </div>
+        <div class="espaco-vazio"></div>
+        <div class="bloco-assinatura">
+            <span class="linha-assinatura"></span>
+            <p>CONTRATADO<br/>NOME DA SUA EMPRESA/PRESTADOR</p>
+        </div>
+    </div>
+
+</body>
+</html>
