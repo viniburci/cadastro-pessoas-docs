@@ -19,9 +19,9 @@ public class PdfGeneratorService {
 
     /**
      * Gera um PDF a partir de um template Thymeleaf.
-     * @param templateName O nome do arquivo HTML (ex: "contrato")
-     * @param data Model (Map) com os dados a serem preenchidos no template
-     * @return O array de bytes do arquivo PDF
+     * param - templateName: O nome do arquivo HTML (ex: "contrato")
+     * param - data: Model (Map) com os dados a serem preenchidos no template
+     * return - O array de bytes do arquivo PDF
      */
     public byte[] generatePdfFromHtml(String templateName, Map<String, Object> data) {
         

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Opção de Vale Transporte</title>
+  <style>
+    /* 1. Estilos Gerais e Configuração de Impressão */
+    html {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 10pt;
+    }
+
+    @page {
+      /* Margens padrão de A4 */
+      margin: 0.787401575in;
+    }
+
+    body {
+      /* Remove a margem extra do body */
+      margin: 0;
+      /* Largura padrão de uma folha A4 */
+      width: 210mm;
+    }
+
+    /* 2. Estilo da Tabela */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      /* Borda externa principal, 2px */
+      border: 2px solid black;
+      font-family: Arial, sans-serif;
+    }
+
+    /* 3. Estilo Padrão das Células (Bordas Mínimas) */
+    td {
+      /* POR PADRÃO: Nenhuma borda interna */
+      border: none;
+      padding: 3px 5px;
+      vertical-align: top;
+      height: 15px;
+      /* Mantém a borda lateral entre campos (vertical) */
+      border-right: 1px solid black;
+    }
+
+    /* Borda esquerda para a primeira célula de cada linha (vertical) */
+    tr>td:first-child {
+      border-left: 1px solid black !important;
+    }
+
+    /* Remove a borda direita da última célula (fecha o campo) */
+    tr>td:last-child {
+      border-right: none !important;
+    }
+
+    /* ======================================= */
+    /* 4. CLASSES FUNCIONAIS E CORREÇÕES ESPECÍFICAS */
+    /* ======================================= */
+
+    /* Títulos de Seção */
+    .titulo-principal {
+      background-color: #D8D8D8;
+      font-weight: bold;
+      text-align: center;
+      font-size: 11pt;
+      /* Aplica borda completa em títulos de seção */
+      border: 1px solid black !important;
+    }
+
+    /* Rótulos (Abre o bloco de 2 linhas) */
+    .cabecalho {
+      font-weight: bold;
+      font-size: 9pt;
+      text-align: left;
+      min-height: 18px;
+      border-top: 1px solid black !important;
+    }
+
+    /* Valores (Fecha o bloco de 2 linhas, permite auto-ajuste de altura) */
+    .valor {
+      font-weight: normal;
+      text-align: left;
+      height: auto;
+      border-bottom: 1px solid black !important;
+    }
+
+    /* Linhas vazias de preenchimento (IDA/VOLTA) */
+    .campo-vazio {
+      height: 25px;
+    }
+
+    /* Estilo para notas pequenas (e alinhamento) */
+    .texto-pequeno {
+      font-size: 8pt;
+      vertical-align: top;
+      padding-top: 5px;
+    }
+
+    /* TEXTO LEGAL (Geralmente sem bordas) */
+    .texto-legal {
+      font-size: 10pt;
+      font-family: Arial, sans-serif;
+      padding: 8px 5px;
+      height: auto;
+      /* REMOVE TODAS AS BORDAS para criar continuidade entre os parágrafos */
+      border: none !important;
+    }
+
+    /* ASSINATURA */
+    .assinatura {
+      text-align: center;
+      border: none !important;
+      padding-top: 0 !important;
+    }
+
+    .no-border {
+      border: none !important;
+    }
+
+    /* --- CORREÇÕES DE BORDAS INTERNAS --- */
+
+    /* 1. REGRAS PARA O BLOCO DE TRANSPORTE (IDA/VOLTA) - Bordas completas */
+    .row40 td,
+    .row49 td {
+      border: 1px solid black !important;
+    }
+
+    .campo-vazio td {
+      border: 1px solid black !important;
+    }
+
+    .campo-vazio>.cabecalho {
+      border: 1px solid black !important;
+    }
+
+    /* 2. REGRAS PARA CHECKBOXES (Unificação horizontal) */
+    .check-box {
+      width: 15px;
+      height: 15px;
+      text-align: center;
+      vertical-align: middle;
+      font-weight: bold;
+      border-top: 1px solid black !important;
+      border-bottom: 1px solid black !important;
+      border-left: none !important;
+      border-right: none !important;
+    }
+
+    /* Aplica bordas verticais apenas nas extremidades do bloco checkbox */
+    .texto-legal>.check-box:first-child {
+      border-left: 1px solid black !important;
+    }
+
+    .texto-legal>.check-box:nth-child(3) {
+      border-right: 1px solid black !important;
+    }
+
+    /* Força a borda esquerda para separar o texto da opção da checkbox */
+    .row15 td:nth-child(4),
+    .row17 td:nth-child(4) {
+      border-left: 1px solid black !important;
+    }
+
+    /* 3. REGRAS PARA DIVISÓRIAS ESPECÍFICAS */
+
+    /* Divisória para o bloco de Opção (Cima e Baixo) */
+    .row15.texto-legal {
+      border-top: 1px solid black !important;
+    }
+
+    .row17.texto-legal {
+      border-bottom: 1px solid black !important;
+    }
+
+    /* 4. CORREÇÃO DA CÉLULA DA DATA (Remove o '|' vertical) */
+    .no-border-left {
+      border-left: none !important;
+    }
+
+    /* Adicione esta regra ao seu CSS para remover a borda vertical à direita */
+    .no-border-right {
+      border-right: none !important;
+    }
+
+    /* Nova classe para as colunas de Lei/Decreto */
+    .coluna-regulamento {
+      /* Remove a borda vertical da direita que o TD padrão pode aplicar */
+      border-right: none !important;
+      /* Garante que o texto fique alinhado à direita para melhor leitura */
+      text-align: right;
+    }
+
+    /* Força a borda inferior para fechar a seção após a última linha de tipos de transporte */
+    .row63 td {
+      border-bottom: 2px solid black !important;
+    }
+    
+  </style>
+</head>
+
+<body>
+  <table border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr class="row0">
+        <td class="no-border" colspan="5"></td>
+        <td class="titulo-principal" colspan="14">OPÇÃO DE VALE TRANSPORTE</td>
+      </tr>
+
+      <tr class="row3">
+        <td class="titulo-principal" colspan="19">DADOS PESSOAIS</td>
+      </tr>
+
+      <tr class="row5 cabecalho">
+        <td colspan="6">Empresa:</td>
+        <td colspan="3">Cliente:</td>
+        <td colspan="5">Cidade/UF:</td>
+        <td colspan="5">CEP:</td>
+      </tr>
+      <tr class="row6 valor">
+        <td colspan="6">DOBAN PRESTADORA DE SERVIÇOS LTDA.</td>
+        <td colspan="3"></td>
+        <td colspan="5">MARINGÁ - PR</td>
+        <td colspan="5"></td>
+      </tr>
+
+      <tr class="row7 cabecalho">
+        <td colspan="15">Nome Colaborador:</td>
+        <td colspan="4">CPF:</td>
+      </tr>
+      <tr class="row8 valor">
+        <td colspan="15"></td>
+        <td colspan="4"></td>
+      </tr>
+
+      <tr class="row9 cabecalho">
+        <td colspan="10">Endereço:</td>
+        <td colspan="9">Bairro:</td>
+      </tr>
+      <tr class="row10 valor">
+        <td colspan="10"></td>
+        <td colspan="9">CENTRO</td>
+      </tr>
+
+      <tr class="row11 cabecalho">
+        <td colspan="6">Cidade:</td>
+        <td colspan="1">UF:</td>
+        <td colspan="3">CEP:</td>
+        <td colspan="9">Telefones de Contato:</td>
+      </tr>
+      <tr class="row12 valor">
+        <td colspan="6"></td>
+        <td colspan="1">PR</td>
+        <td colspan="3"></td>
+        <td colspan="9">(45) </td>
+      </tr>
+
+      <tr class="row13">
+        <td class="titulo-principal" colspan="19">OPÇÃO</td>
+      </tr>
+
+      <tr class="row15 texto-legal">
+        <td class="check-box">(</td>
+        <td class="check-box">X</td>
+        <td class="check-box">)</td>
+        <td colspan="16">
+          <span style="font-weight:bold; text-decoration:underline; color:#000000;">NÃO</span> Desejo
+          receber o Vale - Transporte;
+        </td>
+      </tr>
+
+      <tr class="row17 texto-legal">
+        <td class="check-box">(</td>
+        <td class="check-box"></td>
+        <td class="check-box">)</td>
+        <td colspan="16">
+          <span style="font-weight:bold; text-decoration:underline; color:#000000;">SIM</span> Desejo
+          receber o Vale - Transporte;
+        </td>
+      </tr>
+
+      <tr class="row19 texto-legal">
+        <td colspan="19">
+          Comprometo-me a utilizar o vale transporte exclusivamente para os deslocamentos
+          residência-trabalho-residência, bem como a informar a Empresa, por escrito sempre que ocorrer a
+          alteração no meu endereço residencial ou nos meios de transporte ao meu deslocamento
+          residência-trabalho-residência. Declaro ainda, que as informações acima são verdadeiras, ciente de
+          que qualquer declaração falsa, ou uso indevido do vale transporte, constituira falta grave,
+          ensejando punição, nos termos da lei.
+        </td>
+      </tr>
+
+      <tr style="height: 15px;">
+        <td class="no-border" colspan="19"></td>
+      </tr>
+
+      <tr class="row25 texto-legal">
+        <td colspan="13" class="no-border-right">- Autorizo o desconto de 6% do meu salário, conforme previsto em Lei.
+        </td>
+        <td colspan="6" class="no-border-left">Data: 25 de August de 2025</td>
+      </tr>
+
+      <tr style="height: 10px;">
+        <td class="no-border" colspan="19"></td>
+      </tr>
+
+      <tr class="row28">
+        <td class="no-border texto-pequeno" colspan="10" style="vertical-align: top;">
+          Em caso de Mudança de Endereço, informar o Departamento Pessoal/Supervisor, e entregar cópia do
+          comprovante de endereço.
+        </td>
+        <td class="assinatura no-border" colspan="9" style="vertical-align: bottom;">
+          _____________________________________<br>
+          Assinatura do Funcionário
+        </td>
+      </tr>
+
+      <tr style="height: 15px;">
+        <td class="no-border" colspan="19"></td>
+      </tr>
+
+      <tr class="row32 texto-legal">
+        <td colspan="19">Sendo condição explicita no contrato a possibilidade de transferência de localidade
+          de prestação de serviços, a qualquer tempo e do <span style="font-weight:bold;">EMPREGADO</span> em qualquer
+          dos seus estabelecimentos, sejam filiais,
+          agências ou dependências, PARA DESLOCAR-ME DO TRECHO RESIDÊNCIA - LOCAL DE TRABALHO E VICE-VERSA,
+          UTILIZO OS SEGUINTES TRANSPORTES:</td>
+      </tr>
+
+      <tr style="height: 15px;">
+        <td class="no-border" colspan="19"></td>
+      </tr>
+
+      <tr class="row37">
+        <td class="titulo-principal" colspan="19">IDA (Da residência para o Trabalho)</td>
+      </tr>
+      <tr class="row40 cabecalho">
+        <td colspan="4">Tipo de Transporte</td>
+        <td colspan="5">Empresa de Transporte</td>
+        <td colspan="8">Trajeto</td>
+        <td colspan="2">Valor da Tarifa</td>
+      </tr>
+
+      <tr class="row41 campo-vazio">
+        <td class="cabecalho">1-</td>
+        <td colspan="3"></td>
+        <td colspan="5"></td>
+        <td colspan="8"></td>
+        <td colspan="2">R$</td>
+      </tr>
+      <tr class="row42 campo-vazio">
+        <td class="cabecalho">2-</td>
+        <td colspan="3"></td>
+        <td colspan="5"></td>
+        <td colspan="8"></td>
+        <td colspan="2">R$</td>
+      </tr>
+      <tr class="row42 campo-vazio">
+        <td class="cabecalho">3-</td>
+        <td colspan="3"></td>
+        <td colspan="5"></td>
+        <td colspan="8"></td>
+        <td colspan="2">R$</td>
+      </tr>
+      <tr class="row42 campo-vazio">
+        <td class="cabecalho">4-</td>
+        <td colspan="3"></td>
+        <td colspan="5"></td>
+        <td colspan="8"></td>
+        <td colspan="2">R$</td>
+      </tr>
+
+      <tr class="row46">
+        <td class="titulo-principal" colspan="19">VOLTA (Do Trabalho para a Residência)</td>
+      </tr>
+      <tr class="row49 cabecalho">
+        <td colspan="4">Tipo de Transporte</td>
+        <td colspan="5">Empresa de Transporte</td>
+        <td colspan="8">Trajeto</td>
+        <td colspan="2">Valor da Tarifa</td>
+      </tr>
+
+      <tr class="row50 campo-vazio">
+        <td class="cabecalho">1-</td>
+        <td colspan="3"></td>
+        <td colspan="5"></td>
+        <td colspan="8"></td>
+        <td colspan="2">R$</td>
+      </tr>
+      <tr class="row51 campo-vazio">
+        <td class="cabecalho">2-</td>
+        <td colspan="3"></td>
+        <td colspan="5"></td>
+        <td colspan="8"></td>
+        <td colspan="2">R$</td>
+      </tr>
+      <tr class="row51 campo-vazio">
+        <td class="cabecalho">3-</td>
+        <td colspan="3"></td>
+        <td colspan="5"></td>
+        <td colspan="8"></td>
+        <td colspan="2">R$</td>
+      </tr>
+      <tr class="row51 campo-vazio">
+        <td class="cabecalho">4-</td>
+        <td colspan="3"></td>
+        <td colspan="5"></td>
+        <td colspan="8"></td>
+        <td colspan="2">R$</td>
+      </tr>
+
+      <tr class="row55">
+        <td class="titulo-principal" colspan="19">CASO DE ALTERAÇÃO DA LINHA OU VALOR INFORMAR A DATA E MOTIVO
+          ABAIXO:
+        </td>
+      </tr>
+      <tr class="row56 campo-vazio">
+        <td class="cabecalho" colspan="3">DATA:</td>
+        <td colspan="16"></td>
+      </tr>
+      <tr class="row59 campo-vazio">
+        <td class="cabecalho" colspan="3">MOTIVO:</td>
+        <td colspan="16"></td>
+      </tr>
+
+      <tr class="row60">
+        <td class="titulo-principal" colspan="19">TIPOS DE TRANSPORTE:</td>
+      </tr>
+      <tr class="row61 texto-legal">
+        <td colspan="19">Ônibus Municipal / Ônibus Intermunicipal / Metrô / Trem</td>
+      </tr>
+      <tr class="row62 texto-legal">
+        <td colspan="11" style="border-right: 1px solid black !important;">Integração (Ônibus, Metrô e Trem - Bilhete
+          Único)</td>
+        <td colspan="8" class="coluna-regulamento">Lei 7619 30/09/1987</td>
+      </tr>
+      <tr class="row63 texto-legal">
+        <td colspan="11" style="border-right: 1px solid black !important;">Outros (Favor Especificar que tipo)</td>
+        <td colspan="8" class="coluna-regulamento">Decreto No.95247, Art7 Par 1o. - 17/11/1987</td>
+      </tr>
+
+    </tbody>
+  </table>
+</body>
+
+</html>
