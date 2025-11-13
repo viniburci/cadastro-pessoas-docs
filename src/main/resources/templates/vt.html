@@ -3,275 +3,146 @@
 
 <head>
   <meta charset="utf-8">
+  </meta>
   <title>Opção de Vale Transporte</title>
   <style>
-    /* ==========================================================
-       1. CONFIGURAÇÃO GERAL E IMPRESSÃO
-    ========================================================== */
+    /* CONFIGURAÇÃO GERAL E IMPRESSÃO */
     html {
       font-family: Arial, Helvetica, sans-serif;
       font-size: 10pt;
     }
 
     @page {
-      margin: 0.787401575in;
-      /* Margens padrão A4 */
+      size: A4 portrait;
+      /* Margem reduzida para maximizar o espaço útil. 10mm é seguro. */
+      margin: 10mm;
     }
 
     body {
       margin: 0;
+      padding: 0;
+      /* Largura total do corpo para A4 retrato (210mm) */
       width: 210mm;
     }
 
-    /* ==========================================================
-       2. TABELA BASE
-    ========================================================== */
+
     table {
-      width: 100%;
+      /* Largura útil: 190mm. Usamos 188mm para ter 2mm de folga. */
+      width: 188mm;
       border-collapse: collapse;
-      border: 2px solid black;
+      border: 1px solid black;
+      page-break-inside: avoid;
+      table-layout: fixed;
     }
 
     td {
-      border: none;
-      padding: 3px 5px;
+      border: 1px solid black;
+      padding: 2px 4px;
       vertical-align: top;
-      height: 15px;
-      border-right: 1px solid black;
+      /* Ajuda a quebrar texto longo */
+      word-wrap: break-word;
+      /* Importante para quebra de texto em colunas fixas */
+      overflow: hidden;
     }
 
-    tr>td:first-child {
-      border-left: 1px solid black !important;
+    /* --- Estilos de Conteúdo --- */
+
+    img {
+      max-width: 100%;
+      height: auto;
     }
 
-    tr>td:last-child {
-      border-right: none !important;
+    .cabecalho-logo {
+      border-bottom: none;
+      border-top: none;
+      padding: 5px;
+      vertical-align: middle;
     }
 
-    /* ==========================================================
-       3. ESTILOS DE CONTEÚDO
-    ========================================================== */
     .titulo-principal {
       background-color: #D8D8D8;
       font-weight: bold;
       text-align: center;
       font-size: 11pt;
-      border: 1px solid black !important;
+      /* Altura mínima para títulos, garantindo espaçamento */
+      height: 20px;
     }
+
+    /* .titulo-principal {
+      /* ... mantenha os estilos existentes ... */
+    /*vertical-align: middle;
+      /* Alinha o texto do título com a imagem */
+
 
     .cabecalho {
       font-weight: bold;
       font-size: 9pt;
       text-align: left;
-      border-top: 1px solid black !important;
+      /* Altura mínima para o texto do cabeçalho */
+      height: 14px;
     }
 
     .valor {
       text-align: left;
-      border-bottom: 1px solid black !important;
-    }
-
-    .campo-vazio {
-      height: 25px;
+      font-size: 10pt;
+      /* Altura mínima para os campos de valor */
+      height: 20px;
     }
 
     .texto-legal {
       font-size: 10pt;
-      padding: 8px 5px;
-      border: none !important;
+      padding: 4px;
+      /* Altura mínima para o texto legal */
+      height: auto;
     }
 
     .texto-pequeno {
       font-size: 8pt;
-      padding-top: 5px;
+      padding-top: 4px;
       vertical-align: top;
     }
 
+
     .assinatura {
       text-align: center;
-      border: none !important;
+      vertical-align: bottom;
+      /* Aumenta a altura para dar espaço para a assinatura */
+      height: 50px;
+      /* Adiciona a linha de assinatura no topo do espaço para o texto "Assinatura do Funcionário" */
+      border-bottom: 1px solid black;
+      /* Garante que o texto fique encostado na linha de baixo (borda da célula) */
+      padding-bottom: 0px;
+      /* Centraliza o texto */
+      font-size: 10pt;
     }
 
-    .no-border {
-      border: none !important;
-    }
-
-    .no-border-left {
-      border-left: none !important;
-    }
-
-    .no-border-right {
-      border-right: none !important;
-    }
-
-    .coluna-regulamento {
-      border-right: none !important;
-      text-align: right;
-    }
-
-    /* ==========================================================
-       4. ELEMENTOS FUNCIONAIS
-    ========================================================== */
     .check-box {
       width: 15px;
       height: 15px;
       text-align: center;
-      vertical-align: middle;
       font-weight: bold;
-      border-top: 1px solid black !important;
-      border-bottom: 1px solid black !important;
-      border-left: none !important;
-      border-right: none !important;
-    }
-
-    .texto-legal .check-box:first-child {
-      border-left: 1px solid black !important;
-    }
-
-    .texto-legal .check-box:nth-child(3) {
-      border-right: 1px solid black !important;
-    }
-
-    /* ==========================================================
-   5. SEÇÕES DE TRANSPORTE
-========================================================== */
-
-    /* Cada bloco de transporte (IDA / VOLTA) */
-    .bloco-transporte td {
-      border: 1px solid black !important;
-    }
-
-    /* Remove borda superior duplicada (primeira linha do bloco) */
-    .bloco-transporte tr:first-child td {
-      border-top: none !important;
-    }
-
-    /* Fecha a parte inferior do último bloco */
-    .bloco-transporte:last-of-type tr:last-child td {
-      border-bottom: 2px solid black !important;
-    }
-
-    /* ==========================================================
-   6. TIPOS DE TRANSPORTE (corrigido)
-========================================================== */
-
-    /* Mantém borda simples entre as linhas */
-    .tipos-transporte tr td {
-      border-top: 1px solid black !important;
-    }
-
-    /* Remove borda superior da primeira linha */
-    .tipos-transporte tr:first-child td {
-      border-top: none !important;
-    }
-
-    /* Fecha com borda dupla no final */
-    .tipos-transporte tr:last-child td {
-      border-bottom: 2px solid black !important;
-    }
-
-    /* Garante que nenhuma célula dessa seção herde bordas verticais inesperadas */
-    .tipos-transporte td {
-      border-left: none !important;
-      border-right: none !important;
-    }
-
-
-
-    /* ===================== OPÇÕES DE VALE TRANSPORTE ===================== */
-
-    /* Container das opções */
-    .opcao-transporte {
-      border: 1px solid black;
-    }
-
-    /* Cada linha (NÃO / SIM) */
-    .opcao-transporte tr {
-      border-bottom: 1px solid black;
-    }
-
-    /* Remove a borda inferior da última opção */
-    .opcao-transporte tr:last-child {
-      border-bottom: none;
-    }
-
-    /* Células das caixas */
-    .opcao-transporte td {
-      padding: 6px;
       border: none;
-      font-size: 10pt;
+      /* Remove borda dos checkboxes internos */
     }
 
-    /* Checkboxes ( ) */
-    .opcao-transporte .check-box {
-      width: 15px;
-      text-align: center;
-      font-weight: bold;
-      border: 1px solid black;
+    .texto-opcao {
+      padding-left: 4px;
+      border: none;
+      /* Remove borda do texto da opção interna */
     }
 
-    /* Texto da opção */
-    .opcao-transporte .texto-opcao {
-      padding-left: 5px;
+    /* Tabela Interna para as Opções SIM/NÃO */
+    .tabela-opcoes {
+      width: 100%;
+      border-collapse: collapse;
+      border: none;
+      /* Remove borda da tabela interna */
+      table-layout: fixed;
     }
 
-
-    /* ==========================================================
-   AJUSTE PARA IMPRESSÃO
-========================================================== */
-@media print {
-
-  /* Define página A4 sem redimensionamento automático */
-  @page {
-    size: A4 portrait;
-    margin: 15mm;
-  }
-
-  /* Garante que o corpo use o tamanho real */
-  body {
-    width: 100%;
-    margin: 0;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-
-  /* Força todas as bordas e fundos a aparecerem na impressão */
-  table, td, th {
-    border-color: black !important;
-    color: black !important;
-    background: white !important;
-    -webkit-print-color-adjust: exact;
-  }
-
-  /* Mantém as cores de fundo dos títulos */
-  .titulo-principal {
-    background-color: #D8D8D8 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  /* Evita quebra de tabela entre páginas */
-  table {
-    page-break-inside: avoid;
-  }
-
-  tr, td {
-    page-break-inside: avoid;
-    page-break-after: auto;
-  }
-
-  /* Remove margens de segurança que o Chrome adiciona */
-  html, body {
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  /* Impede zoom automático */
-  * {
-    zoom: 1;
-  }
-}
-
+    .tabela-opcoes tr {
+      height: 20px;
+    }
   </style>
 </head>
 
@@ -279,249 +150,223 @@
 
   <table>
     <tbody>
-
-      <!-- Cabeçalho -->
+      
       <tr>
-        <td class="no-border" colspan="5"></td>
-        <td class="titulo-principal" colspan="14">OPÇÃO DE VALE TRANSPORTE</td>
-      </tr>
+        <td colspan="3" style="width: 50%; border-bottom: none; border-top: none; text-align: center; padding: 5px;">
+          <img src="logo.jpg" style="width: 100px; max-height: 50px;" alt="Logo da Empresa" />
+        </td>
 
-      <!-- Dados pessoais -->
-      <tr>
-        <td class="titulo-principal" colspan="19">DADOS PESSOAIS</td>
+        <td colspan="4" class="titulo-principal" style="width: 80%;">
+          OPÇÃO DE VALE TRANSPORTE
+        </td>
       </tr>
 
       <tr class="cabecalho">
-        <td colspan="6">Empresa:</td>
-        <td colspan="3">Cliente:</td>
-        <td colspan="5">Cidade/UF:</td>
-        <td colspan="5">CEP:</td>
+        <td colspan="6" >Empresa:</td>
+        <td colspan="2" >CNPJ:</td>
+
       </tr>
       <tr class="valor">
         <td colspan="6">DOBAN PRESTADORA DE SERVIÇOS LTDA.</td>
-        <td colspan="3"></td>
-        <td colspan="5">MARINGÁ - PR</td>
-        <td colspan="5"></td>
+        <td colspan="2"></td>
+
       </tr>
 
       <tr class="cabecalho">
-        <td colspan="15">Nome Colaborador:</td>
-        <td colspan="4">CPF:</td>
+        <td colspan="4" style="width: 50% !important;">Cidade/UF:</td>
+        <td colspan="4" style="width: 50% !important;">CEP:</td>
       </tr>
       <tr class="valor">
-        <td colspan="15"></td>
-        <td colspan="4"></td>
+        <td colspan="4" style="width: 50% !important;">MARINGÁ - PR</td>
+        <td colspan="4" style="width: 50% !important;">87020211</td>
       </tr>
 
+
       <tr class="cabecalho">
-        <td colspan="10">Endereço:</td>
-        <td colspan="9">Bairro:</td>
+        <td colspan="8" style="width: 100%;">Cliente:</td>
       </tr>
       <tr class="valor">
-        <td colspan="10"></td>
-        <td colspan="9">CENTRO</td>
+        <td colspan="8">XX.XXX.XXX/XXXX-XX</td>
+      </tr>
+
+      <tr>
+        <td colspan="8" class="titulo-principal">DADOS PESSOAIS</td>
       </tr>
 
       <tr class="cabecalho">
-        <td colspan="6">Cidade:</td>
-        <td colspan="1">UF:</td>
-        <td colspan="3">CEP:</td>
-        <td colspan="9">Telefones de Contato:</td>
+        <td colspan="6" style="width: 75%;">Nome Colaborador:</td>
+        <td colspan="2" style="width: 25%;">CPF:</td>
       </tr>
       <tr class="valor">
         <td colspan="6"></td>
-        <td colspan="1">PR</td>
+        <td colspan="2"></td>
+      </tr>
+
+      <tr class="cabecalho">
+        <td colspan="5" style="width: 62.5%;">Endereço:</td>
+        <td colspan="3" style="width: 37.5%;">Bairro:</td>
+      </tr>
+      <tr class="valor">
+        <td colspan="5"></td>
+        <td colspan="3">CENTRO</td>
+      </tr>
+
+      <tr class="cabecalho">
+        <td colspan="3" style="width: 37.5%;">Cidade:</td>
+        <td colspan="1" style="width: 12.5%;">UF:</td>
+        <td colspan="2" style="width: 25%;">CEP:</td>
+        <td colspan="2" style="width: 25%;">Telefone:</td>
+      </tr>
+      <tr class="valor">
         <td colspan="3"></td>
-        <td colspan="9">(45)</td>
+        <td colspan="1">PR</td>
+        <td colspan="2"></td>
+        <td colspan="2">(45)</td>
       </tr>
 
       <tr>
-        <td class="titulo-principal" colspan="19">OPÇÃO</td>
+        <td colspan="8" class="titulo-principal">OPÇÃO</td>
       </tr>
-
       <tr>
-        <td colspan="19" style="padding:0; border:none;">
-          <table class="opcao-transporte" width="100%" cellspacing="0" cellpadding="0">
+        <td colspan="8" style="padding:0; border:none;">
+          <table class="tabela-opcoes">
             <tr>
-              <td class="check-box">(</td>
-              <td class="check-box">X</td>
-              <td class="check-box">)</td>
-              <td class="texto-opcao">
-                <strong><u>NÃO</u></strong> Desejo receber o Vale - Transporte
-              </td>
+              <td class="check-box" style="width: 20px;">(</td>
+              <td class="check-box" style="width: 20px;"></td>
+              <td class="check-box" style="width: 20px;">)</td>
+              <td class="texto-opcao" style="width: auto;"><strong><u>NÃO</u></strong> Desejo receber o Vale -
+                Transporte</td>
             </tr>
             <tr>
               <td class="check-box">(</td>
               <td class="check-box"></td>
               <td class="check-box">)</td>
-              <td class="texto-opcao">
-                <strong><u>SIM</u></strong> Desejo receber o Vale - Transporte
-              </td>
+              <td class="texto-opcao"><strong><u>SIM</u></strong> Desejo receber o Vale - Transporte</td>
             </tr>
           </table>
         </td>
       </tr>
 
       <tr class="texto-legal">
-        <td colspan="19">
+        <td colspan="8">
           Comprometo-me a utilizar o vale transporte exclusivamente para os deslocamentos
-          residência-trabalho-residência, bem como a informar a Empresa, por escrito sempre que ocorrer a
-          alteração no meu endereço residencial ou nos meios de transporte ao meu deslocamento
-          residência-trabalho-residência. Declaro ainda, que as informações acima são verdadeiras, ciente de
-          que qualquer declaração falsa, ou uso indevido do vale transporte, constituira falta grave,
-          ensejando punição, nos termos da lei.
+          residência-trabalho-residência, bem como a informar a Empresa, por escrito sempre que ocorrer a alteração no
+          meu endereço residencial ou nos meios de transporte ao meu deslocamento residência-trabalho-residência.
+          Declaro ainda, que as informações acima são verdadeiras, ciente de que qualquer declaração falsa, ou uso
+          indevido do vale transporte, constituirá falta grave, ensejando punição, nos termos da lei.
         </td>
-      </tr>
-
-      <tr>
-        <td class="no-border" colspan="19"></td>
       </tr>
 
       <tr class="texto-legal">
-        <td colspan="13" class="no-border-right">- Autorizo o desconto de 6% do meu salário, conforme previsto em Lei.
-        </td>
-        <td colspan="6" class="no-border-left">Data: 25 de Agosto de 2025</td>
+        <td colspan="5" style="width: 62.5%; border-right: 1px solid black;">- Autorizo o desconto de 6% do meu salário,
+          conforme previsto em Lei.</td>
+        <td colspan="3" style="width: 37.5%;">Data: 25 de Agosto de 2025</td>
       </tr>
 
       <tr>
-        <td class="no-border" colspan="19"></td>
-      </tr>
-
-      <tr>
-        <td class="texto-pequeno no-border" colspan="10">
+        <td colspan="5">
           Em caso de Mudança de Endereço, informar o Departamento Pessoal/Supervisor, e entregar cópia do comprovante.
         </td>
-        <td class="assinatura no-border" colspan="9" style="vertical-align: bottom;">
-          _____________________________________<br>
+        <td colspan="3" class="assinatura">
+          ______________________________<br></br>
           Assinatura do Funcionário
         </td>
       </tr>
 
-      <tr>
-        <td class="no-border" colspan="19"></td>
-      </tr>
-
       <tr class="texto-legal">
-        <td colspan="19">Sendo condição explicita no contrato a possibilidade de transferência de localidade
-          de prestação de serviços, a qualquer tempo e do <span style="font-weight:bold;">EMPREGADO</span> em qualquer
-          dos seus estabelecimentos, sejam filiais,
-          agências ou dependências, PARA DESLOCAR-ME DO TRECHO RESIDÊNCIA - LOCAL DE TRABALHO E VICE-VERSA,
-          UTILIZO OS SEGUINTES TRANSPORTES:</td>
+        <td colspan="8">
+          Sendo condição explícita no contrato a possibilidade de transferência de localidade de prestação de serviços,
+          a qualquer tempo e do <strong>EMPREGADO</strong> em qualquer dos seus estabelecimentos, sejam filiais,
+          agências ou dependências, PARA DESLOCAR-ME DO TRECHO RESIDÊNCIA - LOCAL DE TRABALHO E VICE-VERSA, UTILIZO OS
+          SEGUINTES TRANSPORTES:
+        </td>
       </tr>
 
       <tr>
-        <td class="no-border" colspan="19"></td>
+        <td colspan="8" class="titulo-principal">IDA (Da residência para o Trabalho)</td>
       </tr>
-
-      <tr>
-        <td class="titulo-principal" colspan="19">IDA (Da residência para o Trabalho)</td>
-      </tr>
-
-    <tbody class="bloco-transporte">
       <tr class="cabecalho">
-        <td colspan="4">Tipo de Transporte</td>
-        <td colspan="5">Empresa de Transporte</td>
-        <td colspan="8">Trajeto</td>
-        <td colspan="2">Valor da Tarifa</td>
+        <td colspan="2" style="width: 20%;">Tipo de Transporte</td>
+        <td colspan="2" style="width: 30%;">Empresa de Transporte</td>
+        <td colspan="2" style="width: 35%;">Trajeto</td>
+        <td colspan="1" style="width: 15%;">Valor da Tarifa</td>
+      </tr>
+      <tr class="valor">
+        <td colspan="2">1-</td>
+        <td colspan="2"></td>
+        <td colspan="2"></td>
+        <td colspan="1">R$</td>
+      </tr>
+      <tr class="valor">
+        <td colspan="2">2-</td>
+        <td colspan="2"></td>
+        <td colspan="2"></td>
+        <td colspan="1">R$</td>
+      </tr>
+      <tr class="valor">
+        <td colspan="2">3-</td>
+        <td colspan="2"></td>
+        <td colspan="2"></td>
+        <td colspan="1">R$</td>
+      </tr>
+      <tr class="valor">
+        <td colspan="2">4-</td>
+        <td colspan="2"></td>
+        <td colspan="2"></td>
+        <td colspan="1">R$</td>
       </tr>
 
-      <tr class="campo-vazio">
-        <td colspan="4" class="cabecalho">1-</td>
-        <td colspan="5"></td>
-        <td colspan="8"></td>
-        <td colspan="2">R$</td>
+      <tr>
+        <td colspan="8" class="titulo-principal">VOLTA (Do Trabalho para a Residência)</td>
       </tr>
-
-      <tr class="campo-vazio">
-        <td colspan="4" class="cabecalho">2-</td>
-        <td colspan="5"></td>
-        <td colspan="8"></td>
-        <td colspan="2">R$</td>
-      </tr>
-
-      <tr class="campo-vazio">
-        <td colspan="4" class="cabecalho">3-</td>
-        <td colspan="5"></td>
-        <td colspan="8"></td>
-        <td colspan="2">R$</td>
-      </tr>
-
-      <tr class="campo-vazio">
-        <td colspan="4" class="cabecalho">4-</td>
-        <td colspan="5"></td>
-        <td colspan="8"></td>
-        <td colspan="2">R$</td>
-      </tr>
-    </tbody>
-
-    <!-- Transporte VOLTA -->
-    <tr>
-      <td class="titulo-principal" colspan="19">VOLTA (Do Trabalho para a Residência)</td>
-    </tr>
-
-    <tbody class="bloco-transporte">
       <tr class="cabecalho">
-        <td colspan="4">Tipo de Transporte</td>
-        <td colspan="5">Empresa de Transporte</td>
-        <td colspan="8">Trajeto</td>
-        <td colspan="2">Valor da Tarifa</td>
+        <td colspan="2" style="width: 20%;">Tipo de Transporte</td>
+        <td colspan="2" style="width: 30%;">Empresa de Transporte</td>
+        <td colspan="2" style="width: 35%;">Trajeto</td>
+        <td colspan="1" style="width: 15%;">Valor da Tarifa</td>
+      </tr>
+      <tr class="valor">
+        <td colspan="2">1-</td>
+        <td colspan="2"></td>
+        <td colspan="2"></td>
+        <td colspan="1">R$</td>
+      </tr>
+      <tr class="valor">
+        <td colspan="2">2-</td>
+        <td colspan="2"></td>
+        <td colspan="2"></td>
+        <td colspan="1">R$</td>
+      </tr>
+      <tr class="valor">
+        <td colspan="2">3-</td>
+        <td colspan="2"></td>
+        <td colspan="2"></td>
+        <td colspan="1">R$</td>
+      </tr>
+      <tr class="valor">
+        <td colspan="2">4-</td>
+        <td colspan="2"></td>
+        <td colspan="2"></td>
+        <td colspan="1">R$</td>
       </tr>
 
-      <tr class="campo-vazio">
-        <td colspan="4" class="cabecalho">1-</td>
-        <td colspan="5"></td>
-        <td colspan="8"></td>
-        <td colspan="2">R$</td>
-      </tr>
-
-      <tr class="campo-vazio">
-        <td colspan="4" class="cabecalho">2-</td>
-        <td colspan="5"></td>
-        <td colspan="8"></td>
-        <td colspan="2">R$</td>
-      </tr>
-
-      <tr class="campo-vazio">
-        <td colspan="4" class="cabecalho">3-</td>
-        <td colspan="5"></td>
-        <td colspan="8"></td>
-        <td colspan="2">R$</td>
-      </tr>
-
-      <tr class="campo-vazio">
-        <td colspan="4" class="cabecalho">4-</td>
-        <td colspan="5"></td>
-        <td colspan="8"></td>
-        <td colspan="2">R$</td>
-      </tr>
-    </tbody>
-
-    <!-- Tipos de transporte -->
-    <tr>
-      <td class="titulo-principal" colspan="19">TIPOS DE TRANSPORTE:</td>
-    </tr>
-
-    <tbody class="tipos-transporte">
-      <tr class="texto-legal">
-        <td colspan="19">Ônibus Municipal / Ônibus Intermunicipal / Metrô / Trem</td>
+      <tr>
+        <td colspan="8" class="titulo-principal">TIPOS DE TRANSPORTE:</td>
       </tr>
       <tr class="texto-legal">
-        <td colspan="11" style="border-right: 1px solid black !important;">
-          Integração (Ônibus, Metrô e Trem - Bilhete Único)
-        </td>
-        <td colspan="8" class="coluna-regulamento">Lei 7619 30/09/1987</td>
+        <td colspan="8">Ônibus Municipal / Ônibus Intermunicipal / Metrô / Trem</td>
       </tr>
       <tr class="texto-legal">
-        <td colspan="11" style="border-right: 1px solid black !important;">
-          Outros (Favor Especificar que tipo)
-        </td>
-        <td colspan="8" class="coluna-regulamento">
-          Decreto No.95247, Art7 Par 1o. - 17/11/1987
-        </td>
+        <td colspan="5" style="border-right:1px solid black;">Integração (Ônibus, Metrô e Trem - Bilhete Único)</td>
+        <td colspan="3">Lei 7619 30/09/1987</td>
       </tr>
-
+      <tr class="texto-legal">
+        <td colspan="5" style="border-right:1px solid black;">Outros (Favor Especificar que tipo)</td>
+        <td colspan="3">Decreto No.95247, Art7 Par 1o. - 17/11/1987</td>
+      </tr>
     </tbody>
   </table>
+
 </body>
 
 </html>

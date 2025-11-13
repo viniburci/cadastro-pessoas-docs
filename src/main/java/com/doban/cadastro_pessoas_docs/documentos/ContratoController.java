@@ -53,9 +53,29 @@ public class ContratoController {
         HttpHeaders headers = new HttpHeaders();
         String nomeArquivo = "contrato_" + contrato.get("numero").replace("/", "_") + ".pdf";
         
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData(nomeArquivo, nomeArquivo);
         headers.setContentLength(pdfBytes.length);
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + nomeArquivo);
+
+        // 3. Retorna o PDF
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
+    @GetMapping("/download2")
+    public ResponseEntity<byte[]> downloadValeTransportePdf() {
+        
+        // 1. Gera o PDF usando o Service
+        byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("vt", null);
+        
+        // 2. Configura a resposta HTTP
+        HttpHeaders headers = new HttpHeaders();
+        String nomeArquivo = "contrato_" + Math.random() + ".pdf";
+        
+        headers.setContentLength(pdfBytes.length);
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + nomeArquivo);
 
         // 3. Retorna o PDF
         return ResponseEntity.ok()
