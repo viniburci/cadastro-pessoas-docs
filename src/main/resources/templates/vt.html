@@ -214,6 +214,64 @@
     .opcao-transporte .texto-opcao {
       padding-left: 5px;
     }
+
+
+    /* ==========================================================
+   AJUSTE PARA IMPRESSÃO
+========================================================== */
+@media print {
+
+  /* Define página A4 sem redimensionamento automático */
+  @page {
+    size: A4 portrait;
+    margin: 15mm;
+  }
+
+  /* Garante que o corpo use o tamanho real */
+  body {
+    width: 100%;
+    margin: 0;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Força todas as bordas e fundos a aparecerem na impressão */
+  table, td, th {
+    border-color: black !important;
+    color: black !important;
+    background: white !important;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Mantém as cores de fundo dos títulos */
+  .titulo-principal {
+    background-color: #D8D8D8 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Evita quebra de tabela entre páginas */
+  table {
+    page-break-inside: avoid;
+  }
+
+  tr, td {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  /* Remove margens de segurança que o Chrome adiciona */
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Impede zoom automático */
+  * {
+    zoom: 1;
+  }
+}
+
   </style>
 </head>
 
