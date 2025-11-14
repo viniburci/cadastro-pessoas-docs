@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 @RestController
@@ -32,10 +35,8 @@ public class ContratoController {
     @GetMapping("/download")
     public ResponseEntity<byte[]> downloadContratoPdf() {
         
-        // Simulação dos dados que viriam do seu banco de dados
         Map<String, Object> data = new HashMap<>();
         
-        // Usamos Mapas para simular objetos complexos
         Map<String, String> cliente = Map.of(
             "nome", "Carlos Eduardo Silva",
             "cpf", "123.456.789-00",
@@ -45,20 +46,12 @@ public class ContratoController {
         Map<String, String> contrato = Map.of(
             "numero", "045/2025"
         );
-        
-        Map<String, Object> servico = Map.of(
-            "descricao", "Criação e Manutenção de Aplicação Web.",
-            "prazoDias", 120
-        );
 
         data.put("cliente", cliente);
         data.put("contrato", contrato);
-        data.put("servico", servico);
         
-        // 1. Gera o PDF usando o Service
-        byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml("contrato", data);
+        byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("contrato", data);
         
-        // 2. Configura a resposta HTTP
         HttpHeaders headers = new HttpHeaders();
         String nomeArquivo = "contrato_" + contrato.get("numero").replace("/", "_") + ".pdf";
         
@@ -66,7 +59,6 @@ public class ContratoController {
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + nomeArquivo);
 
-        // 3. Retorna o PDF
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(pdfBytes);
@@ -97,6 +89,7 @@ public class ContratoController {
 
         data.put("cliente", cliente);
         data.put("funcionario", funcionario);
+        data.put("dataAtual", obterDataPorExtenso());
         
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("vt", data);
         
@@ -110,5 +103,16 @@ public class ContratoController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(pdfBytes);
+    }
+
+    public static String obterDataPorExtenso() {
+        LocalDate hoje = LocalDate.now();
+
+        DateTimeFormatter formatador = DateTimeFormatter.ofPattern(
+            "d 'de' MMMM 'de' yyyy", 
+            new Locale("pt", "BR")
+        );
+
+        return hoje.format(formatador);
     }
 }
