@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8" />
     <title>Contrato de Prestação de Serviços</title>
@@ -8,69 +9,404 @@
         @page {
             size: A4;
             margin: 2cm;
-            @top-center { content: "Página " counter(page) " de " counter(pages); }
+            /* Remover a linha e a numeração do cabeçalho */
+            @top-center { content: ""; }
         }
-        body { font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.5; }
-        h1 { font-size: 14pt; text-align: center; margin-bottom: 20px; }
-        .clausula { margin-bottom: 15px; text-align: justify; }
-        .titulo-clausula { font-weight: bold; text-decoration: underline; }
-        
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+        }
+
+        h1 {
+            font-size: 14pt;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .clausula {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .titulo-clausula {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
         /* Estilo para as Assinaturas */
         .assinatura-container {
             display: flex;
             justify-content: space-between;
             width: 100%;
-            margin-top: 80px;
+            margin-top: 120px; /* Aumenta o espaço acima das assinaturas */
+            flex-wrap: nowrap; /* Garante que as assinaturas fiquem lado a lado */
         }
+
         .bloco-assinatura {
-            width: 45%;
+            width: 45%; /* Ajustado para 45% */
             text-align: center;
         }
+
         .linha-assinatura {
             display: block;
             border-bottom: 1px solid black;
             margin-bottom: 5px;
         }
+
         .espaco-vazio {
-            width: 10%;
+            width: 10%; /* Mantém o espaço entre as assinaturas */
+        }
+
+        .titulo-secao {
+            font-weight: bold;
+            font-size: 12pt;
+            text-align: center;
+            margin: 40px 0 20px 0;
+            border-top: 1px solid black;
+            padding-top: 10px;
+            page-break-before: always; /* Garante quebra de página antes de cada título */
+        }
+
+        /* Ajusta o espaçamento das Testemunhas */
+        .assinatura-testemunhas {
+            margin-top: 80px; /* Aumenta o espaço acima das testemunhas */
+        }
+
+        .assinatura {
+            text-align: center;
+            vertical-align: bottom;
+            /* Aumenta a altura para dar espaço para a assinatura */
+            height: 50px;
+            /* Adiciona a linha de assinatura no topo do espaço para o texto "Assinatura do Funcionário" */
+            border-bottom: 1px solid black;
+            /* Garante que o texto fique encostado na linha de baixo (borda da célula) */
+            padding-bottom: 0px;
+            /* Centraliza o texto */
+            font-size: 10pt;
         }
     </style>
 </head>
+
 <body>
 
-    <h1>CONTRATO DE PRESTAÇÃO DE SERVIÇOS Nº <span th:text="${contrato.numero}">123/2025</span></h1>
+    <h1>CONTRATO DE EXPERIÊNCIA</h1>
 
-    <p>
-        Pelo presente instrumento particular de Contrato de Prestação de Serviços, de um lado
-        **<span th:text="${cliente.nome}">NOME DO CLIENTE</span>**,
-        inscrito no CPF sob o nº **<span th:text="${cliente.cpf}">123.456.789-00</span>**,
-        residente e domiciliado em **<span th:text="${cliente.endereco}">Rua das Flores, 100</span>**,
-        doravante denominado **CONTRATANTE**.
+    <div class="clausula">
+        <p>
+            Pelo presente instrumento de Contrato de Trabalho que entre si fazem a empresa
+            <strong>DOBAN PRESTADORA DE SERVIÇOS LTDA.</strong>, pessoa jurídica de direito privado, inscrita no CNPJ/MF
+            23.292.453/0001-34,
+            com sede na Rua Joaquim Murtinho, nº 60, Zona 04, CEP 87014-210, Maringá, Estado do Paraná, doravante
+            denominada
+            <strong>EMPREGADORA</strong>, e, de outro lado:
+        </p>
+        <p>
+            <strong th:text="${empregado.nome}">NOME FUNCIONARIO</strong>,
+            Brasileiro(a),
+            <span th:text="${empregado.estadoCivil}">ESTADO CIVIL</span>, portador(a) do RG:
+            <span th:text="${empregado.rg}">RG</span>, CPF:
+            <span th:text="${empregado.cpf}">VPF</span>, CTPS:
+            <span th:text="${empregado.ctps}">CTPS</span>, Série:
+            <span th:text="${empregado.ctpsSerie}">SERIE CTPS</span>, residente e domiciliado à
+            <span th:text="${empregado.endereco}">ENDEREÇO</span>, cidade de
+            <span th:text="${empregado.cidade}">CIDADE</span> -
+            <span th:text="${empregado.uf}">ESTADO</span>, doravante designado
+            <strong>EMPREGADO</strong>, celebram o presente CONTRATO INDIVIDUAL DE TRABALHO, conforme Legislação
+            Trabalhista em vigor, regido pelas cláusulas abaixo e demais disposições Legais vigentes.
+        </p>
+    </div>
+
+    <div class="clausula">
+        <strong>1º -</strong> Fica o EMPREGADO admitido no quadro de funcionários da EMPREGADORA para exercer a função
+        de:
+        <strong th:text="${contrato.funcao}">TÉCNICO AMBIENTAL</strong>, pelo regime da CLT com o devido registro em sua
+        CTPS, porém, a função especificada não importa na intransferibilidade do EMPREGADO para outro serviço, no qual
+        demonstre melhor capacidade de adaptação desde que compatível com sua condição pessoal, percebendo o valor de
+        <strong th:text="${#numbers.formatCurrency(contrato.salario)}">R$ 2.600,00</strong>, por mês, a ser pago até o
+        5º (quinto) dia útil do mês subsequente ao vencido, podendo, o empregador fazer os seguintes descontos no seu
+        salário: Contribuição Previdenciária (INSS), 6% referente ao Vale Transporte e 20% do valor de Vale Refeição,
+        caso venha a utilizar;
+    </div>
+
+    <div class="clausula">
+        <strong>2º -</strong> O local de trabalho situa-se na cidade de <strong
+            th:text="${contrato.cidadeTrabalho}">PÉROLA</strong>, e região, podendo a EMPREGADORA, a qualquer tempo,
+        transferir o EMPREGADO a titulo transitório ou definitivo, tanto no âmbito da unidade para a qual foi admitido,
+        como para outras, em qualquer localidade deste Estado ou de outro no País.
+    </div>
+
+    <div class="clausula">
+        <strong>3º -</strong> O presente contrato é firmado em carater de experiência, pelo prazo de
+        45 dias, vigorando a partir de
+        <strong th:text="${#temporals.format(contrato.dataInicio, 'dd/MM/yyyy')}">25/08/2025</strong> até
+        <strong th:text="${#temporals.format(contrato.dataFim, 'dd/MM/yyyy')}">08/10/2025</strong>, podendo ser
+        prorrogado por mais 45 dias, independente de quaisquer interrupções ou suspensões, em cujo termo estará extinto,
+        sem que caiba a qualquer das partes aviso prévio ou indenização.
+        <br />
+        Parágrafo Único – Este contrato poderá ser prorrogado, inclusive automaticamente, uma única vez, observando,
+        porém, o limite máximo fixado pelo artigo 445 da Consolidação das Leis do Trabalho, independentemente de
+        interrupções ou suspensões.
+    </div>
+
+    <div class="clausula">
+        <strong>4º –</strong> O horário de trabalho é de: <strong
+            th:text="${#temporals.format(contrato.horarioEntrada, 'HH:mm')}">00:00</strong> às <strong
+            th:text="${#temporals.format(contrato.horarioSaida, 'HH:mm')}">00:00</strong>, com <strong>01:30</strong> de
+        almoço (Carga Horária Mensal).
+    </div>
+
+    <div class="clausula">
+        <strong>5º –</strong> Além dos descontos previstos em lei, reserva-se à EMPREGADORA o direito de descontar do
+        EMPREGADO as importâncias correspondentes aos danos a que der causa, infrações de transito (multas) incidentes
+        sobre o veículo do empregador, quando na ocasião esteja sendo conduzido pelo EMPREGADO, aos danos causados por
+        ele no veículo de terceiros, quando for constatado a sua culpa, seja em acidentes de trânsito ou não, com
+        fundamento no § único do artigo 462 da CLT, já que essa possibilidade fica expressamente prevista em Contrato,
+        em mau uso do uniforme e convênios firmados pelo empregado conforme política de benefícios firmados pela
+        Empresa, nos termos do art. 462, I da CLT.
+    </div>
+
+    <div class="clausula">
+        <strong>6º –</strong> O EMPREGADO declara-se CIENTE do Regulamento Interno da EMPREGADORA e Normas de Segurança
+        que regulam suas atividades, comprometendo-se ao seu cumprimento, sob pena de aplicação de sanção, nos termos da
+        legislação aplicável, o qual recebe uma cópia neste ato.
+    </div>
+
+    <div class="clausula">
+        <strong>7º –</strong> O EMPREGA(A) cumprirá uma jornada de 44 (quarenta e quatro) horas semanais, ficando
+        ajustada a possibilidade de compensação de horas, mediante o acréscimo de jornada em determinados dias, para
+        redução em outros.
+        <br />
+        PARÁGRAFO ÚNICO: Dentro das 44 (quarenta e quatro) horas semanais de serviços prestados à EMPREGADORA pelo(a)
+        EMPREGADO(a), o início e o encerramento das atividades poderão ser modificados de acordo com a necessidade da
+        EMPREGADORA.
+    </div>
+
+    <div class="clausula">
+        <strong>8º –</strong> O empregado deve se dirigir em caso de dúvidas e receber orientações apenas de empregados
+        da empregadora DOBAN PRESTADORA DE SERVIÇOS LTDA., não devendo seguir orientações de terceiros.
+    </div>
+
+    <div class="clausula">
+        <strong>9º –</strong> Considerar-se-á rescindido, de pleno direito, por justa causa, o presente contrato, na
+        eventualidade da prática, pelo empregado, de quaisquer das faltas capituladas no artigo 482 da CLT, quando a
+        Carteira Nacional de Habilitação do empregado for suspensa temporáriamente, perder a validade ou for cassada
+        pelo Conselho Nacional de Trânsito, assim como na eventualidade da prática, pela DOBAN PRESTADORA DE SERVIÇOS
+        LTDA., de quaisquer das faltas capituladas no artigo 483 da CLT.
+    </div>
+
+    <div class="clausula">
+        <strong>10º –</strong> O EMPREGADO autoriza o uso de sua imagem, a título gratuito, em ações promocionais ou
+        institucionais da empregadora ou seus clientes, sejam estas destinadas ao uso interno ou para divulgação ao
+        público em geral, desde que não sejam desvirtuadas de suas finalidades. O uso da imagem poderá se dar através de
+        fotos ou outros meios, em todo e qualquer material, no território nacional ou exterior, bem como sede
+        gratuitamente eventual invenção/propriedade técnica ou intelectual desenvolvida durante a relação contratual.
+    </div>
+
+    <div class="clausula">
+        <strong>11º –</strong> Obriga-se também o EMPREGADO(a) a prestar serviços em horas extraordinárias, sempre que
+        lhe for determinado pela EMPREGADORA, na forma da prevista Lei. Na hipótese desta faculdade pela EMPREGADORA, o
+        EMPREGADO(A) receberá as horas extraordinárias com o acréscimo legal, salvo a ocorrência de compensação com a
+        consequente redução da jornada de trabalho em outro dia.
+    </div>
+
+    <div class="clausula">
+        <strong>12º -</strong> Aceita o EMPREGADO(A) expressamente à condição de prestar serviços em qualquer dos turnos
+        de trabalho, isto é, tanto durante o dia, como à noite.
+    </div>
+
+    <div class="clausula">
+        <strong>13º -</strong> No ato da assinatura deste Contrato, o EMPREGADO(A) recebe o Regulamento Interno de
+        Conduta e Ética da Empresa e o Termo de Responsabilidade do Uso do Veículo cujas cláusulas fazem parte desse
+        Contrato de Trabalho, e a violação de qualquer delas implicará em sanção, cuja graduação dependerá da gravidade
+        da mesma, culminando com a rescisão do contrato.
+    </div>
+
+    <div class="clausula">
+        <strong>14º -</strong> Opera-se a rescisão do presente contrato pela decorrência do prazo supra citado ou por
+        vontade de cada uma das partes. Rescindindo-se por vontade do EMPREGADO(A) ou pela EMPREGADORA com justa causa,
+        nenhuma indenização é devida. Rescindindo-se antes do prazo, pela EMPREGADORA, fica esta obrigada a pagar a
+        multa conforme os termos do artigo 479 da CLT sem prejuizo no Regulamento do Fundo de Garantia por Tempo de
+        Serviço. Rescindindo-se antes do prazo pelo EMPREGADO(A), fica este obrigado a pagar a multa nos termos do
+        artigo 480 da CLT, assim como o seu parágrafo primeiro. Nenhum aviso prévio é devido pela rescisão do presente
+        contrato.
+    </div>
+
+    <p class="clausula" style="text-align: center;">
+        E por estarem assim, justas e contratadas, as partes assinam o presente contrato em duas vias de igual teor e
+        forma, na presença de duas testemunhas.
     </p>
 
-    <div class="clausula">
-        <div class="titulo-clausula">1. DO OBJETO DO CONTRATO</div>
-        <p>O presente contrato tem como objeto a prestação de serviços de <span th:text="${servico.descricao}">Desenvolvimento de Software</span>, conforme especificações em anexo.</p>
-    </div>
-
-    <div class="clausula">
-        <div class="titulo-clausula">2. DO PRAZO</div>
-        <p>O prazo de execução será de <span th:text="${servico.prazoDias}">90</span> dias corridos, contados a partir da data de assinatura.</p>
-    </div>
-
-    <p style="margin-top: 50px;">E por estarem justos e contratados, assinam o presente em 02 (duas) vias de igual teor e forma.</p>
+    <p style="text-align: center; margin-top: 30px;">
+        Maringá - PR, <strong th:text="${dataAtualExtenso}">XX de XXXXXXX de XXXX</strong>.
+    </p>
 
     <div class="assinatura-container">
         <div class="bloco-assinatura">
             <span class="linha-assinatura"></span>
-            <p>CONTRATANTE<br/><span th:text="${cliente.nome}">NOME DO CLIENTE</span></p>
+            DOBAN PRESTADORA DE SERVIÇOS LTDA.
+        </div>
+            <br />
+            <br />
+            <br />
+            <br />
+        <div class="espaco-vazio"></div>
+        <div class="bloco-assinatura">
+            <span class="linha-assinatura"></span>
+            <span th:text="${empregado.nome}">ANDRE HENRIQUE ROGALESKI SILVA</span>
+        </div>
+    </div>
+
+    <p class="assinatura-testemunhas">Testemunhas:</p>
+    <div class="assinatura-container" style="margin-top: 50px;">
+        <div class="bloco-assinatura">
+            <span class="linha-assinatura"></span>
+            Nome:
+            <br />
+            RG:
+        </div>
+            <br />
+            <br />
+            <br />
+            <br />
+        <div class="espaco-vazio"></div>
+        <div class="bloco-assinatura">
+            <span class="linha-assinatura"></span>
+            Nome:
+            <br />
+            RG:
+        </div>
+    </div>
+
+    <!-- INÍCIO DO ACORDO DE PRORROGAÇÃO (FORÇADO PARA NOVA PÁGINA pelo .titulo-secao) -->
+    <div class="titulo-secao">
+        ACORDO PARA PRORROGAÇÃO DE HORAS DE TRABALHO E DE COMPENSAÇÃO DE HORÁRIO
+    </div>
+
+    <div class="clausula">
+        Conforme previsto no Parágrafo Único, Cláusula Sétima, do Contrato de Trabalho firmado entre as partes já
+        devidamente qualificadas no referido contrato e ao qual o presente ACORDO passa a integrar, os CONTRATANTES, com
+        base no artigo 59, parágrafo 1º, do Decreto Lei 5.452/43 (CLT), convencionam o seguinte:
+    </div>
+
+    <div class="clausula">
+        <strong>Primeiro –</strong> A duração diária do trabalho poderá ser prorrogada por mais até 2 (duas) horas,
+        sendo consideradas extraordinárias e pagas com acréscimo.
+    </div>
+
+    <div class="clausula">
+        <strong>Segundo –</strong> Fica ainda convencionado, com base no parágrafo segundo do artigo 59 da CLT, que o
+        excesso de horas trabalhadas em dias da semana, independentemente de acréscimo salarial, poderá ser compensada
+        pela correspondente diminuição em outro dia, de maneira que não exceda o horário normal da semana nem seja
+        ultrapassado o limite máximo de 10 (dez) horas diárias.
+    </div>
+
+    <div class="clausula">
+        <!-- O CLÁUSULA TERCEIRO ESTÁ FALTANDO NO ORIGINAL, mantido como "Quarto" para refletir o código original -->
+        <strong>Quarto –</strong> Comprovada a conveniência para isso, fica autorizada a rescisão do presente acordo, a
+        partir da qual fica cancelada a prorrogação ou compensação de horário.
+    </div>
+
+    <p class="clausula" style="text-align: center;">
+        E por estarem de pleno acordo com o que aqui ficou convencionado, as partes contratantes assinam o presente
+        acordo, em 2 (duas) vias de igual teor e forma.
+    </p>
+
+    <p style="text-align: center; margin-top: 30px;">
+        Maringá - PR, <strong th:text="${dataAtualExtenso}">25 de agosto de 2025</strong>.
+    </p>
+
+    <div class="assinatura-container">
+        <div class="bloco-assinatura">
+            <span class="linha-assinatura"></span>
+            DOBAN PRESTADORA DE SERVIÇOS LTDA.
+        </div>
+            <br />
+            <br />
+            <br />
+            <br />
+        <div class="espaco-vazio"></div>
+        <div class="bloco-assinatura">
+            <span class="linha-assinatura"></span>
+            <span th:text="${empregado.nome}">NOME FUNCIONARIO</span>
+        </div>
+    </div>
+
+    <p class="assinatura-testemunhas">Testemunhas:</p>
+    <div class="assinatura-container" style="margin-top: 50px;">
+        <div class="bloco-assinatura">
+            <span class="linha-assinatura"></span>
+            Nome:
+            <br />
+            RG:
+        </div>
+            <br />
+            <br />
+            <br />
+            <br />
+        <div class="espaco-vazio"></div>
+        <div class="bloco-assinatura">
+            <span class="linha-assinatura"></span>
+            Nome:
+            <br />
+            RG:
+        </div>
+    </div>
+
+    <!-- INÍCIO DO TERMO DE PRORROGAÇÃO (FORÇADO PARA NOVA PÁGINA pelo .titulo-secao) -->
+    <div class="titulo-secao">
+        TERMO DE PRORROGAÇÃO
+    </div>
+
+    <div class="clausula">
+        Por mútuo acordo entre as partes, fica o presente Contrato de Experiência, que deveria vencer em
+        <strong th:text="${#temporals.format(contrato.dataInicio, 'dd/MM/yyyy')}">XX de XXXXXXX de XXXX</strong>,
+        prorrogado até
+        <strong th:text="${#temporals.format(contrato.dataFim, 'dd/MM/yyyy')}">XX/XX/XXXX</strong>.
+    </div>
+
+    <p style="text-align: center; margin-top: 30px;">
+        Maringá - PR, <strong th:text="${dataAtualExtenso}">XX de XXXXXXX de XXXX</strong>.
+    </p>
+
+    <div class="assinatura-container">
+        <div class="bloco-assinatura">
+            <span class="linha-assinatura"></span>
+            DOBAN PRESTADORA DE SERVIÇOS LTDA.
+        </div>
+            <br />
+            <br />
+            <br />
+            <br />
+        <div class="espaco-vazio"></div>
+        <div class="bloco-assinatura">
+            <span class="linha-assinatura"></span>
+            <span th:text="${empregado.nome}">NOME</span>
+        </div>
+    </div>
+
+    <p class="assinatura-testemunhas">Testemunhas:</p>
+    <div class="assinatura-container" style="margin-top: 50px;">
+        <div class="bloco-assinatura">
+            <span class="linha-assinatura"></span>
+            Nome:
+            <br />
+            RG:
+            <br />
+            <br />
+            <br />
+            <br />
         </div>
         <div class="espaco-vazio"></div>
         <div class="bloco-assinatura">
             <span class="linha-assinatura"></span>
-            <p>CONTRATADO<br/>NOME DA SUA EMPRESA/PRESTADOR</p>
+            Nome:
+            <br />
+            RG:
         </div>
     </div>
 
 </body>
+
 </html>
