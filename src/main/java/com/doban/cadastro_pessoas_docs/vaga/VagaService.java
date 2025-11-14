@@ -10,6 +10,7 @@ import com.doban.cadastro_pessoas_docs.pessoa.Pessoa;
 import com.doban.cadastro_pessoas_docs.pessoa.PessoaService;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -30,6 +31,14 @@ public class VagaService {
     public VagaDTO obterVagaMaisRecentePorPessoa(Long pessoaId) {
         Vaga vaga = vagaRepository.findFirstByPessoaIdOrderByDataAdmissaoDesc(pessoaId)
                 .orElseThrow(() -> new EntityNotFoundException("Essa pessoa não tem vagas cadastradas."));
+        VagaDTO vagaDTO = new VagaDTO(vaga);
+        return vagaDTO;
+    }
+
+    @Transactional
+    public VagaDTO obterVagaPorId(Long vagaId) {
+        Vaga vaga = vagaRepository.findById(vagaId)
+            .orElseThrow(() -> new EntityNotFoundException("Não existe vaga com id " + vagaId + '.'));
         VagaDTO vagaDTO = new VagaDTO(vaga);
         return vagaDTO;
     }

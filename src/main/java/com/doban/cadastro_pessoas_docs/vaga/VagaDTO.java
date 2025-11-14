@@ -15,6 +15,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class VagaDTO {
     private Long id;
+    private Long pessoaId;
     private TipoContratante contratante;
     private String cliente;
     private String setor;
@@ -36,6 +37,9 @@ public class VagaDTO {
 
     public VagaDTO(Vaga vaga) {
         this.id = vaga.getId();
+        if (vaga.getPessoa() != null) {
+            this.pessoaId = vaga.getPessoa().getId();
+        }
         this.contratante = vaga.getContratante();
         this.cliente = vaga.getCliente();
         this.setor = vaga.getSetor();

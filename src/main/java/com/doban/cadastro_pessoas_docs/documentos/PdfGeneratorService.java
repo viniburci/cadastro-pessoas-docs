@@ -51,6 +51,7 @@ public class PdfGeneratorService {
     }
 
     public byte[] generatePdfFromHtml1(String templateName, Map<String, Object> data) {
+        
 
         // 1. Processa o Template com os Dados (Thymeleaf)
         Context context = new Context();

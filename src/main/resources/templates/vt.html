@@ -162,13 +162,13 @@
       </tr>
 
       <tr class="cabecalho">
-        <td colspan="6" >Empresa:</td>
-        <td colspan="2" >CNPJ:</td>
+        <td colspan="5" >Empresa:</td>
+        <td colspan="3" >CNPJ:</td>
 
       </tr>
       <tr class="valor">
-        <td colspan="6">DOBAN PRESTADORA DE SERVIÇOS LTDA.</td>
-        <td colspan="2"></td>
+        <td colspan="5">DOBAN PRESTADORA DE SERVIÇOS LTDA.</td>
+        <td colspan="3">23.292.453/0001-34</td>
 
       </tr>
 
@@ -178,7 +178,7 @@
       </tr>
       <tr class="valor">
         <td colspan="4" style="width: 50% !important;">MARINGÁ - PR</td>
-        <td colspan="4" style="width: 50% !important;">87020211</td>
+        <td colspan="4" style="width: 50% !important;">87014-210</td>
       </tr>
 
 
@@ -186,7 +186,7 @@
         <td colspan="8" style="width: 100%;">Cliente:</td>
       </tr>
       <tr class="valor">
-        <td colspan="8">XX.XXX.XXX/XXXX-XX</td>
+        <td colspan="8"><span th:text="${cliente.nome}">CLIENTE</span></td>
       </tr>
 
       <tr>
@@ -194,34 +194,34 @@
       </tr>
 
       <tr class="cabecalho">
-        <td colspan="6" style="width: 75%;">Nome Colaborador:</td>
-        <td colspan="2" style="width: 25%;">CPF:</td>
+        <td colspan="6" >Nome Colaborador:</td>
+        <td colspan="2" >CPF:</td>
       </tr>
       <tr class="valor">
-        <td colspan="6"></td>
-        <td colspan="2"></td>
+        <td colspan="6"><span th:text="${funcionario.nome}">NOME DO FUNCIONARIO</span></td>
+        <td colspan="2"><span th:text="${funcionario.cpf}">CPF</span></td>
       </tr>
 
       <tr class="cabecalho">
-        <td colspan="5" style="width: 62.5%;">Endereço:</td>
-        <td colspan="3" style="width: 37.5%;">Bairro:</td>
+        <td colspan="5" >Endereço:</td>
+        <td colspan="3" >Bairro:</td>
       </tr>
       <tr class="valor">
-        <td colspan="5"></td>
-        <td colspan="3">CENTRO</td>
+        <td colspan="5"><span th:text="${funcionario.endereço}">NOME DO FUNCIONARIO</span></td>
+        <td colspan="3"><span th:text="${funcionario.bairro}">NOME DO FUNCIONARIO</span></td>
       </tr>
 
       <tr class="cabecalho">
-        <td colspan="3" style="width: 37.5%;">Cidade:</td>
-        <td colspan="1" style="width: 12.5%;">UF:</td>
-        <td colspan="2" style="width: 25%;">CEP:</td>
-        <td colspan="2" style="width: 25%;">Telefone:</td>
+        <td colspan="3" >Cidade:</td>
+        <td colspan="1" >UF:</td>
+        <td colspan="2" >CEP:</td>
+        <td colspan="2" >Telefone:</td>
       </tr>
       <tr class="valor">
-        <td colspan="3"></td>
-        <td colspan="1">PR</td>
-        <td colspan="2"></td>
-        <td colspan="2">(45)</td>
+        <td colspan="3"><span th:text="${funcionario.cidade}">CIDADE</span></td>
+        <td colspan="1"><span th:text="${funcionario.uf}">UF</span></td>
+        <td colspan="2"><span th:text="${funcionario.cep}">CEP</span></td>
+        <td colspan="2"><span th:text="${funcionario.telefone}">TELEFONE</span></td>
       </tr>
 
       <tr>
@@ -265,7 +265,7 @@
 
       <tr>
         <td colspan="5">
-          Em caso de Mudança de Endereço, informar o Departamento Pessoal/Supervisor, e entregar cópia do comprovante.
+          Em caso de Mudança de Endereço, informar o Departamento Pessoal/Supervisor, e entregar cópia do comprovante de endereço.
         </td>
         <td colspan="3" class="assinatura">
           ______________________________<br></br>
