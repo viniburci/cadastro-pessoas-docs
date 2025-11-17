@@ -126,7 +126,7 @@ public class ContratoController {
 
         DateTimeFormatter formatador = DateTimeFormatter.ofPattern(
             "d 'de' MMMM 'de' yyyy", 
-            new Locale("pt", "BR")
+            new Locale.Builder().setLanguage("pt").setRegion("BR").build()
         );
 
         return hoje.format(formatador);

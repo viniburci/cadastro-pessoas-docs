@@ -9,8 +9,11 @@
         @page {
             size: A4;
             margin: 2cm;
+
             /* Remover a linha e a numeração do cabeçalho */
-            @top-center { content: ""; }
+            @top-center {
+                content: "";
+            }
         }
 
         body {
@@ -40,13 +43,22 @@
             display: flex;
             justify-content: space-between;
             width: 100%;
-            margin-top: 120px; /* Aumenta o espaço acima das assinaturas */
-            flex-wrap: nowrap; /* Garante que as assinaturas fiquem lado a lado */
+            margin-top: 120px;
+            /* Aumenta o espaço acima das assinaturas */
+            flex-wrap: nowrap;
+            /* Garante que as assinaturas fiquem lado a lado */
         }
 
         .bloco-assinatura {
-            width: 45%; /* Ajustado para 45% */
+            width: 45%;
             text-align: center;
+            line-height: 1.5;
+            /* Ajuda a separar as linhas */
+        }
+
+        .bloco-assinatura span {
+            display: block;
+            /* Garante que a linha de assinatura ocupe uma linha inteira */
         }
 
         .linha-assinatura {
@@ -56,7 +68,8 @@
         }
 
         .espaco-vazio {
-            width: 10%; /* Mantém o espaço entre as assinaturas */
+            width: 10%;
+            /* Mantém o espaço entre as assinaturas */
         }
 
         .titulo-secao {
@@ -66,12 +79,14 @@
             margin: 40px 0 20px 0;
             border-top: 1px solid black;
             padding-top: 10px;
-            page-break-before: always; /* Garante quebra de página antes de cada título */
+            page-break-before: always;
+            /* Garante quebra de página antes de cada título */
         }
 
         /* Ajusta o espaçamento das Testemunhas */
         .assinatura-testemunhas {
-            margin-top: 80px; /* Aumenta o espaço acima das testemunhas */
+            margin-top: 80px;
+            /* Aumenta o espaço acima das testemunhas */
         }
 
         .assinatura {
@@ -242,42 +257,44 @@
         Maringá - PR, <strong th:text="${dataAtualExtenso}">XX de XXXXXXX de XXXX</strong>.
     </p>
 
-    <div class="assinatura-container">
-        <div class="bloco-assinatura">
-            <span class="linha-assinatura"></span>
-            DOBAN PRESTADORA DE SERVIÇOS LTDA.
-        </div>
-            <br />
-            <br />
-            <br />
-            <br />
-        <div class="espaco-vazio"></div>
-        <div class="bloco-assinatura">
-            <span class="linha-assinatura"></span>
-            <span th:text="${empregado.nome}">ANDRE HENRIQUE ROGALESKI SILVA</span>
-        </div>
-    </div>
+
+    <br />
+    <table style="width: 100%; border-collapse: collapse; margin-top: 50px;">
+        <tr>
+            <td style="width: 45%; text-align: center; padding: 0 10px; vertical-align: top;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                DOBAN PRESTADORA DE SERVIÇOS LTDA.
+            </td>
+
+            <td style="width: 10%;"></td>
+
+            <td style="width: 45%; text-align: center; padding: 0 10px; vertical-align: top;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                <span th:text="${empregado.nome}">NOME</span>
+            </td>
+        </tr>
+    </table>
 
     <p class="assinatura-testemunhas">Testemunhas:</p>
-    <div class="assinatura-container" style="margin-top: 50px;">
-        <div class="bloco-assinatura">
-            <span class="linha-assinatura"></span>
-            Nome:
-            <br />
-            RG:
-        </div>
-            <br />
-            <br />
-            <br />
-            <br />
-        <div class="espaco-vazio"></div>
-        <div class="bloco-assinatura">
-            <span class="linha-assinatura"></span>
-            Nome:
-            <br />
-            RG:
-        </div>
-    </div>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 50px;">
+        <tr>
+            <td style="width: 45%; text-align: left; padding: 0 10px; vertical-align: top;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                Nome:
+                <br />
+                RG:
+            </td>
+
+            <td style="width: 10%;"></td>
+
+            <td style="width: 45%; text-align: left; padding: 0 10px; vertical-align: top;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                Nome:
+                <br />
+                RG:
+            </td>
+        </tr>
+    </table>
 
     <!-- INÍCIO DO ACORDO DE PRORROGAÇÃO (FORÇADO PARA NOVA PÁGINA pelo .titulo-secao) -->
     <div class="titulo-secao">
@@ -317,42 +334,43 @@
         Maringá - PR, <strong th:text="${dataAtualExtenso}">25 de agosto de 2025</strong>.
     </p>
 
-    <div class="assinatura-container">
-        <div class="bloco-assinatura">
-            <span class="linha-assinatura"></span>
-            DOBAN PRESTADORA DE SERVIÇOS LTDA.
-        </div>
-            <br />
-            <br />
-            <br />
-            <br />
-        <div class="espaco-vazio"></div>
-        <div class="bloco-assinatura">
-            <span class="linha-assinatura"></span>
-            <span th:text="${empregado.nome}">NOME FUNCIONARIO</span>
-        </div>
-    </div>
+    <br />
+    <table style="width: 100%; border-collapse: collapse; margin-top: 50px;">
+        <tr>
+            <td style="width: 45%; text-align: center; padding: 0 10px; vertical-align: top;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                DOBAN PRESTADORA DE SERVIÇOS LTDA.
+            </td>
+
+            <td style="width: 10%;"></td>
+
+            <td style="width: 45%; text-align: center; padding: 0 10px; vertical-align: top;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                <span th:text="${empregado.nome}">NOME</span>
+            </td>
+        </tr>
+    </table>
 
     <p class="assinatura-testemunhas">Testemunhas:</p>
-    <div class="assinatura-container" style="margin-top: 50px;">
-        <div class="bloco-assinatura">
-            <span class="linha-assinatura"></span>
-            Nome:
-            <br />
-            RG:
-        </div>
-            <br />
-            <br />
-            <br />
-            <br />
-        <div class="espaco-vazio"></div>
-        <div class="bloco-assinatura">
-            <span class="linha-assinatura"></span>
-            Nome:
-            <br />
-            RG:
-        </div>
-    </div>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 50px;">
+        <tr>
+            <td style="width: 45%; text-align: left; padding: 0 10px; vertical-align: top;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                Nome:
+                <br />
+                RG:
+            </td>
+
+            <td style="width: 10%;"></td>
+
+            <td style="width: 45%; text-align: left; padding: 0 10px; vertical-align: top;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                Nome:
+                <br />
+                RG:
+            </td>
+        </tr>
+    </table>
 
     <!-- INÍCIO DO TERMO DE PRORROGAÇÃO (FORÇADO PARA NOVA PÁGINA pelo .titulo-secao) -->
     <div class="titulo-secao">
@@ -369,43 +387,44 @@
     <p style="text-align: center; margin-top: 30px;">
         Maringá - PR, <strong th:text="${dataAtualExtenso}">XX de XXXXXXX de XXXX</strong>.
     </p>
+    <br />
+    <table style="width: 100%; border-collapse: collapse; margin-top: 50px;">
+        <tr>
+            <td style="width: 45%; text-align: center; padding: 0 10px; vertical-align: top;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                DOBAN PRESTADORA DE SERVIÇOS LTDA.
+            </td>
 
-    <div class="assinatura-container">
-        <div class="bloco-assinatura">
-            <span class="linha-assinatura"></span>
-            DOBAN PRESTADORA DE SERVIÇOS LTDA.
-        </div>
-            <br />
-            <br />
-            <br />
-            <br />
-        <div class="espaco-vazio"></div>
-        <div class="bloco-assinatura">
-            <span class="linha-assinatura"></span>
-            <span th:text="${empregado.nome}">NOME</span>
-        </div>
-    </div>
+            <td style="width: 10%;"></td>
+
+            <td style="width: 45%; text-align: center; padding: 0 10px; vertical-align: top;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                <span th:text="${empregado.nome}">NOME</span>
+            </td>
+        </tr>
+    </table>
+
 
     <p class="assinatura-testemunhas">Testemunhas:</p>
-    <div class="assinatura-container" style="margin-top: 50px;">
-        <div class="bloco-assinatura">
-            <span class="linha-assinatura"></span>
-            Nome:
-            <br />
-            RG:
-            <br />
-            <br />
-            <br />
-            <br />
-        </div>
-        <div class="espaco-vazio"></div>
-        <div class="bloco-assinatura">
-            <span class="linha-assinatura"></span>
-            Nome:
-            <br />
-            RG:
-        </div>
-    </div>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 50px;">
+        <tr>
+            <td style="width: 45%; text-align: left; padding: 0 10px; vertical-align: top;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                Nome:
+                <br />
+                RG:
+            </td>
+
+            <td style="width: 10%;"></td>
+
+            <td style="width: 45%; text-align: left; padding: 0 10px; vertical-align: top;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                Nome:
+                <br />
+                RG:
+            </td>
+        </tr>
+    </table>
 
 </body>
 
