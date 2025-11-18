@@ -21,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import static java.util.Map.entry;
 
 @RestController
 @RequestMapping("/documentos")
@@ -30,7 +31,8 @@ public class ContratoController {
     private final PessoaService pessoaService;
     private final PdfGeneratorService pdfGeneratorService;
 
-    public ContratoController(PdfGeneratorService pdfGeneratorService, VagaService vagaService, PessoaService pessoaService) {
+    public ContratoController(PdfGeneratorService pdfGeneratorService, VagaService vagaService,
+            PessoaService pessoaService) {
         this.pdfGeneratorService = pdfGeneratorService;
         this.vagaService = vagaService;
         this.pessoaService = pessoaService;
@@ -41,40 +43,38 @@ public class ContratoController {
 
         VagaDTO vagaDTO = vagaService.obterVagaPorId(vagaId);
         PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(vagaDTO.getPessoaId());
-        
+
         Map<String, Object> data = new HashMap<>();
-        
+
         Map<String, String> empregado = Map.of(
-            "nome", pessoaDTO.getNome(),
-            "estadoCivil", pessoaDTO.getEstadoCivil(),
-            "rg", pessoaDTO.getNumeroRg(),
-            "cpf", pessoaDTO.getCpf(),
-            "ctps", pessoaDTO.getNumeroCtps(),
-            "ctpsSerie", pessoaDTO.getSerieCtps(),
-            "endereco", pessoaDTO.getEndereco(),
-            "cidade", pessoaDTO.getCidade(),
-            "uf", pessoaDTO.getEstado()
-        );
-        
+                "nome", pessoaDTO.getNome(),
+                "estadoCivil", pessoaDTO.getEstadoCivil(),
+                "rg", pessoaDTO.getNumeroRg(),
+                "cpf", pessoaDTO.getCpf(),
+                "ctps", pessoaDTO.getNumeroCtps(),
+                "ctpsSerie", pessoaDTO.getSerieCtps(),
+                "endereco", pessoaDTO.getEndereco(),
+                "cidade", pessoaDTO.getCidade(),
+                "uf", pessoaDTO.getEstado());
+
         Map<String, Object> contrato = Map.of(
-            "funcao", vagaDTO.getCargo(),
-            "salario", vagaDTO.getSalario(),
-            "cidadeTrabalho", vagaDTO.getCidade(),
-            "dataInicio", vagaDTO.getDataAdmissao(),
-            "dataFim", vagaDTO.getDataDemissao(),
-            "horarioEntrada", vagaDTO.getHorarioEntrada(),
-            "horarioSaida", vagaDTO.getHorarioSaida()
-        );
+                "funcao", vagaDTO.getCargo(),
+                "salario", vagaDTO.getSalario(),
+                "cidadeTrabalho", vagaDTO.getCidade(),
+                "dataInicio", vagaDTO.getDataAdmissao(),
+                "dataFim", vagaDTO.getDataDemissao(),
+                "horarioEntrada", vagaDTO.getHorarioEntrada(),
+                "horarioSaida", vagaDTO.getHorarioSaida());
 
         data.put("empregado", empregado);
         data.put("contrato", contrato);
         data.put("dataAtualExtenso", obterDataPorExtenso());
-        
+
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("contrato", data);
-        
+
         HttpHeaders headers = new HttpHeaders();
         String nomeArquivo = "contrato_" + Math.random() + ".pdf";
-        
+
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + nomeArquivo);
@@ -91,31 +91,29 @@ public class ContratoController {
         PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(vagaDTO.getPessoaId());
 
         Map<String, Object> data = new HashMap<>();
-        
+
         Map<String, String> cliente = Map.of(
-            "nome", vagaDTO.getCliente()
-        );
-        
+                "nome", vagaDTO.getCliente());
+
         Map<String, Object> funcionario = Map.of(
-            "nome", pessoaDTO.getNome(),
-            "cpf", pessoaDTO.getCpf(),
-            "endereço", pessoaDTO.getEndereco(),
-            "bairro", pessoaDTO.getBairro(),
-            "cidade", pessoaDTO.getCidade(),
-            "uf", pessoaDTO.getEstado(),
-            "cep", pessoaDTO.getCep(),
-            "telefone", pessoaDTO.getTelefone()
-        );
+                "nome", pessoaDTO.getNome(),
+                "cpf", pessoaDTO.getCpf(),
+                "endereço", pessoaDTO.getEndereco(),
+                "bairro", pessoaDTO.getBairro(),
+                "cidade", pessoaDTO.getCidade(),
+                "uf", pessoaDTO.getEstado(),
+                "cep", pessoaDTO.getCep(),
+                "telefone", pessoaDTO.getTelefone());
 
         data.put("cliente", cliente);
         data.put("funcionario", funcionario);
         data.put("dataAtual", obterDataPorExtenso());
-        
+
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("vt", data);
-        
+
         HttpHeaders headers = new HttpHeaders();
         String nomeArquivo = "contrato_" + Math.random() + ".pdf";
-        
+
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + nomeArquivo);
@@ -130,42 +128,94 @@ public class ContratoController {
 
         VagaDTO vagaDTO = vagaService.obterVagaPorId(vagaId);
         PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(vagaDTO.getPessoaId());
-        
+
         Map<String, Object> data = new HashMap<>();
-        
+
         Map<String, String> empregado = Map.of(
-            "nome", pessoaDTO.getNome(),
-            "estadoCivil", pessoaDTO.getEstadoCivil(),
-            "rg", pessoaDTO.getNumeroRg(),
-            "cpf", pessoaDTO.getCpf(),
-            "ctps", pessoaDTO.getNumeroCtps(),
-            "ctpsSerie", pessoaDTO.getSerieCtps(),
-            "endereco", pessoaDTO.getEndereco(),
-            "cidade", pessoaDTO.getCidade(),
-            "uf", pessoaDTO.getEstado(),
-            "pix", pessoaDTO.getChavePix()
-        );
-        
+                "nome", pessoaDTO.getNome(),
+                "estadoCivil", pessoaDTO.getEstadoCivil(),
+                "rg", pessoaDTO.getNumeroRg(),
+                "cpf", pessoaDTO.getCpf(),
+                "ctps", pessoaDTO.getNumeroCtps(),
+                "ctpsSerie", pessoaDTO.getSerieCtps(),
+                "endereco", pessoaDTO.getEndereco(),
+                "cidade", pessoaDTO.getCidade(),
+                "uf", pessoaDTO.getEstado(),
+                "pix", pessoaDTO.getChavePix());
+
         Map<String, Object> contrato = Map.of(
-            "funcao", vagaDTO.getCargo(),
-            "salario", vagaDTO.getSalario(),
-            "salarioExtenso", converterParaValorExtenso(vagaDTO.getSalario()),
-            "cidadeTrabalho", vagaDTO.getCidade(),
-            "dataInicio", vagaDTO.getDataAdmissao(),
-            "dataFim", vagaDTO.getDataDemissao(),
-            "horarioEntrada", vagaDTO.getHorarioEntrada(),
-            "horarioSaida", vagaDTO.getHorarioSaida()
-        );
+                "funcao", vagaDTO.getCargo(),
+                "salario", vagaDTO.getSalario(),
+                "salarioExtenso", converterParaValorExtenso(vagaDTO.getSalario()),
+                "cidadeTrabalho", vagaDTO.getCidade(),
+                "dataInicio", vagaDTO.getDataAdmissao(),
+                "dataFim", vagaDTO.getDataDemissao(),
+                "horarioEntrada", vagaDTO.getHorarioEntrada(),
+                "horarioSaida", vagaDTO.getHorarioSaida());
 
         data.put("empregado", empregado);
         data.put("contrato", contrato);
         data.put("dataAtualExtenso", obterDataPorExtenso());
-        
+
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("contrato_ps", data);
-        
+
         HttpHeaders headers = new HttpHeaders();
         String nomeArquivo = "contrato_" + Math.random() + ".pdf";
-        
+
+        headers.setContentLength(pdfBytes.length);
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + nomeArquivo);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
+    @GetMapping("/termo_materiais/{vagaId}")
+    public ResponseEntity<byte[]> downloadTermoMateriaisPdf(@PathVariable Long vagaId) {
+
+        VagaDTO vagaDTO = vagaService.obterVagaPorId(vagaId);
+        PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(vagaDTO.getPessoaId());
+
+        Map<String, Object> data = new HashMap<>();
+
+        Map<String, String> empregado = Map.ofEntries(
+                entry("nome", pessoaDTO.getNome()),
+                entry("estadoCivil", pessoaDTO.getEstadoCivil()),
+                entry("rg", pessoaDTO.getNumeroRg()),
+                entry("cpf", pessoaDTO.getCpf()),
+                entry("ctps", pessoaDTO.getNumeroCtps()),
+                entry("ctpsSerie", pessoaDTO.getSerieCtps()),
+                entry("endereco", pessoaDTO.getEndereco()),
+                entry("bairro", pessoaDTO.getBairro()),
+                entry("cidade", pessoaDTO.getCidade()),
+                entry("uf", pessoaDTO.getEstado()),
+                entry("pix", pessoaDTO.getChavePix()),
+                entry("cep", pessoaDTO.getCep()),
+                entry("telefone", pessoaDTO.getTelefone()) // 13º par
+        );
+
+        Map<String, Object> contrato = Map.of(
+                "cliente", vagaDTO.getCliente(),
+                "funcao", vagaDTO.getCargo(),
+                "salario", vagaDTO.getSalario(),
+                "salarioExtenso", converterParaValorExtenso(vagaDTO.getSalario()),
+                "cidadeTrabalho", vagaDTO.getCidade(),
+                "estadoTrabalho", vagaDTO.getUf(),
+                "dataInicio", vagaDTO.getDataAdmissao(),
+                "dataFim", vagaDTO.getDataDemissao(),
+                "horarioEntrada", vagaDTO.getHorarioEntrada(),
+                "horarioSaida", vagaDTO.getHorarioSaida());
+
+        data.put("empregado", empregado);
+        data.put("contrato", contrato);
+        data.put("dataAtualExtenso", obterDataPorExtenso());
+
+        byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("termo_materiais", data);
+
+        HttpHeaders headers = new HttpHeaders();
+        String nomeArquivo = "contrato_" + Math.random() + ".pdf";
+
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + nomeArquivo);
@@ -179,14 +229,13 @@ public class ContratoController {
         LocalDate hoje = LocalDate.now();
 
         DateTimeFormatter formatador = DateTimeFormatter.ofPattern(
-            "d 'de' MMMM 'de' yyyy", 
-            new Locale.Builder().setLanguage("pt").setRegion("BR").build()
-        );
+                "d 'de' MMMM 'de' yyyy",
+                new Locale.Builder().setLanguage("pt").setRegion("BR").build());
 
         return hoje.format(formatador);
     }
 
-    public String converterParaValorExtenso (BigDecimal valor) {
+    public String converterParaValorExtenso(BigDecimal valor) {
         ULocale locale = new ULocale("pt_BR");
 
         RuleBasedNumberFormat rbnf = new RuleBasedNumberFormat(locale, RuleBasedNumberFormat.SPELLOUT);

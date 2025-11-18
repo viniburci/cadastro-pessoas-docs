@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Termo de Responsabilidade e Uso de Materiais</title>
+    <style>
+        /* Define o formato A4 e margens */
+        @page {
+            size: A4;
+            margin: 2cm;
+            /* Remover a linha e a numeração do cabeçalho */
+            @top-center {
+                content: "";
+            }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            text-align: justify;
+        }
+
+        h1 {
+            font-size: 14pt;
+            text-align: center;
+            margin-bottom: 20px;
+            text-decoration: underline;
+        }
+
+        .clausula {
+            margin-bottom: 15px;
+            text-indent: -15px;
+            padding-left: 15px;
+        }
+
+        /* Estilo para tabelas de Dados e Materiais */
+        .dados-tabela,
+        .materiais-tabela {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            margin-bottom: 25px;
+        }
+
+        .dados-tabela td,
+        .materiais-tabela th,
+        .materiais-tabela td {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: left;
+            vertical-align: top;
+            font-size: 10pt;
+        }
+
+        .materiais-tabela th {
+            text-align: center;
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+
+        /* Estilo para as Assinaturas */
+        .assinatura-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 80px;
+            flex-wrap: nowrap;
+        }
+
+        .bloco-assinatura {
+            width: 45%;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .linha-assinatura {
+            display: block;
+            border-bottom: 1px solid black;
+            margin-bottom: 5px;
+        }
+
+        .espaco-vazio {
+            width: 10%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>TERMO DE RESPONSABILIDADE E USO DE MATERIAIS</h1>
+
+    <div style="margin-bottom: 30px;">
+        Pelo presente termo a EMPRESA e o COLABORADOR abaixo identificado, simplesmente denominados como **"EMPRESA"** e **"USUÁRIO"**, de comum acordo, ajustam o que segue:
+    </div>
+
+    <h2>1. QUALIFICAÇÃO DAS PARTES</h2>
+    <table class="dados-tabela">
+        <tr>
+            <td colspan="4"><strong>Empresa:</strong> DOBAN PRESTADORA DE SERVIÇOS LTDA.</td>
+            <td><strong>CNPJ:</strong> 23.292.453/0001-34</td>
+        </tr>
+        <tr>
+            <td colspan="2"><strong>Cliente:</strong> <span th:text="${contrato.cliente}">CLIENTE</span> </td>
+            <td><strong>Cidade/UF:</strong> Maringá - PR</td>
+            <td colspan="2"><strong>CEP:</strong> 87014-210 </td>
+        </tr>
+        <tr>
+            <td colspan="4"><strong>Nome Colaborador:</strong> <span th:text="${empregado.nome}">NOME</span> </td>
+            <td><strong>CPF:</strong> <span th:text="${empregado.cpf}">CPF</span> </td>
+        </tr>
+        <tr>
+            <td colspan="3"><strong>Endereço:</strong> <span th:text="${empregado.endereco}">ENDERECO</span> </td>
+            <td colspan="2"><strong>Bairro:</strong> <span th:text="${empregado.bairro}">BAIRRO</span> </td>
+        </tr>
+        <tr>
+            <td><strong>Cidade:</strong> <span th:text="${empregado.cidade}">CIDADE</span> </td>
+            <td><strong>UF:</strong> <span th:text="${empregado.uf}">ESTADO</span></td>
+            <td><strong>CEP:</strong> <span th:text="${empregado.cep}">CEP</span> </td>
+            <td colspan="2"><strong>Telefones de Contato:</strong> <span th:text="${empregado.telefone}">TELEFONE</span> </td>
+        </tr>
+    </table>
+
+
+    <h2>2. DISPOSIÇÕES GERAIS</h2>
+    <div class="clausula">
+        <strong>I -</strong> O(a) Usuário(a) declara nesta data que recebe da EMPRESA os materiais abaixo relacionados. O(s) referido(s) instrumento(s) entregue(s) está(ão) vinculado(s) ao Contrato de Trabalho firmado entre a EMPRESA e o(a) USUÁRIO(a).
+    </div>
+
+    <div class="clausula">
+        <strong>II -</strong> Ainda, é de conhecimento do(a) USUÁRIO(a) que o material / equipamento fornecido é necessário para o desempenho de suas atribuições.
+    </div>
+
+    <div class="clausula">
+        <strong>III -</strong> O(a) Usuário(a) declara expressamente que recebeu o(s) referido(s) instrumento(s), em prefeito estado de conservação e funcionamento e provido de todos os seus acessórios, assim como todas, as orientações de manuseio, utilização e conservação.
+    </div>
+
+    <div class="clausula">
+        <strong>IV -</strong> O(a) Usuário(a) tem o dever e obrigação de zelo, guarda e conservação do bem, o qual não poderá ser cedido, onerado, gravado ou alienado, sob qualquer forma ou título.
+    </div>
+
+    <div class="clausula">
+        <strong>V -</strong> Por este instrumento de posse aqui descrito, conforme cadastro no patrimônio da EMPRESA, o(a) USUÁRIO(A) declara que é responsável pelo uso do mesmo, assumindo o compromisso de utilizá-lo exclusivamente para assuntos de interesse da EMPRESA ou que tenham relação com as atividades laborais, **não sendo cabível seu uso para fins pessoais**.
+    </div>
+
+    <div class="clausula">
+        <strong>VI -</strong> A manutenção técnica será realizada pela empresa interveniente, sendo que o(s) USUÁRIO(A) não poderá promover qualquer modificação no equipamento ou alterar / instalar quaisquer dispositivos ou programas, sem prévia autorização por escrito, sendo que deverá comunicar imediatamente a EMPRESA quaisquer defeito ou problemas eventualmente verificados no bem.
+    </div>
+
+    <div class="clausula">
+        <strong>VII -</strong> O(a) Usuário(a) se compromete a devolver o(s) instrumento(s) descrito(s), assim que a EMPRESA o requisitar por escrito, desde que respeitado a notificação prévia de **24 (vinte e quatro) horas** de antecedência. A devolução do bem deverá observar as mesmas condições em que foi entregue, ressalvado o normal desgaste pelo uso.
+    </div>
+
+    <div class="clausula">
+        <strong>VIII -</strong> A EMPRESA deverá ser devidamente ressarcida de eventual sinistro que porventura possa ocorrer com o(s) presente(s) equipamento(s), bem como da falta de devolução quando da rescisão contratual, desde que constatado a **culpa por parte do(a) USUÁRIO(A)**, nos termos do artigo 468 da CLT.
+    </div>
+
+    <div class="clausula">
+        <strong>IX -</strong> Este documento tem por objetivo adequar à relação de trabalho mantida entre a EMPRESA e o(a) USUÁRIO(a), sendo mantida as demais cláusulas contratuais do Contrato de Trabalho.
+    </div>
+
+    <div class="clausula">
+        <strong>X -</strong> As presentes cláusulas passarão a integrar o Contrato de Trabalho do(a) USUÁRIO(a), vez que a presente alteração atende ao mandamento previsto no artigo 468 da CLT vigente.
+    </div>
+
+    <h2>3. MATERIAIS RECEBIDOS</h2>
+    <table class="materiais-tabela">
+        <thead>
+            <tr>
+                <th>QTDE</th>
+                <th>MARCA</th>
+                <th>DESCRIÇÃO</th>
+                <th>Nº SÉRIE / IMEI</th>
+                <th>DDD</th>
+                <th>VALOR</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align: center;">1</td>
+                <td style="text-align: center;">MOTOROLA</td>
+                <td>E-13</td>
+                <td style="text-align: center;">355569152633595/603</td>
+                <td style="text-align: center;">44</td>
+                <td style="text-align: right;">R$ 1.250,00</td>
+            </tr>
+            <tr>
+                <td style="text-align: center;">1</td>
+                <td style="text-align: center;">MOTOROLA</td>
+                <td>CARREGADOR + CABO USB</td>
+                <td style="text-align: center;">-</td>
+                <td style="text-align: center;">-</td>
+                <td style="text-align: right;">R$ 250,00</td>
+            </tr>
+            <tr>
+                <td style="text-align: center;">1</td>
+                <td style="text-align: center;">VIVO</td>
+                <td>CHIP</td>
+                <td style="text-align: center;">99116-6356</td>
+                <td style="text-align: center;">44</td>
+                <td style="text-align: right;">R$ 25,00</td>
+            </tr>
+            <tr>
+                <td style="text-align: center;">1</td>
+                <td style="text-align: center;">BAOFENG</td>
+                <td>BF-777 S</td>
+                <td style="text-align: center;">-</td>
+                <td style="text-align: center;">-</td>
+                <td style="text-align: right;">R$ 200,00</td>
+            </tr>
+            <tr>
+                <td colspan="5" style="text-align: right; font-weight: bold;">VALOR TOTAL ESTIMADO:</td>
+                <td style="text-align: right; font-weight: bold;">R$ 1.725,00</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p style="text-align: center; margin-top: 30px;">
+        Maringá - PR, <strong>25 de agosto de 2025</strong>.
+    </p>
+
+    <div class="assinatura-container">
+        <div class="bloco-assinatura">
+            <span class="linha-assinatura"></span>
+            DOBAN PRESTADORA DE SERVIÇOS LTDA.
+            <br />
+            (EMPRESA)
+        </div>
+
+        <div class="espaco-vazio"></div>
+
+        <div class="bloco-assinatura">
+            <span class="linha-assinatura"></span>
+            ANDRE HENRIQUE ROGALESKI SILVA
+            <br />
+            (USUÁRIO)
+        </div>
+    </div>
+
+</body>
+
+</html>
