@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Contrato de Prestação de Serviços</title>
+    <style>
+        /* Define o formato A4 e margens */
+        @page {
+            size: A4;
+            margin: 2cm;
+            /* Remover a linha e a numeração do cabeçalho */
+            @top-center {
+                content: "";
+            }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+        }
+
+        h1 {
+            font-size: 14pt;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .clausula {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        /* Estilo para as Assinaturas */
+        .assinatura-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 120px;
+            flex-wrap: nowrap;
+        }
+
+        .bloco-assinatura {
+            width: 45%;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .linha-assinatura {
+            display: block;
+            border-bottom: 1px solid black;
+            margin-bottom: 5px;
+        }
+
+        .espaco-vazio {
+            width: 10%;
+        }
+
+        .assinatura-testemunhas {
+            margin-top: 80px;
+        }
+
+        /* Títulos de Seção */
+        .titulo-secao {
+            font-weight: bold;
+            font-size: 12pt;
+            text-align: center;
+            margin: 30px 0 10px 0;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>CONTRATO DE PRESTAÇÃO DE SERVIÇOS</h1>
+
+    <div class="clausula">
+        Pelo presente Contrato de Prestação de Serviços ("Contrato"), as Partes têm entre si, justo e acertado este Contrato que será regulado pelas cláusulas e condições abaixo estabelecidas:
+    </div>
+
+    <div class="clausula">
+        <strong>CONTRATANTE:</strong> <strong>DOBAN PRESTADORA DE SERVIÇOS LTDA.</strong>, pessoa jurídica de direito privado, inscrita no CNPJ/MF 23.292.453/0001-34, com sede na Rua Joaquim Murtinho, nº 60, Zona 04, CEP 87014-210, Maringá, Estado do Paraná, doravante denominada CONTRATANTE, neste ato representada por DOUGLAS BRASIL DE ANDRADE, Brasileiro, Solteiro, inscrito no CPF: 511.149.251-87.
+    </div>
+
+    <div class="clausula">
+        <strong>CONTRATADO(A):</strong> <strong th:text="${empregado.nome}">NOME</strong>, Brasileiro(a), Solteiro(a), portador(a) do RG: <span th:text="${empregado.rg}">RG</span>, CPF: <span th:text="${empregado.cpf}">CPF</span>, CTPS: <span th:text="${empregado.ctps}">CTPS</span>, Série: <span th:text="${empregado.ctpsSerie}">SERIE CTPS</span>, residente e domiciliado à <span th:text="${empregado.endereco}">ENDEREÇO</span>, cidade de <span th:text="${empregado.cidade}">CIDADE</span> - <span th:text="${empregado.uf}">ESTADO</span>, doravante designado <strong>CONTRATADO(A)</strong>.
+    </div>
+
+
+    <div class="clausula">
+        CONTRATANTE e CONTRATADO(A) em conjunto como <strong>Partes</strong> e, individualmente, como <strong>Parte</strong>.
+    </div>
+
+    <p class="titulo-secao">OBJETO</p>
+
+    <div class="clausula">
+        <strong>1.</strong> O presente Contrato tem como objeto os Serviços de <strong th:text="${contrato.funcao}">FUNÇAO</strong>, que compõe além de todas as rotinas do cargo, os serviços de Orientação Técnica ao Cliente (OTC), Vistoria Técnica Ambiental (VTA), e entregas de relatórios.
+    </div>
+
+    <div class="clausula">
+        <strong>2.</strong> A execução do serviço, ou seja, a empreitada será de responsabilidade do(a) CONTRATADO(A), que declara estar devidamente habilitado(a) para realização de todas as atividades decorrentes desta atribuição, ao qual se reportará ao nosso Responsável Técnico de campo e o nosso Diretor Operacional.
+    </div>
+
+    <div class="clausula">
+        <strong>3.</strong> O trabalho será executado de Segunda-feira a Sábado, sendo que, de Segunda-feira à Sexta-feira, o horário será das 08:00 às 17:30, com 01h30 de intervalo, e de sábado será das 08:00 às 12:00.
+    </div>
+
+    <p class="titulo-secao">FORMA DE EXECUÇÃO DOS SERVIÇOS E PAGAMENTO</p>
+
+    <div class="clausula">
+        <strong>3.</strong> O(A) CONTRATADO(A) deverá desempenhar as atividades necessárias para a execução dos serviços, conforme item 1, executar o cumprimento de metas de 280 (OTC) mês e 350 (VTA) mês.
+    </div>
+
+    <div class="clausula">
+        <strong>4.</strong> O(A) CONTRATANTE deverá pagar ao Contratado(a), o valor de R$ <strong th:text="${contrato.salario}">SALARIO</strong> (<strong th:text="${contrato.salarioExtenso}">SALARIO EXTENSO</strong> reais), por 30 (trinta) dias trabalhados. Fica ajustado que o pagamento pelos dias trabalhados serão feitos por meio de chave PIX: <strong th:text="${empregado.pix}">PIX</strong>, fornecida pelo próprio Contratado, todo dia 07 do mês subsequente ao trabalhado.
+        <br />
+        <br />
+        <strong>a.</strong> Na hipótese de atraso do pagamento por culpa exclusiva do(a) CONTRATANTE, haverá incidência de multa de 2% (dois por cento) sobre o valor devido, além de juros de 1% (um por cento) ao mês, e correção monetária até a data do efetivo pagamento.
+        <br />
+        <strong>b.</strong> Na hipótese de atraso no cumprimento do prazo de entrega das etapas do serviço a serem executados, será postergado a data dos pagamentos na mesma proporção de dias de atraso da entrega dos serviços contratados.
+    </div>
+
+    <p class="titulo-secao">OBRIGAÇÕES E RESPONSABILIDADES DO(A) CONTRATADO(A)</p>
+
+    <div class="clausula">
+        <strong>5.</strong> O(A) CONTRATADO(A) compromete-se:
+        <br />
+        <br />
+        <strong>a.</strong> executar fielmente os serviços sempre dentro da boa técnica e dos padrões usuais, bem como respeitar as normas, as especificações técnicas, as condições de segurança aplicáveis em trabalhos deste gênero, toda a legislação aplicável à espécie, seja federal, estadual ou municipal, bem como todas as determinações e resoluções dos órgãos competentes da Administração Pública e demais entidades de fiscalização.
+        <br />
+        <strong>b.</strong> as atividades serão realizadas pelo(a) CONTRATADO(A) de forma autônoma, responsabilizando-se, desde já, por eventuais processos judiciais ou administrativos propostos e relacionados ao Contrato, assumindo expressamente em juízo esta condição, sendo passível de indenização o(a) CONTRATANTE por eventuais ônus, despesas, honorários, condenações e/ou penalidades advindas da inobservância deste Contrato pelo(a) CONTRATADO(A), acompanhada da apuração dos danos diretos e/ou indiretos.
+        <br />
+        <strong>c.</strong> fornecer as notas fiscais/recibos referentes aos pagamentos efetuados pelo(a) CONTRATANTE, podendo, também, ser aceito o comprovante de deposito em conta como comprovante de pagamento ao Contratado.
+        <br />
+        <strong>d.</strong> o(a) CONTRATADO(A) é o responsável pela execução dos serviços, devendo cumprir com todas as obrigações, tributos incidentes e a regularidade fiscal sobre a presente atividade. Ademais, compromete-se a manter-se devidamente uniformizado(a) e com identificação e todos os EPIs obrigatórios que serão fornecidos pela contratante.
+        <br />
+        <strong>e.</strong> o(a) CONTRATADO(A) não se responsabiliza por atrasos decorrentes do(a) CONTRATANTE, sendo de sua obrigação executar o seu trabalho de acordo com o projeto apresentado.
+        <br />
+        <strong>f.</strong> fornecer, a qualquer tempo, no prazo máximo de 03 (três) dias úteis, a partir do recebimento da solicitação por escrito do(a) CONTRATANTE, os esclarecimentos e as informações técnicas que lhe venham a ser solicitadas sobre os serviços executados.
+    </div>
+
+    <p class="titulo-secao">OBRIGAÇÕES E RESPONSABILIDADES DO(A) CONTRATANTE</p>
+
+    <div class="clausula">
+        <strong>6.</strong> O(A) CONTRATANTE compromete-se:
+        <br />
+        <br />
+        <strong>a.</strong> prestar ao(à) CONTRATADO(A), com clareza e precisão, as informações porventura solicitadas e inerentes ao cumprimento do objeto do Contrato.
+        <br />
+        <strong>b.</strong> comunicar ao (à) CONTRATADO(A), por escrito, a ocorrência de qualquer falha ou mau funcionamento, especificando o tipo de defeito, fornecendo todos os dados e informações necessárias ao seu saneamento, devendo o(a) CONTRATADO(A) promover a correção no prazo máximo de 01 (um) dia útil.
+        <br />
+        <strong>c.</strong> efetuar os pagamentos devidos ao(à) CONTRATADO(A) na forma e nas datas ajustadas.
+    </div>
+
+    <p class="titulo-secao">VIGÊNCIA</p>
+
+    <div class="clausula">
+        <strong>7.</strong> A vigência do Contrato é firmada por tempo determinado, iniciando em <strong th:text="${contrato.dataInicio}">DATA INICIO</strong> até <strong th:text="${contrato.dataFim}">DATA FIM</strong>, ou o atingimento da totalidade dos serviços, o que ocorrer primeiro, a contar da assinatura deste, e poderá ser renovado, desde que exista concordância expressa por ambas as Partes.
+    </div>
+
+    <p class="titulo-secao">CESSÃO E TRANSFERÊNCIA</p>
+
+    <div class="clausula">
+        <strong>8.</strong> Nenhuma das Partes poderá ceder ou transferir a terceiros, no todo ou em parte, os direitos e obrigações oriundos do presente Contrato salvo com a prévia anuência, por escrito, da outra Parte. Será nula a cessão efetuada em desacordo com esta cláusula, não produzindo efeitos quanto à outra Parte.
+    </div>
+
+    <p class="titulo-secao">HIPÓTESES DE DESCUMPRIMENTO E RESCISÃO DO CONTRATO</p>
+
+    <div class="clausula">
+        <strong>9.</strong> A qualquer momento, poderão as Partes de comum acordo rescindir este Contrato, mediante aviso prévio de <strong>30 (trinta) dias</strong> por escrito, sendo que não incidirão quaisquer ônus, encargos ou penalidades, ressalvado o cumprimento das obrigações contratuais ainda pendentes.
+    </div>
+
+    <div class="clausula">
+        <strong>10.</strong> Na hipótese de rescisão em função do descumprimento de qualquer uma das cláusulas presentes neste Contrato, seja por qualquer uma das Partes, após a concessão do prazo de 03 (três) dias úteis para a resolução da infração, não havendo êxito será aplicado à parte infratora o pagamento de multa correspondente a percentual de <strong>10% (dez por cento)</strong> do valor total deste Contrato, sem prejuízo de indenização ou reparação por eventuais perdas e danos.
+    </div>
+
+    <div class="clausula">
+        <strong>11.</strong> Não constituem causa de rescisão contratual o não cumprimento das obrigações assumidas em decorrência de fatos que independem da vontade das Partes, ocasionados por caso fortuito ou força maior, devidamente comprovados, desde que nos termos contratados as atividades sejam retomadas no prazo de 15 (quinze) dias, em consonância com a vontade das Partes. Caso o prazo mencionado seja superado não havendo mais interesse em manter a contratação o presente Contrato poderá então ser rescindido por qualquer das Partes.
+    </div>
+
+    <p class="titulo-secao">DISPOSIÇÕES GERAIS</p>
+
+    <div class="clausula">
+        <strong>12.</strong> Não se estabelece entre as Partes, por força deste Contrato, qualquer forma de sociedade, associação, mandato, representação, agência, consórcio ou responsabilidade solidária para quaisquer fins.
+    </div>
+
+    <div class="clausula">
+        <strong>13.</strong> O(A) CONTRATADO(A) assumirá integral responsabilidade pela execução dos serviços contratados, bem como responderá perante o CONTRATANTE e a terceiros, por eventuais perdas e danos a que der causa em razão da qualidade dos serviços e dos atos praticados na sua execução, quer por si, quer por sua equipe de profissionais disponibilizada, direta ou indiretamente nesta execução.
+    </div>
+
+    <div class="clausula">
+        <strong>14.</strong> Pelo fiel cumprimento do presente Contrato, obrigam-se as Partes e seus sucessores.
+    </div>
+
+    <div class="clausula">
+        <strong>15.</strong> Lei Geral de Proteção de Dados (“LGPD”) dispões ainda que quaisquer dados de terceiros e / ou informações pessoais que possam ser obtidas ou utilizadas por qualquer das partes em decorrência do presente Contrato (“Dados”) serão recolhidos, utilizados, armazenados e mantidos de acordo com os padrões geralmente aceitos para coleta de dados, pela legislação aplicável, qual seja a Lei 13.709/2018.
+    </div>
+
+    <div class="clausula">
+        <strong>16.</strong> Todas as comunicações e notificações decorrentes deste Contrato serão realizadas entre as Partes por qualquer meio escrito.
+    </div>
+
+    <div class="clausula">
+        <strong>17.</strong> Elegem as Partes o Foro da comarca de Maringá - PR para conhecer e dirimir quaisquer dúvidas ou discussões oriundas deste Contrato, com renúncia a qualquer outro, por mais especial e privilegiado que seja.
+    </div>
+
+    <p class="clausula" style="text-align: center;">
+        E assim, estando as Partes de comum acordo quanto ao contratado, dando-o por justo e acertado, assinam o presente Contrato em 02 (duas) vias de igual teor, na presença de (02) duas testemunhas, a fim de se produzir todos os efeitos legais de direito.
+    </p>
+
+    <p style="text-align: center; margin-top: 30px;">
+        Maringá - PR, <strong th:text="${dataAtualExtenso}">DATA EXTENSO</strong>.
+    </p>
+
+    <br />
+    <table style="width: 100%; border-collapse: collapse; margin-top: 50px;">
+        <tr>
+            <td style="width: 45%; text-align: center; padding: 0 10px; vertical-align: top;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                DOBAN PRESTADORA DE SERVIÇOS LTDA.
+                <br />
+                (CONTRATANTE)
+            </td>
+
+            <td style="width: 10%;"></td>
+
+            <td style="width: 45%; text-align: center; padding: 0 10px; vertical-align: top;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                <span th:text="${empregado.nome}">NOME</span>
+                <br />
+                (CONTRATADO)
+            </td>
+        </tr>
+    </table>
+
+    <p class="assinatura-testemunhas">Testemunhas:</p>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 50px;">
+        <tr>
+            <td style="width: 45%; text-align: left; padding: 0 10px; vertical-align: top;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                Nome:
+                <br />
+                RG:
+            </td>
+
+            <td style="width: 10%;"></td>
+
+            <td style="width: 45%; text-align: left; padding: 0 10px; vertical-align: top;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                Nome:
+                <br />
+                RG:
+            </td>
+        </tr>
+    </table>
+
+</body>
+
+</html>

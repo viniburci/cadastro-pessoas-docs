@@ -4,6 +4,9 @@ import com.doban.cadastro_pessoas_docs.pessoa.PessoaDTO;
 import com.doban.cadastro_pessoas_docs.pessoa.PessoaService;
 import com.doban.cadastro_pessoas_docs.vaga.VagaDTO;
 import com.doban.cadastro_pessoas_docs.vaga.VagaService;
+import com.ibm.icu.text.RuleBasedNumberFormat;
+import com.ibm.icu.util.ULocale;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -121,6 +125,56 @@ public class ContratoController {
                 .body(pdfBytes);
     }
 
+    @GetMapping("/contrato_ps/{vagaId}")
+    public ResponseEntity<byte[]> downloadContratoPsPdf(@PathVariable Long vagaId) {
+
+        VagaDTO vagaDTO = vagaService.obterVagaPorId(vagaId);
+        PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(vagaDTO.getPessoaId());
+        
+        Map<String, Object> data = new HashMap<>();
+        
+        Map<String, String> empregado = Map.of(
+            "nome", pessoaDTO.getNome(),
+            "estadoCivil", pessoaDTO.getEstadoCivil(),
+            "rg", pessoaDTO.getNumeroRg(),
+            "cpf", pessoaDTO.getCpf(),
+            "ctps", pessoaDTO.getNumeroCtps(),
+            "ctpsSerie", pessoaDTO.getSerieCtps(),
+            "endereco", pessoaDTO.getEndereco(),
+            "cidade", pessoaDTO.getCidade(),
+            "uf", pessoaDTO.getEstado(),
+            "pix", pessoaDTO.getChavePix()
+        );
+        
+        Map<String, Object> contrato = Map.of(
+            "funcao", vagaDTO.getCargo(),
+            "salario", vagaDTO.getSalario(),
+            "salarioExtenso", converterParaValorExtenso(vagaDTO.getSalario()),
+            "cidadeTrabalho", vagaDTO.getCidade(),
+            "dataInicio", vagaDTO.getDataAdmissao(),
+            "dataFim", vagaDTO.getDataDemissao(),
+            "horarioEntrada", vagaDTO.getHorarioEntrada(),
+            "horarioSaida", vagaDTO.getHorarioSaida()
+        );
+
+        data.put("empregado", empregado);
+        data.put("contrato", contrato);
+        data.put("dataAtualExtenso", obterDataPorExtenso());
+        
+        byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("contrato_ps", data);
+        
+        HttpHeaders headers = new HttpHeaders();
+        String nomeArquivo = "contrato_" + Math.random() + ".pdf";
+        
+        headers.setContentLength(pdfBytes.length);
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + nomeArquivo);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
     public static String obterDataPorExtenso() {
         LocalDate hoje = LocalDate.now();
 
@@ -130,5 +184,15 @@ public class ContratoController {
         );
 
         return hoje.format(formatador);
+    }
+
+    public String converterParaValorExtenso (BigDecimal valor) {
+        ULocale locale = new ULocale("pt_BR");
+
+        RuleBasedNumberFormat rbnf = new RuleBasedNumberFormat(locale, RuleBasedNumberFormat.SPELLOUT);
+
+        String extenso = rbnf.format(valor);
+
+        return extenso;
     }
 }
