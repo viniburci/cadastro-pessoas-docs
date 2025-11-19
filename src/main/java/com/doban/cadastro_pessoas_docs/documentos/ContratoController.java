@@ -192,7 +192,7 @@ public class ContratoController {
                 entry("uf", pessoaDTO.getEstado()),
                 entry("pix", pessoaDTO.getChavePix()),
                 entry("cep", pessoaDTO.getCep()),
-                entry("telefone", pessoaDTO.getTelefone()) // 13º par
+                entry("telefone", pessoaDTO.getTelefone())
         );
 
         Map<String, Object> contrato = Map.of(

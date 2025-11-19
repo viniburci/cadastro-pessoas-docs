@@ -92,7 +92,7 @@
     <h1>TERMO DE RESPONSABILIDADE E USO DE MATERIAIS</h1>
 
     <div style="margin-bottom: 30px;">
-        Pelo presente termo a EMPRESA e o COLABORADOR abaixo identificado, simplesmente denominados como **"EMPRESA"** e **"USUÁRIO"**, de comum acordo, ajustam o que segue:
+        Pelo presente termo a EMPRESA e o COLABORADOR abaixo identificado, simplesmente denominados como <strong>EMPRESA</strong> e <strong>USUÁRIO</strong>, de comum acordo, ajustam o que segue:
     </div>
 
     <h2>1. QUALIFICAÇÃO DAS PARTES</h2>
@@ -220,23 +220,26 @@
         Maringá - PR, <strong>25 de agosto de 2025</strong>.
     </p>
 
-    <div class="assinatura-container">
-        <div class="bloco-assinatura">
-            <span class="linha-assinatura"></span>
-            DOBAN PRESTADORA DE SERVIÇOS LTDA.
-            <br />
-            (EMPRESA)
-        </div>
+    <br />
+    <br />
+    <br />    
+    <br />
 
-        <div class="espaco-vazio"></div>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 50px;">
+        <tr>
+            <td style="width: 45%; text-align: center; padding: 0 10px; vertical-align: top;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                DOBAN PRESTADORA DE SERVIÇOS LTDA.
+            </td>
 
-        <div class="bloco-assinatura">
-            <span class="linha-assinatura"></span>
-            ANDRE HENRIQUE ROGALESKI SILVA
-            <br />
-            (USUÁRIO)
-        </div>
-    </div>
+            <td style="width: 10%;"></td>
+
+            <td style="width: 45%; text-align: center; padding: 0 10px; vertical-align: top;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                <span th:text="${empregado.nome}">NOME</span>
+            </td>
+        </tr>
+    </table>
 
 </body>
 
