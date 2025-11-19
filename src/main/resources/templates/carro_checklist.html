@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Check List de Vistoria de Veículo</title>
+    <style>
+        /* Define o formato A4 e margens */
+        @page {
+            size: A4;
+            margin: 1.5cm; 
+            @top-center {
+                content: "";
+            }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10pt; 
+            line-height: 1.2; 
+            text-align: justify;
+        }
+
+        h1 {
+            font-size: 12pt; 
+            text-align: center;
+            margin-bottom: 10px; 
+            text-decoration: underline;
+        }
+
+        h2 {
+            font-size: 11pt; 
+            margin-top: 10px; /* Redução */
+            margin-bottom: 5px;
+        }
+
+        /* Estilo para tabelas de Dados */
+        .dados-tabela {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px; /* Redução */
+            margin-bottom: 10px; /* Redução */
+        }
+
+        .dados-tabela td {
+            border: 1px solid black;
+            padding: 3px; 
+            text-align: left;
+            vertical-align: top;
+            font-size: 10pt; 
+        }
+        
+        /* Estilo para a Checklist - 3 Colunas */
+        .checklist-tabela {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px; /* Redução */
+        }
+        
+        .checklist-tabela th {
+            border: 1px solid black;
+            padding: 3px; 
+            text-align: center;
+            background-color: #f0f0f0;
+            font-weight: bold;
+            font-size: 10pt;
+        }
+
+        .checklist-tabela td {
+            width: 33.33%;
+            border: 1px solid black;
+            padding: 3px 5px; 
+            vertical-align: top;
+            font-size: 10pt;
+        }
+        
+        /* Novo estilo para a tabela de alinhamento interno (dentro de cada TD da checklist) */
+        .alinhamento-interno {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0px; /* Redução máxima do espaçamento entre grupos */
+        }
+        .alinhamento-interno tr {
+             page-break-inside: avoid;
+        }
+        .alinhamento-interno td {
+            border: none !important;
+            padding: 0; 
+            font-size: 10pt;
+            line-height: 1.1; 
+        }
+        /* Larguras fixas para alinhamento */
+        .texto-item {
+            width: 85%; 
+            text-align: left;
+        }
+        .checkbox-item {
+            width: 15%; 
+            text-align: right; 
+            padding-right: 2px;
+        }
+
+        /* Desenha o quadrado usando borda CSS, garantindo renderização em PDF */
+        .checkbox-after {
+            display: inline-block;
+            width: 8px; 
+            height: 8px;
+            border: 1px solid black;
+            vertical-align: middle;
+        }
+        
+        /* Estilo para as Assinaturas */
+        .assinatura-container {
+            width: 100%;
+            margin-top: 30px; /* Redução */
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>CHECK LIST DE VISTORIA DE VEÍCULO</h1>
+
+    <h2>1. DADOS DO CONDUTOR</h2>
+    <table class="dados-tabela">
+        <tr>
+            <td colspan="3"><strong>Nome Completo:</strong> <strong th:text="${empregado.nome}">NOME</strong> </td>
+            <td colspan="2"><strong>Regional:</strong> <strong th:text="${empregado.cidade}">CIDADE</strong> </td>
+        </tr>
+        <tr>
+            <td><strong>RG:</strong> <strong th:text="${empregado.rg}">RG</strong> </td>
+            <td><strong>CPF:</strong> <strong th:text="${empregado.cpf}">CPF</strong> </td>
+            <td colspan="3"><strong>Telefone:</strong> <strong th:text="${empregado.telefone}">TELEFONE</strong></td>
+        </tr>
+    </table>
+
+    <h2>2. DADOS DO VEÍCULO</h2>
+    <table class="dados-tabela">
+        <tr>
+            <td style="width: 15%;"><strong>Cor: </strong> <strong th:text="${carro.cor}">COR</strong> </td>
+            <td style="width: 40%;"><strong>Chassi:</strong> <strong th:text="${carro.chassi}">NOME</strong> </td>
+            <td style="width: 45%;" colspan="3"><strong>Marca:</strong> <strong th:text="${carro.marca}">MARCA</strong> </td>
+        </tr>
+        <tr>
+            <td><strong>Ano:</strong> <strong th:text="${carro.ano}">ANO</strong> </td>
+            <td><strong>Placa:</strong> <strong th:text="${carro.placa}">PLACA</strong> </td>
+            <td colspan="3"><strong>Modelo:</strong> <strong th:text="${carro.modelo}">MODELO</strong> </td>
+        </tr>
+    </table>
+
+    <h2>3. CHECK LIST DE CONDIÇÕES</h2>
+    
+    <table class="checklist-tabela">
+        <thead>
+            <tr>
+                <th>AVARIAS DA CARROCERIA</th>
+                <th>VIDROS / RETROVISORES</th>
+                <th>AVARIAS INTERNAS E GERAIS</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <p><strong>LADO DIANTEIRO ESQUERDO</strong></p>
+                    <table class="alinhamento-interno">
+                        <tr><td class="texto-item">Riscado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Amassado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                    </table>
+                    
+                    <p><strong>LADO DIANTEIRO DIREITO</strong></p>
+                    <table class="alinhamento-interno">
+                        <tr><td class="texto-item">Riscado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Amassado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                    </table>
+
+                    <p><strong>LADO TRASEIRO ESQUERDO</strong></p>
+                    <table class="alinhamento-interno">
+                        <tr><td class="texto-item">Riscado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Amassado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                    </table>
+
+                    <p><strong>LADO TRASEIRO DIREITO</strong></p>
+                    <table class="alinhamento-interno">
+                        <tr><td class="texto-item">Riscado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Amassado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                    </table>
+                </td>
+                
+                <td>
+                    <p><strong>VIDRO DIANTEIRO ESQUERDO</strong></p>
+                    <table class="alinhamento-interno">
+                        <tr><td class="texto-item">Quebrado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Trincado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                    </table>
+
+                    <p><strong>VIDRO DIANTEIRO DIREITO</strong></p>
+                    <table class="alinhamento-interno">
+                        <tr><td class="texto-item">Quebrado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Trincado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                    </table>
+
+                    <p><strong>VIDRO TRASEIRO ESQUERDO</strong></p>
+                    <table class="alinhamento-interno">
+                        <tr><td class="texto-item">Quebrado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Trincado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                    </table>
+
+                    <p><strong>VIDRO TRASEIRO DIREITO</strong></p>
+                    <table class="alinhamento-interno">
+                        <tr><td class="texto-item">Quebrado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Trincado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                    </table>
+                </td>
+
+                <td>
+                    <p><strong>PARTE INTERNA</strong></p>
+                    <table class="alinhamento-interno">
+                        <tr><td class="texto-item">Falta tapete do condutor</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Falta tapete do passageiro dianteiro</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Falta tapete do passageiro traseiro esquerdo</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Falta tapete do passageiro traseiro direito</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Retrovisor interno danificado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Porta luvas danificado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Marcha danificada</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <p><strong>PORTA DIANTEIRA ESQUERDA</strong></p>
+                    <table class="alinhamento-interno">
+                        <tr><td class="texto-item">Riscado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Amassado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                    </table>
+                    
+                    <p><strong>PORTA DIANTEIRA DIREITA</strong></p>
+                    <table class="alinhamento-interno">
+                        <tr><td class="texto-item">Riscado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Amassado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                    </table>
+
+                    <p><strong>PORTA TRASEIRA ESQUERDA</strong></p>
+                    <table class="alinhamento-interno">
+                        <tr><td class="texto-item">Riscado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Amassado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                    </table>
+
+                    <p><strong>PORTA TRASEIRA DIREITA</strong></p>
+                    <table class="alinhamento-interno">
+                        <tr><td class="texto-item">Riscado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Amassado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                    </table>
+                </td>
+
+                <td>
+                    <p><strong>VIDRO FRENTE (CAPÔ)</strong></p>
+                    <table class="alinhamento-interno">
+                        <tr><td class="texto-item">Quebrado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Trincado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                    </table>
+
+                    <p><strong>VIDRO FUNDO (PORTA MALAS)</strong></p>
+                    <table class="alinhamento-interno">
+                        <tr><td class="texto-item">Quebrado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Trincado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                    </table>
+                    
+                    <p><strong>RETROVISOR ESQUERDO</strong></p>
+                    <table class="alinhamento-interno">
+                        <tr><td class="texto-item">Quebrado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Trincado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                    </table>
+                    
+                    <p><strong>RETROVISOR DIREITO</strong></p>
+                    <table class="alinhamento-interno">
+                        <tr><td class="texto-item">Quebrado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Trincado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                    </table>
+                </td>
+
+                <td>
+                    <p><strong>PARTE EXTERNA</strong></p>
+                    <table class="alinhamento-interno">
+                        <tr><td class="texto-item">Para brisa dianteiro danificado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Para brisa traseiro danificado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                    </table>
+                    
+                    <p><strong>INSULFILM</strong></p>
+                    <table class="alinhamento-interno">
+                        <tr><td class="texto-item">Com insulfilm</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Sem insulfilm</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                    </table>
+
+                    <p><strong>CAPÔ</strong></p>
+                    <table class="alinhamento-interno">
+                        <tr><td class="texto-item">Riscado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Amassado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                    </table>
+                    
+                    <p><strong>PORTA MALAS</strong></p>
+                    <table class="alinhamento-interno">
+                        <tr><td class="texto-item">Riscado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                        <tr><td class="texto-item">Amassado</td><td class="checkbox-item"><span class="checkbox-after"></span></td></tr>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 5px;">
+        <tr>
+            <td style="width: 50%; padding-right: 10px; vertical-align: top;">
+                <img src="carro.jpg" style="width: 300px; max-height: 150px;" alt="Carro" />
+            </td>
+
+            <td style="width: 50%; vertical-align: top; padding-left: 10px;">
+                <h4>Nível de Combustível</h4>
+                <table class="dados-tabela" style="margin-top: 0; margin-bottom: 0;">
+                    <tr>
+                        <td style="width: 20%; text-align: center;"><strong>R</strong> </td>
+                        <td style="width: 20%; text-align: center;"><strong>1/4</strong> </td>
+                        <td style="width: 20%; text-align: center;"><strong>1/2</strong> </td>
+                        <td style="width: 20%; text-align: center;"><strong>3/4</strong></td>
+                        <td style="width: 20%; text-align: center;"><strong>Cheio </strong></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <h2>4. OBSERVAÇÕES E DEMAIS ITENS</h2>
+    <div style="border: 1px solid black; 
+        padding: 5px 15px; 
+        /* 🔽 COMPACTAÇÃO: Altura mínima reduzida para 70px */
+        min-height: 70px; 
+        font-size: 10pt;">
+        <p><strong>Observações:</strong></p>
+        <br/>
+        <p style="text-align: right; font-style: italic; margin-top: 10px;">(Se espaço insuficiente, utilizar o verso)</p>
+        
+        <p style="margin-top: 5px;"><strong>Nível de Combustível (A ser preenchido):</strong> ______________________</p>
+    </div>
+    <br />
+    <br />
+
+    <p style="text-align: center; margin-top: 30px;">
+        MARINGÁ - PR, <strong th:text="${dataAtualExtenso}"></strong>.
+    </p>
+    <br />
+    <br />
+    <br />
+    <br />
+    <table style="width: 100%; border-collapse: collapse; margin-top: 25px;"> <tr>
+            <td style="width: 45%; text-align: center; padding: 0 10px; vertical-align: top;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                Responsável pela Vistoria
+            </td>
+
+            <td style="width: 10%;"></td>
+
+            <td style="width: 45%; text-align: center; padding: 0 10px; vertical-align: top;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                ANDRE HENRIQUE ROGALESKI SILVA - CONDUTOR(A)
+            </td>
+        </tr>
+    </table>
+
+</body>
+
+</html>

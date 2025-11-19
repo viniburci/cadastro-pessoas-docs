@@ -2,6 +2,8 @@ package com.doban.cadastro_pessoas_docs.documentos;
 
 import com.doban.cadastro_pessoas_docs.pessoa.PessoaDTO;
 import com.doban.cadastro_pessoas_docs.pessoa.PessoaService;
+import com.doban.cadastro_pessoas_docs.recurso.recurso_carro.RecursoCarro;
+import com.doban.cadastro_pessoas_docs.recurso.recurso_carro.RecursoCarroService;
 import com.doban.cadastro_pessoas_docs.vaga.VagaDTO;
 import com.doban.cadastro_pessoas_docs.vaga.VagaService;
 import com.ibm.icu.text.RuleBasedNumberFormat;
@@ -29,13 +31,15 @@ public class ContratoController {
 
     private final VagaService vagaService;
     private final PessoaService pessoaService;
+    private final RecursoCarroService recursoCarroService;
     private final PdfGeneratorService pdfGeneratorService;
 
     public ContratoController(PdfGeneratorService pdfGeneratorService, VagaService vagaService,
-            PessoaService pessoaService) {
+            PessoaService pessoaService, RecursoCarroService recursoCarroService) {
         this.pdfGeneratorService = pdfGeneratorService;
         this.vagaService = vagaService;
         this.pessoaService = pessoaService;
+        this.recursoCarroService = recursoCarroService;
     }
 
     @GetMapping("/contrato/{vagaId}")
@@ -266,6 +270,57 @@ public class ContratoController {
         data.put("dataAtualExtenso", obterDataPorExtenso());
 
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("entrega_epi", data);
+
+        HttpHeaders headers = new HttpHeaders();
+        String nomeArquivo = "contrato_" + Math.random() + ".pdf";
+
+        headers.setContentLength(pdfBytes.length);
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + nomeArquivo);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
+    @GetMapping("/carro_checklist/{recursoCarroId}")
+    public ResponseEntity<byte[]> downloadCarroChecklistPdf(@PathVariable Long recursoCarroId) {
+
+        RecursoCarro recursoCarro = recursoCarroService.buscarPorId(recursoCarroId);
+        PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(recursoCarro.getPessoa().getId());
+
+        Map<String, Object> data = new HashMap<>();
+
+        Map<String, String> empregado = Map.ofEntries(
+                entry("nome", pessoaDTO.getNome()),
+                entry("estadoCivil", pessoaDTO.getEstadoCivil()),
+                entry("rg", pessoaDTO.getNumeroRg()),
+                entry("cpf", pessoaDTO.getCpf()),
+                entry("ctps", pessoaDTO.getNumeroCtps()),
+                entry("ctpsSerie", pessoaDTO.getSerieCtps()),
+                entry("endereco", pessoaDTO.getEndereco()),
+                entry("bairro", pessoaDTO.getBairro()),
+                entry("cidade", pessoaDTO.getCidade()),
+                entry("uf", pessoaDTO.getEstado()),
+                entry("pix", pessoaDTO.getChavePix()),
+                entry("cep", pessoaDTO.getCep()),
+                entry("telefone", pessoaDTO.getTelefone())
+        );
+
+        Map<String, String> carro = Map.ofEntries(
+                entry("modelo", recursoCarro.getCarro().getModelo()),
+                entry("cor", recursoCarro.getCarro().getCor()),
+                entry("ano", recursoCarro.getCarro().getAnoModelo()),
+                entry("chassi", recursoCarro.getCarro().getChassi()),
+                entry("placa", recursoCarro.getCarro().getPlaca()),
+                entry("marca", recursoCarro.getCarro().getMarca())
+        );
+
+        data.put("empregado", empregado);
+        data.put("carro", carro);
+        data.put("dataAtualExtenso", obterDataPorExtenso());
+
+        byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("carro_checklist", data);
 
         HttpHeaders headers = new HttpHeaders();
         String nomeArquivo = "contrato_" + Math.random() + ".pdf";
