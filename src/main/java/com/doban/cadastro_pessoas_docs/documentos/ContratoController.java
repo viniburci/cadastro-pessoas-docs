@@ -225,6 +225,60 @@ public class ContratoController {
                 .body(pdfBytes);
     }
 
+    @GetMapping("/entrega_epi/{vagaId}")
+    public ResponseEntity<byte[]> downloadEntregaEpiPdf(@PathVariable Long vagaId) {
+
+        VagaDTO vagaDTO = vagaService.obterVagaPorId(vagaId);
+        PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(vagaDTO.getPessoaId());
+
+        Map<String, Object> data = new HashMap<>();
+
+        Map<String, String> empregado = Map.ofEntries(
+                entry("nome", pessoaDTO.getNome()),
+                entry("estadoCivil", pessoaDTO.getEstadoCivil()),
+                entry("rg", pessoaDTO.getNumeroRg()),
+                entry("cpf", pessoaDTO.getCpf()),
+                entry("ctps", pessoaDTO.getNumeroCtps()),
+                entry("ctpsSerie", pessoaDTO.getSerieCtps()),
+                entry("endereco", pessoaDTO.getEndereco()),
+                entry("bairro", pessoaDTO.getBairro()),
+                entry("cidade", pessoaDTO.getCidade()),
+                entry("uf", pessoaDTO.getEstado()),
+                entry("pix", pessoaDTO.getChavePix()),
+                entry("cep", pessoaDTO.getCep()),
+                entry("telefone", pessoaDTO.getTelefone())
+        );
+
+        Map<String, Object> contrato = Map.of(
+                "cliente", vagaDTO.getCliente(),
+                "funcao", vagaDTO.getCargo(),
+                "salario", vagaDTO.getSalario(),
+                "salarioExtenso", converterParaValorExtenso(vagaDTO.getSalario()),
+                "cidadeTrabalho", vagaDTO.getCidade(),
+                "estadoTrabalho", vagaDTO.getUf(),
+                "dataInicio", vagaDTO.getDataAdmissao(),
+                "dataFim", vagaDTO.getDataDemissao(),
+                "horarioEntrada", vagaDTO.getHorarioEntrada(),
+                "horarioSaida", vagaDTO.getHorarioSaida());
+
+        data.put("empregado", empregado);
+        data.put("contrato", contrato);
+        data.put("dataAtualExtenso", obterDataPorExtenso());
+
+        byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("entrega_epi", data);
+
+        HttpHeaders headers = new HttpHeaders();
+        String nomeArquivo = "contrato_" + Math.random() + ".pdf";
+
+        headers.setContentLength(pdfBytes.length);
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + nomeArquivo);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
     public static String obterDataPorExtenso() {
         LocalDate hoje = LocalDate.now();
 
