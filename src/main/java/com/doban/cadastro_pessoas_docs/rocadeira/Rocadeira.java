@@ -22,4 +22,6 @@ public class Rocadeira {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    private String marca;
+    private String NumeroSerie;
 }
