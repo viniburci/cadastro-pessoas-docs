@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.doban.cadastro_pessoas_docs.recurso.DevolucaoDTO;
+
 @RestController
 @RequestMapping("/recursos/rocadeiras")
 @CrossOrigin(origins = "http://localhost:4200")
@@ -41,7 +43,7 @@ public class RecursoRocadeiraController {
     }
 
     @PostMapping(path = "/{id}/devolucao")
-    public ResponseEntity<RecursoRocadeiraResponseDTO> registrarDevolucao(@PathVariable Long id, RecursoRocadeiraRequestDTO dto) {
+    public ResponseEntity<RecursoRocadeiraResponseDTO> registrarDevolucao(@PathVariable Long id, DevolucaoDTO dto) {
         return ResponseEntity.ok().body(service.registrarDevolucao(id, dto));
     }
     

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.doban.cadastro_pessoas_docs.pessoa.Pessoa;
 import com.doban.cadastro_pessoas_docs.pessoa.PessoaRepository;
+import com.doban.cadastro_pessoas_docs.recurso.DevolucaoDTO;
 import com.doban.cadastro_pessoas_docs.rocadeira.Rocadeira;
 import com.doban.cadastro_pessoas_docs.rocadeira.RocadeiraRepository;
 
@@ -77,7 +78,7 @@ public class RecursoRocadeiraService {
                 .collect(Collectors.toList());
     }
 
-    public RecursoRocadeiraResponseDTO registrarDevolucao(Long id, RecursoRocadeiraRequestDTO dto) {
+    public RecursoRocadeiraResponseDTO registrarDevolucao(Long id, DevolucaoDTO dto) {
         RecursoRocadeira recurso = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Recurso não encontrado com id: " + id));
         recurso.setDataDevolucao(dto.getDataDevolucao());
