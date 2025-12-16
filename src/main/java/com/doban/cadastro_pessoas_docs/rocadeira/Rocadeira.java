@@ -23,5 +23,5 @@ public class Rocadeira {
     private Long id;
     
     private String marca;
-    private String NumeroSerie;
+    private String numeroSerie;
 }
