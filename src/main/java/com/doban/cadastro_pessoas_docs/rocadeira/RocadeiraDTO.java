@@ -18,7 +18,7 @@ public class RocadeiraDTO {
         this.NumeroSerie = numeroSerie;
     }
 
-    public RocadeiraDTO(RocadeiraDTO rocadeira) {
+    public RocadeiraDTO(Rocadeira rocadeira) {
         this.marca = rocadeira.getMarca();
         this.NumeroSerie = rocadeira.getNumeroSerie();
     }
