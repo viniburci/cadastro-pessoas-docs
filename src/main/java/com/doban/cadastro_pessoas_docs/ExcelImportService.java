@@ -36,15 +36,15 @@ import com.doban.cadastro_pessoas_docs.domain.celular.CelularRepository;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.Pessoa;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaExcelDTO;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaRepository;
+import com.doban.cadastro_pessoas_docs.domain.vaga.AtestadoSaudeOcupacional;
+import com.doban.cadastro_pessoas_docs.domain.vaga.TipoAcrescimoSubstituicao;
+import com.doban.cadastro_pessoas_docs.domain.vaga.TipoContratante;
+import com.doban.cadastro_pessoas_docs.domain.vaga.TipoContrato;
+import com.doban.cadastro_pessoas_docs.domain.vaga.Vaga;
+import com.doban.cadastro_pessoas_docs.domain.vaga.VagaDTO;
+import com.doban.cadastro_pessoas_docs.domain.vaga.VagaRepository;
 import com.doban.cadastro_pessoas_docs.recurso.recurso_carro.RecursoCarro;
 import com.doban.cadastro_pessoas_docs.recurso.recurso_celular.RecursoCelular;
-import com.doban.cadastro_pessoas_docs.vaga.AtestadoSaudeOcupacional;
-import com.doban.cadastro_pessoas_docs.vaga.TipoAcrescimoSubstituicao;
-import com.doban.cadastro_pessoas_docs.vaga.TipoContratante;
-import com.doban.cadastro_pessoas_docs.vaga.TipoContrato;
-import com.doban.cadastro_pessoas_docs.vaga.Vaga;
-import com.doban.cadastro_pessoas_docs.vaga.VagaDTO;
-import com.doban.cadastro_pessoas_docs.vaga.VagaRepository;
 
 import jakarta.transaction.Transactional;
 

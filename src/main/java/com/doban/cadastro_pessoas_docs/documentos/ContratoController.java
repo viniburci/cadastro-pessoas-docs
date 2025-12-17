@@ -2,10 +2,10 @@ package com.doban.cadastro_pessoas_docs.documentos;
 
 import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaDTO;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaService;
+import com.doban.cadastro_pessoas_docs.domain.vaga.VagaDTO;
+import com.doban.cadastro_pessoas_docs.domain.vaga.VagaService;
 import com.doban.cadastro_pessoas_docs.recurso.recurso_carro.RecursoCarro;
 import com.doban.cadastro_pessoas_docs.recurso.recurso_carro.RecursoCarroService;
-import com.doban.cadastro_pessoas_docs.vaga.VagaDTO;
-import com.doban.cadastro_pessoas_docs.vaga.VagaService;
 import com.ibm.icu.text.RuleBasedNumberFormat;
 import com.ibm.icu.util.ULocale;
 

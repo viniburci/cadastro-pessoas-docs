@@ -1,4 +1,4 @@
-package com.doban.cadastro_pessoas_docs.vaga;
+package com.doban.cadastro_pessoas_docs.domain.vaga;
 
 import java.util.List;
 

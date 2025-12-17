@@ -3,7 +3,7 @@ package com.doban.cadastro_pessoas_docs;
 import com.doban.cadastro_pessoas_docs.domain.carro.CarroDTO;
 import com.doban.cadastro_pessoas_docs.domain.celular.CelularDTO;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaExcelDTO;
-import com.doban.cadastro_pessoas_docs.vaga.VagaDTO;
+import com.doban.cadastro_pessoas_docs.domain.vaga.VagaDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

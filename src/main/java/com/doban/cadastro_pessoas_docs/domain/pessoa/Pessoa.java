@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.doban.cadastro_pessoas_docs.domain.vaga.Vaga;
 import com.doban.cadastro_pessoas_docs.recurso.Recurso;
-import com.doban.cadastro_pessoas_docs.vaga.Vaga;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
