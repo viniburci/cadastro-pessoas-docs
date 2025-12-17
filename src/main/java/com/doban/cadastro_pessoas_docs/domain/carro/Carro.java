@@ -1,5 +1,4 @@
-package com.doban.cadastro_pessoas_docs.celular;
-
+package com.doban.cadastro_pessoas_docs.domain.carro;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,12 +10,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "celulares")
+@Table(name = "carros")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Celular {
+public class Carro {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +23,8 @@ public class Celular {
 
     private String marca;
     private String modelo;
-    private String chip;
-    private String imei;
+    private String cor;
+    private String chassi;
+    private String placa;
+    private String anoModelo;
 }
-

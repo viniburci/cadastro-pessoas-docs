@@ -1,4 +1,4 @@
-package com.doban.cadastro_pessoas_docs.rocadeira;
+package com.doban.cadastro_pessoas_docs.domain.rocadeira;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

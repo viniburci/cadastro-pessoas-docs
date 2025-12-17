@@ -1,6 +1,6 @@
 package com.doban.cadastro_pessoas_docs.recurso.recurso_celular;
 
-import com.doban.cadastro_pessoas_docs.celular.Celular;
+import com.doban.cadastro_pessoas_docs.domain.celular.Celular;
 import com.doban.cadastro_pessoas_docs.recurso.Recurso;
 
 import jakarta.persistence.*;

@@ -6,11 +6,11 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.doban.cadastro_pessoas_docs.pessoa.Pessoa;
-import com.doban.cadastro_pessoas_docs.pessoa.PessoaRepository;
+import com.doban.cadastro_pessoas_docs.domain.pessoa.Pessoa;
+import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaRepository;
+import com.doban.cadastro_pessoas_docs.domain.rocadeira.Rocadeira;
+import com.doban.cadastro_pessoas_docs.domain.rocadeira.RocadeiraRepository;
 import com.doban.cadastro_pessoas_docs.recurso.DevolucaoDTO;
-import com.doban.cadastro_pessoas_docs.rocadeira.Rocadeira;
-import com.doban.cadastro_pessoas_docs.rocadeira.RocadeiraRepository;
 
 @Service
 public class RecursoRocadeiraService {

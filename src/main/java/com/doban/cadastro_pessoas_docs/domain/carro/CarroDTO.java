@@ -1,4 +1,4 @@
-package com.doban.cadastro_pessoas_docs.carro;
+package com.doban.cadastro_pessoas_docs.domain.carro;
 
 import lombok.Builder;
 import lombok.Data;

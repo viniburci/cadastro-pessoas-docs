@@ -1,4 +1,4 @@
-package com.doban.cadastro_pessoas_docs.celular;
+package com.doban.cadastro_pessoas_docs.domain.celular;
 
 import lombok.Builder;
 import lombok.Data;

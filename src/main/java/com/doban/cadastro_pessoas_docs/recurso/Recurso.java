@@ -2,10 +2,9 @@ package com.doban.cadastro_pessoas_docs.recurso;
 
 import java.time.LocalDate;
 
+import com.doban.cadastro_pessoas_docs.domain.pessoa.Pessoa;
+
 import jakarta.persistence.InheritanceType;
-
-import com.doban.cadastro_pessoas_docs.pessoa.Pessoa;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;

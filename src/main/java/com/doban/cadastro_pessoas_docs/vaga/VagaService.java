@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import com.doban.cadastro_pessoas_docs.pessoa.Pessoa;
-import com.doban.cadastro_pessoas_docs.pessoa.PessoaService;
+import com.doban.cadastro_pessoas_docs.domain.pessoa.Pessoa;
+import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaService;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;

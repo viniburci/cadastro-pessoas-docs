@@ -1,7 +1,7 @@
 package com.doban.cadastro_pessoas_docs.documentos;
 
-import com.doban.cadastro_pessoas_docs.pessoa.PessoaDTO;
-import com.doban.cadastro_pessoas_docs.pessoa.PessoaService;
+import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaDTO;
+import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaService;
 import com.doban.cadastro_pessoas_docs.recurso.recurso_carro.RecursoCarro;
 import com.doban.cadastro_pessoas_docs.recurso.recurso_carro.RecursoCarroService;
 import com.doban.cadastro_pessoas_docs.vaga.VagaDTO;

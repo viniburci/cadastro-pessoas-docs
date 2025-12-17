@@ -1,19 +1,19 @@
-package com.doban.cadastro_pessoas_docs.pessoa;
-
-import java.time.LocalDate;
+package com.doban.cadastro_pessoas_docs.domain.pessoa;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDate;
+
 @Data
 @Builder
 @AllArgsConstructor
-public class PessoaDTO {
+public class PessoaExcelDTO {
+
     private Long id;
     private String nome;
     private String endereco;
-    private String complemento;
     private String bairro;
     private String cidade;
     private String estado;
@@ -43,14 +43,13 @@ public class PessoaDTO {
 
     private String chavePix;
 
-    public PessoaDTO() {
+    // ++++++++++++++++++CONSTRUTORES++++++++++++++++++
+    public PessoaExcelDTO() {
     }
 
-    public PessoaDTO(Pessoa pessoa) {
-        this.id = pessoa.getId();
+    public PessoaExcelDTO(Pessoa pessoa) {
         this.nome = pessoa.getNome();
         this.endereco = pessoa.getEndereco();
-        this.complemento = pessoa.getComplemento();
         this.bairro = pessoa.getBairro();
         this.cidade = pessoa.getCidade();
         this.estado = pessoa.getEstado();
@@ -81,12 +80,8 @@ public class PessoaDTO {
 
     public Pessoa toEntity() {
         Pessoa pessoa = new Pessoa();
-        if (this.id != null) {
-            pessoa.setId(this.id);
-        }
         pessoa.setNome(this.nome);
         pessoa.setEndereco(this.endereco);
-        pessoa.setComplemento(this.complemento);
         pessoa.setBairro(this.bairro);
         pessoa.setCidade(this.cidade);
         pessoa.setEstado(this.estado);
@@ -115,37 +110,5 @@ public class PessoaDTO {
         pessoa.setChavePix(this.chavePix);
 
         return pessoa;
-    }
-
-    public void atualizarEntidade(Pessoa pessoa) {
-        pessoa.setNome(this.nome);
-        pessoa.setEndereco(this.endereco);
-        pessoa.setComplemento(this.complemento);
-        pessoa.setBairro(this.bairro);
-        pessoa.setCidade(this.cidade);
-        pessoa.setEstado(this.estado);
-        pessoa.setCep(this.cep);
-        pessoa.setTelefone(this.telefone);
-        pessoa.setEmail(this.email);
-        pessoa.setNumeroCtps(this.numeroCtps);
-        pessoa.setSerieCtps(this.serieCtps);
-        pessoa.setDataEmissaoCtps(this.dataEmissaoCtps);
-        pessoa.setNumeroRg(this.numeroRg);
-        pessoa.setDataEmissaoRg(this.dataEmissaoRg);
-        pessoa.setUfRg(this.ufRg);
-        pessoa.setCpf(this.cpf);
-        pessoa.setPis(this.pis);
-        pessoa.setDataEmissaoPis(this.dataEmissaoPis);
-        pessoa.setTituloEleitor(this.tituloEleitor);
-        pessoa.setDataNascimento(this.dataNascimento);
-        pessoa.setLocalNascimento(this.localNascimento);
-        pessoa.setMae(this.mae);
-        pessoa.setPai(this.pai);
-        pessoa.setEstadoCivil(this.estadoCivil);
-        pessoa.setNumeroCnh(this.numeroCnh);
-        pessoa.setRegistroCnh(this.registroCnh);
-        pessoa.setCategoriaCnh(this.categoriaCnh);
-        pessoa.setValidadeCnh(this.validadeCnh);
-        pessoa.setChavePix(this.chavePix);
     }
 }

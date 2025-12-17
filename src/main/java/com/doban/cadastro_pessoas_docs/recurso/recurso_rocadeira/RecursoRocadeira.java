@@ -1,7 +1,7 @@
 package com.doban.cadastro_pessoas_docs.recurso.recurso_rocadeira;
 
+import com.doban.cadastro_pessoas_docs.domain.rocadeira.Rocadeira;
 import com.doban.cadastro_pessoas_docs.recurso.Recurso;
-import com.doban.cadastro_pessoas_docs.rocadeira.Rocadeira;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

@@ -1,4 +1,4 @@
-package com.doban.cadastro_pessoas_docs.pessoa;
+package com.doban.cadastro_pessoas_docs.domain.pessoa;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

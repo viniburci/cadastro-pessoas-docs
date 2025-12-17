@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.doban.cadastro_pessoas_docs.celular.Celular;
-import com.doban.cadastro_pessoas_docs.celular.CelularRepository;
-import com.doban.cadastro_pessoas_docs.pessoa.Pessoa;
-import com.doban.cadastro_pessoas_docs.pessoa.PessoaRepository;
+import com.doban.cadastro_pessoas_docs.domain.celular.Celular;
+import com.doban.cadastro_pessoas_docs.domain.celular.CelularRepository;
+import com.doban.cadastro_pessoas_docs.domain.pessoa.Pessoa;
+import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaRepository;
 import com.doban.cadastro_pessoas_docs.recurso.DevolucaoDTO;
 
 import lombok.RequiredArgsConstructor;

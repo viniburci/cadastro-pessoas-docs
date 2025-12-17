@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.doban.cadastro_pessoas_docs.carro.Carro;
-import com.doban.cadastro_pessoas_docs.carro.CarroRepository;
-import com.doban.cadastro_pessoas_docs.pessoa.Pessoa;
-import com.doban.cadastro_pessoas_docs.pessoa.PessoaRepository;
+import com.doban.cadastro_pessoas_docs.domain.carro.Carro;
+import com.doban.cadastro_pessoas_docs.domain.carro.CarroRepository;
+import com.doban.cadastro_pessoas_docs.domain.pessoa.Pessoa;
+import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaRepository;
 import com.doban.cadastro_pessoas_docs.recurso.DevolucaoDTO;
 
 @Service

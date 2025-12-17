@@ -1,4 +1,4 @@
-package com.doban.cadastro_pessoas_docs.carro;
+package com.doban.cadastro_pessoas_docs.domain.carro;
 
 import java.util.Optional;
 

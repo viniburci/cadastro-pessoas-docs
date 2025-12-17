@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import com.doban.cadastro_pessoas_docs.pessoa.Pessoa;
+import com.doban.cadastro_pessoas_docs.domain.pessoa.Pessoa;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
