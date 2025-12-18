@@ -49,8 +49,7 @@ public class RecursoRocadeiraService {
         recursoRocadeira.setDataEntrega(requestDTO.getDataEntrega());
         recursoRocadeira.setDataDevolucao(requestDTO.getDataDevolucao());
 
-        RecursoRocadeira recursoSalvo = repository.save(recursoRocadeira);
-        return new RecursoRocadeiraResponseDTO(recursoSalvo);
+        return new RecursoRocadeiraResponseDTO(repository.save(recursoRocadeira));
     }
 
     public RecursoRocadeiraResponseDTO atualizar(Long id, RecursoRocadeiraRequestDTO requestDTO) {
