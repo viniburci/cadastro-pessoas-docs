@@ -26,7 +26,7 @@ public class RocadeiraController {
     @Autowired
     private RocadeiraService service;
 
-    @GetMapping("/numeroSerie/{numeroSerie}")
+    @GetMapping("/numero_serie/{numeroSerie}")
     public ResponseEntity<RocadeiraResponseDTO> obterPorNumeroSerie (@PathVariable String numeroSerie) {
         RocadeiraResponseDTO responseDTO = service.getRocadeiraByNumeroSerie(numeroSerie);
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
