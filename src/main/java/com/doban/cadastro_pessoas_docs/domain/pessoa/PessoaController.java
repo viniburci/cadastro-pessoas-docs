@@ -33,6 +33,22 @@ public class PessoaController {
                 : ResponseEntity.ok(pessoas);
     }
 
+    @GetMapping("/ativas")
+    public ResponseEntity<List<PessoaDTO>> buscarPessoasAtivas() {
+        List<PessoaDTO> pessoas = pessoaService.buscarPessoasAtivas();
+        return pessoas.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(pessoas);
+    }
+
+    @GetMapping("/inativas")
+    public ResponseEntity<List<PessoaDTO>> buscarPessoasInativas() {
+        List<PessoaDTO> pessoas = pessoaService.buscarPessoasInativas();
+        return pessoas.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(pessoas);
+    }
+
     @GetMapping("/{pessoaId}")
     public ResponseEntity<PessoaDTO> buscarPessoa(@PathVariable Long pessoaId) {
         return ResponseEntity.ok(pessoaService.buscarPessoaPorId(pessoaId));

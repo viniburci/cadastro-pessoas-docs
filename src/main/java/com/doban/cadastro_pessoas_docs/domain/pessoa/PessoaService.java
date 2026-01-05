@@ -1,5 +1,6 @@
 package com.doban.cadastro_pessoas_docs.domain.pessoa;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -58,5 +59,24 @@ public class PessoaService {
 
     public void deletarPessoa(Long id) {
         pessoaRepository.deleteById(id);
+    }
+
+    public List<PessoaDTO> buscarPessoasAtivas() {
+        LocalDate hoje = LocalDate.now();
+        return pessoaRepository.findAll().stream()
+                .filter(pessoa -> pessoa.getVagas().stream()
+                        .anyMatch(vaga -> vaga.getDataDemissao() == null || vaga.getDataDemissao().isAfter(hoje)))
+                .map(PessoaDTO::new)
+                .toList();
+    }
+
+    public List<PessoaDTO> buscarPessoasInativas() {
+        LocalDate hoje = LocalDate.now();
+        return pessoaRepository.findAll().stream()
+                .filter(pessoa -> pessoa.getVagas().isEmpty() ||
+                        pessoa.getVagas().stream()
+                                .allMatch(vaga -> vaga.getDataDemissao() != null && !vaga.getDataDemissao().isAfter(hoje)))
+                .map(PessoaDTO::new)
+                .toList();
     }
 }
