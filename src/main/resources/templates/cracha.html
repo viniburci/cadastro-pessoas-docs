@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
+    <title>Crachá</title>
     <style>
         @page {
             size: 10cm 15cm;
@@ -17,61 +18,70 @@
         .cracha {
             width: 10cm;
             height: 15cm;
-            border: 2px solid #000;
-            position: relative;
+            border: 2px solid black;
+            padding: 15px;
+            box-sizing: border-box;
             page-break-after: always;
+            page-break-inside: avoid;
         }
 
-        .cracha-frente {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
+        .cracha:last-child {
+            page-break-after: auto;
         }
 
         .header {
-            background-color: #f0f0f0;
-            padding: 10px;
             text-align: center;
-            border-bottom: 2px solid #000;
+            border-bottom: 2px solid black;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
         }
 
-        .logo {
-            max-width: 200px;
-            max-height: 60px;
-            margin: 0 auto;
+        .header h2 {
+            margin: 5px 0;
+            font-size: 16px;
         }
 
-        .foto-container {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+        .header h3 {
+            margin: 5px 0;
+            font-size: 14px;
         }
 
         .foto {
-            max-width: 6cm;
-            max-height: 8cm;
+            width: 150px;
+            height: 180px;
             border: 2px solid #333;
+            margin: 10px auto;
+            display: block;
+            object-fit: cover;
         }
 
-        .info-nome {
-            background-color: #fff;
-            padding: 10px;
+        .sem-foto {
+            width: 150px;
+            height: 180px;
+            border: 2px dashed #999;
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0f0f0;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .info {
             text-align: center;
+            margin: 8px 0;
+            font-size: 13px;
+        }
+
+        .info p {
+            margin: 5px 0;
+            font-size: 11px;
+        }
+
+        .nome {
             font-weight: bold;
             font-size: 16px;
-            border-top: 2px solid #000;
-            border-bottom: 2px solid #000;
-        }
-
-        .info-funcao {
-            background-color: #fff;
-            padding: 8px;
-            text-align: center;
-            font-size: 14px;
-            border-bottom: 2px solid #000;
         }
 
         .footer {
@@ -79,115 +89,58 @@
             color: white;
             padding: 8px;
             text-align: center;
+            margin-top: 15px;
             font-size: 12px;
             font-weight: bold;
         }
 
-        /* Verso do crachá */
-        .cracha-verso {
-            width: 100%;
-            height: 100%;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .verso-header {
-            text-align: center;
-            font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #000;
-        }
-
-        .verso-info {
-            font-size: 11px;
-            line-height: 1.6;
-        }
-
-        .verso-info p {
-            margin: 8px 0;
-        }
-
-        .verso-destaque {
+        .aviso {
             background-color: #ffe6e6;
-            padding: 10px;
-            margin: 15px 0;
-            border: 2px solid #cc0000;
+            border: 2px solid red;
+            padding: 8px;
+            margin-top: 15px;
             text-align: center;
             font-weight: bold;
-            font-size: 12px;
-        }
-
-        .verso-contato {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 2px solid #000;
-            text-align: center;
             font-size: 11px;
-        }
-
-        .contrato-info {
-            font-size: 10px;
-            margin: 5px 0;
         }
     </style>
 </head>
 <body>
-    <!-- FRENTE DO CRACHÁ -->
+    <!-- Frente do Crachá -->
     <div class="cracha">
-        <div class="cracha-frente">
-            <div class="header">
-                <img th:src="@{/logo.jpg}" alt="DOBAN SERVIÇOS" class="logo"/>
-            </div>
-
-            <div class="foto-container">
-                <img th:if="${pessoa.fotoBase64}" th:src="${'data:image/jpeg;base64,' + pessoa.fotoBase64}" alt="Foto" class="foto"/>
-                <div th:unless="${pessoa.fotoBase64}" style="width: 6cm; height: 8cm; border: 2px solid #333; display: flex; align-items: center; justify-content: center; background-color: #f0f0f0;">
-                    <span style="color: #999;">SEM FOTO</span>
-                </div>
-            </div>
-
-            <div class="info-nome">
-                <span th:text="${pessoa.nome}">NOME DA PESSOA</span>
-            </div>
-
-            <div class="info-funcao">
-                <span th:text="${contrato.funcao}">TÉCNICO AMBIENTAL</span>
-            </div>
-
-            <div class="footer">
-                A SERVIÇO DA SANEPAR
-            </div>
+        <div class="header">
+            <h2>DOBAN SERVIÇOS</h2>
         </div>
+
+        <img th:if="${fotoPath}" th:src="${fotoPath}" alt="Foto" class="foto"/>
+        <div th:unless="${fotoPath}" class="sem-foto">FOTO 3x4</div>
+
+        <div class="info nome" th:text="${pessoa.nome}">NOME</div>
+        <div class="info" th:text="${contrato.funcao}">FUNÇÃO</div>
+        <div class="info">CPF: <span th:text="${pessoa.cpf}">000.000.000-00</span></div>
+
+        <div class="footer">A SERVIÇO DA SANEPAR</div>
     </div>
 
-    <!-- VERSO DO CRACHÁ -->
+    <!-- Verso do Crachá -->
     <div class="cracha">
-        <div class="cracha-verso">
-            <div class="verso-header">
-                Cartão pessoal e instransferível.<br/>
-                Em caso de perda:
-            </div>
-
-            <div class="verso-info">
-                <p><strong>Doban Prestadora de Serviços Ltda.</strong></p>
-                <p>R. Joaquim Murtinho, n. 60 - Zona 7, Maringá - PR - CEP 87.014-210</p>
-                <p>(44) 3024-9757 / (44) 99148-7555</p>
-                <p>
-                    <a th:href="'mailto:' + ${contato.email}" th:text="${contato.email}" style="color: #005fa3; text-decoration: none;">dobanmaringa@gmail.com</a>
-                </p>
-
-                <div style="margin-top: 15px;">
-                    <p class="contrato-info"><strong>Nome:</strong> <span th:text="${pessoa.nome}">NOME</span></p>
-                    <p class="contrato-info"><strong>Contrato:</strong> <span th:text="${contrato.numero}">25/08/2025</span></p>
-                    <p class="contrato-info"><strong>CPF:</strong> <span th:text="${pessoa.cpf}">000.000.000-00</span></p>
-                </div>
-            </div>
-
-            <div class="verso-destaque">
-                É OBRIGATÓRIO O USO DESTE EM SERVIÇO.
-            </div>
+        <div class="header">
+            <h3>Cartão Pessoal e Intransferível</h3>
+        </div>
+        <div class="info">
+            <p><strong>Doban Prestadora de Serviços Ltda.</strong></p>
+            <p>R. Joaquim Murtinho, n. 60 - Zona 7</p>
+            <p>Maringá - PR - CEP 87.014-210</p>
+            <p>(44) 3024-9757 / (44) 99148-7555</p>
+            <p th:text="${contato.email}">email</p>
+        </div>
+        <div class="info" style="margin-top: 20px;">
+            <p><strong>Nome:</strong> <span th:text="${pessoa.nome}">NOME</span></p>
+            <p><strong>Contrato:</strong> <span th:text="${contrato.numero}">DATA</span></p>
+            <p><strong>CPF:</strong> <span th:text="${pessoa.cpf}">CPF</span></p>
+        </div>
+        <div class="aviso">
+            É OBRIGATÓRIO O USO DESTE EM SERVIÇO.
         </div>
     </div>
 </body>

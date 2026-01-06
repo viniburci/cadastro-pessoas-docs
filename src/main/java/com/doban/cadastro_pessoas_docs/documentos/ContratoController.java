@@ -20,14 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import static java.util.Map.entry;
 
 @RestController
-@RequestMapping("/documentos")
+@RequestMapping("/api/v1/documentos")
 public class ContratoController {
 
     private final VagaService vagaService;
@@ -363,15 +362,10 @@ public class ContratoController {
 
         Map<String, Object> data = new HashMap<>();
 
-        Map<String, String> pessoa = new HashMap<>();
-        pessoa.put("nome", pessoaDTO.getNome());
-        pessoa.put("cpf", pessoaDTO.getCpf());
-
-        // Converte a foto para Base64 se existir
-        if (pessoaDTO.getFoto() != null && pessoaDTO.getFoto().length > 0) {
-            String fotoBase64 = Base64.getEncoder().encodeToString(pessoaDTO.getFoto());
-            pessoa.put("fotoBase64", fotoBase64);
-        }
+        Map<String, String> pessoa = Map.of(
+                "nome", pessoaDTO.getNome(),
+                "cpf", pessoaDTO.getCpf()
+        );
 
         Map<String, String> contrato = Map.of(
                 "funcao", vagaDTO.getCargo(),
@@ -386,7 +380,7 @@ public class ContratoController {
         data.put("contrato", contrato);
         data.put("contato", contato);
 
-        byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("cracha", data);
+        byte[] pdfBytes = pdfGeneratorService.generatePdfWithPhoto("cracha", data, pessoaDTO.getFoto());
 
         HttpHeaders headers = new HttpHeaders();
         String nomeArquivo = "cracha_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
