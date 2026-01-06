@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DataInitializer {
 
-	@Value("${doban.excelFolder}")
+	@Value("${DOBAN_EXCEL_FOLDER}")
 	private String excelFolder;
 
 
