@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -352,5 +353,50 @@ public class ContratoController {
         String extenso = rbnf.format(valor);
 
         return extenso;
+    }
+
+    @GetMapping("/cracha/{vagaId}")
+    public ResponseEntity<byte[]> downloadCrachaPdf(@PathVariable Long vagaId) {
+
+        VagaDTO vagaDTO = vagaService.obterVagaPorId(vagaId);
+        PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(vagaDTO.getPessoaId());
+
+        Map<String, Object> data = new HashMap<>();
+
+        Map<String, String> pessoa = new HashMap<>();
+        pessoa.put("nome", pessoaDTO.getNome());
+        pessoa.put("cpf", pessoaDTO.getCpf());
+
+        // Converte a foto para Base64 se existir
+        if (pessoaDTO.getFoto() != null && pessoaDTO.getFoto().length > 0) {
+            String fotoBase64 = Base64.getEncoder().encodeToString(pessoaDTO.getFoto());
+            pessoa.put("fotoBase64", fotoBase64);
+        }
+
+        Map<String, String> contrato = Map.of(
+                "funcao", vagaDTO.getCargo(),
+                "numero", vagaDTO.getDataAdmissao() != null ? vagaDTO.getDataAdmissao().toString() : ""
+        );
+
+        Map<String, String> contato = Map.of(
+                "email", "dobanmaringa@gmail.com"
+        );
+
+        data.put("pessoa", pessoa);
+        data.put("contrato", contrato);
+        data.put("contato", contato);
+
+        byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("cracha", data);
+
+        HttpHeaders headers = new HttpHeaders();
+        String nomeArquivo = "cracha_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+
+        headers.setContentLength(pdfBytes.length);
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + nomeArquivo);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
     }
 }

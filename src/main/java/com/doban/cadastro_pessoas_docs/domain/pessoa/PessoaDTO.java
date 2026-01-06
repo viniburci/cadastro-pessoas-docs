@@ -43,6 +43,8 @@ public class PessoaDTO {
 
     private String chavePix;
 
+    private byte[] foto;
+
     public PessoaDTO() {
     }
 
@@ -77,6 +79,7 @@ public class PessoaDTO {
         this.categoriaCnh = pessoa.getCategoriaCnh();
         this.validadeCnh = pessoa.getValidadeCnh();
         this.chavePix = pessoa.getChavePix();
+        this.foto = pessoa.getFoto();
     }
 
     public Pessoa toEntity() {
@@ -113,6 +116,7 @@ public class PessoaDTO {
         pessoa.setCategoriaCnh(this.categoriaCnh);
         pessoa.setValidadeCnh(this.validadeCnh);
         pessoa.setChavePix(this.chavePix);
+        pessoa.setFoto(this.foto);
 
         return pessoa;
     }
@@ -147,5 +151,6 @@ public class PessoaDTO {
         pessoa.setCategoriaCnh(this.categoriaCnh);
         pessoa.setValidadeCnh(this.validadeCnh);
         pessoa.setChavePix(this.chavePix);
+        pessoa.setFoto(this.foto);
     }
 }

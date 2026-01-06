@@ -58,6 +58,9 @@ public class Pessoa {
 
     private String chavePix;
 
+    @Column(name = "foto", columnDefinition = "BYTEA")
+    private byte[] foto;
+
     @Builder.Default
     @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = false)
     @JsonManagedReference

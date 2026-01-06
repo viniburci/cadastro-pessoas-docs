@@ -79,4 +79,30 @@ public class PessoaService {
                 .map(PessoaDTO::new)
                 .toList();
     }
+
+    public void salvarFoto(Long pessoaId, byte[] foto) {
+        if (foto == null || foto.length == 0) {
+            throw new IllegalArgumentException("Foto não pode ser vazia");
+        }
+
+        // Limite de 5MB para fotos
+        if (foto.length > 5_000_000) {
+            throw new IllegalArgumentException("Foto muito grande. Tamanho máximo: 5MB");
+        }
+
+        Pessoa pessoa = buscarEntidadePessoaPorId(pessoaId);
+        pessoa.setFoto(foto);
+        pessoaRepository.save(pessoa);
+    }
+
+    public byte[] buscarFoto(Long pessoaId) {
+        Pessoa pessoa = buscarEntidadePessoaPorId(pessoaId);
+        byte[] foto = pessoa.getFoto();
+
+        if (foto == null || foto.length == 0) {
+            throw new EntityNotFoundException("Foto não encontrada para a pessoa com id: " + pessoaId);
+        }
+
+        return foto;
+    }
 }

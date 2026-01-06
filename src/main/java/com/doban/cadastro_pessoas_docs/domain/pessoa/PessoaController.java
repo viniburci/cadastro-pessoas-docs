@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 
 
@@ -71,6 +73,19 @@ public class PessoaController {
         pessoaService.deletarPessoa(pessoaId);
         return ResponseEntity.noContent().build();
     }
-    
+
+    @PostMapping("/{pessoaId}/foto")
+    public ResponseEntity<String> uploadFoto(@PathVariable Long pessoaId, @RequestParam("foto") MultipartFile foto) throws Exception {
+        pessoaService.salvarFoto(pessoaId, foto.getBytes());
+        return ResponseEntity.ok("Foto salva com sucesso");
+    }
+
+    @GetMapping("/{pessoaId}/foto")
+    public ResponseEntity<byte[]> buscarFoto(@PathVariable Long pessoaId) {
+        byte[] foto = pessoaService.buscarFoto(pessoaId);
+        return ResponseEntity.ok()
+                .header("Content-Type", "image/jpeg")
+                .body(foto);
+    }
 
 }
