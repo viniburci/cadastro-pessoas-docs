@@ -3,6 +3,7 @@ package com.doban.cadastro_pessoas_docs.domain.vaga;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Map;
 
 import com.doban.cadastro_pessoas_docs.domain.pessoa.Pessoa;
 
@@ -32,6 +33,12 @@ public class VagaDTO {
     private Boolean optanteVT;
     private AtestadoSaudeOcupacional aso;
 
+    // Campos dinâmicos
+    private Long tipoVagaId;
+    private String tipoVagaCodigo;
+    private String tipoVagaNome;
+    private Map<String, Object> atributosDinamicos;
+
     public VagaDTO() {
     }
 
@@ -55,6 +62,14 @@ public class VagaDTO {
         this.horarioSaida = vaga.getHorarioSaida();
         this.optanteVT = vaga.getOptanteVT();
         this.aso = vaga.getAso();
+
+        // Campos dinâmicos
+        if (vaga.getTipoVaga() != null) {
+            this.tipoVagaId = vaga.getTipoVaga().getId();
+            this.tipoVagaCodigo = vaga.getTipoVaga().getCodigo();
+            this.tipoVagaNome = vaga.getTipoVaga().getNome();
+        }
+        this.atributosDinamicos = vaga.getAtributosDinamicos();
     }
 
     public Vaga toEntity(Pessoa pessoa) {
@@ -74,7 +89,8 @@ public class VagaDTO {
                 .horarioSaida(this.horarioSaida)
                 .optanteVT(this.optanteVT)
                 .aso(this.aso)
-                .pessoa(pessoa);
+                .pessoa(pessoa)
+                .atributosDinamicos(this.atributosDinamicos);
 
         if (this.id != null) {
             vagaBuilder.id(this.id);
@@ -98,5 +114,8 @@ public class VagaDTO {
         vaga.setOptanteVT(this.optanteVT);
         vaga.setHorarioEntrada(this.horarioEntrada);
         vaga.setHorarioSaida(this.horarioSaida);
+        if (this.atributosDinamicos != null) {
+            vaga.setAtributosDinamicos(this.atributosDinamicos);
+        }
     }
 }

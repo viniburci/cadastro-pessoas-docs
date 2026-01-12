@@ -1,5 +1,7 @@
 package com.doban.cadastro_pessoas_docs.exception;
 
+import java.util.stream.Collectors;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+
+import com.doban.cadastro_pessoas_docs.shared.validation.SchemaValidationException;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -61,6 +65,21 @@ public class GlobalExceptionHandler {
                 request.getDescription(false).replace("uri=", "")
         );
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(error);
+    }
+
+    @ExceptionHandler(SchemaValidationException.class)
+    public ResponseEntity<ErrorResponse> handleSchemaValidation(SchemaValidationException ex, WebRequest request) {
+        log.warn("Erro de validação de schema: {}", ex.getMessage());
+        String detalhes = ex.getErros().stream()
+                .map(e -> e.getCampo() + ": " + e.getMensagem())
+                .collect(Collectors.joining("; "));
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                "Validation Error",
+                detalhes,
+                request.getDescription(false).replace("uri=", "")
+        );
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(error);
     }
 
     @ExceptionHandler(RuntimeException.class)

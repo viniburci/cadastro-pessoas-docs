@@ -3,11 +3,16 @@ package com.doban.cadastro_pessoas_docs.domain.vaga;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.doban.cadastro_pessoas_docs.domain.pessoa.Pessoa;
+import com.doban.cadastro_pessoas_docs.domain.vaga.tipo.TipoVaga;
+import com.doban.cadastro_pessoas_docs.shared.schema.JsonMapConverter;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -67,4 +72,13 @@ public class Vaga {
     @JoinColumn(name = "pessoa_id", nullable = false)
     @JsonBackReference
     private Pessoa pessoa;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tipo_vaga_id")
+    private TipoVaga tipoVaga;
+
+    @Builder.Default
+    @Column(columnDefinition = "jsonb")
+    @Convert(converter = JsonMapConverter.class)
+    private Map<String, Object> atributosDinamicos = new HashMap<>();
 }
