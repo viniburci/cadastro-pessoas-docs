@@ -43,7 +43,7 @@ VALUES (
                 "tamanhoMaximo": 50
             }
         ]
-    }',
+    }'::jsonb,
     NOW(),
     NOW()
 ) ON CONFLICT (codigo) DO NOTHING;
@@ -105,7 +105,7 @@ VALUES (
                 "tamanhoMaximo": 10
             }
         ]
-    }',
+    }'::jsonb,
     NOW(),
     NOW()
 ) ON CONFLICT (codigo) DO NOTHING;
@@ -168,7 +168,7 @@ VALUES (
                 "tamanhoMaximo": 200
             }
         ]
-    }',
+    }'::jsonb,
     NOW(),
     NOW()
 ) ON CONFLICT (codigo) DO NOTHING;
