@@ -46,7 +46,8 @@ import com.doban.cadastro_pessoas_docs.recurso.dinamico.RecursoDinamicoRepositor
 import com.doban.cadastro_pessoas_docs.recurso.item.ItemDinamico;
 import com.doban.cadastro_pessoas_docs.recurso.item.ItemDinamicoService;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ExcelImportService {
@@ -73,7 +74,6 @@ public class ExcelImportService {
         this.recursoDinamicoRepository = recursoDinamicoRepository;
     }
 
-    @Transactional
     public void importar(String caminhoArquivo) throws IOException {
         try (FileInputStream fis = new FileInputStream(caminhoArquivo);
                 Workbook workbook = new XSSFWorkbook(fis)) {
@@ -107,6 +107,7 @@ public class ExcelImportService {
                     }
                 } catch (Exception e) {
                     System.out.println("⚠ Erro ao importar linha " + (i + 1) + ": " + e.getMessage());
+                    e.printStackTrace();
                 }
             }
 
@@ -246,6 +247,7 @@ public class ExcelImportService {
         return importacaoDto;
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     private void importarPessoa(ImportacaoDTO importacaoDto) {
         Optional<Pessoa> existente = pessoaRepository.findByCpf(importacaoDto.getPessoa().getCpf());
 
@@ -258,7 +260,25 @@ public class ExcelImportService {
             pessoa = importacaoDto.getPessoa().toEntity();
         }
 
-        // Importar CARRO usando sistema dinâmico
+        // Salvar foto se disponível
+        if (importacaoDto.getFoto() != null && importacaoDto.getFoto().length > 0) {
+            pessoa.setFoto(importacaoDto.getFoto());
+        }
+
+        // Salvar dados bancários se disponíveis ANTES de salvar a pessoa
+        if (importacaoDto.getDadosBancarios() != null &&
+            !importacaoDto.getDadosBancarios().isEmpty()) {
+
+            com.doban.cadastro_pessoas_docs.domain.pessoa.DadosBancarios dadosBancarios =
+                importacaoDto.getDadosBancarios().toEntity();
+            dadosBancarios.setPessoa(pessoa);
+            pessoa.setDadosBancarios(dadosBancarios);
+        }
+
+        // Salvar a pessoa primeiro para obter o ID
+        Pessoa pessoaBanco = pessoaRepository.save(pessoa);
+
+        // AGORA importar CARRO usando sistema dinâmico (pessoa já tem ID)
         if (importacaoDto.getCarro() != null &&
             importacaoDto.getCarro().getPlaca() != null &&
             !importacaoDto.getCarro().getPlaca().isBlank()) {
@@ -280,10 +300,10 @@ public class ExcelImportService {
 
                 // Criar empréstimo se não existir já um ativo para este item e pessoa
                 if (!recursoDinamicoRepository.existsByItemIdAndPessoaIdAndDataDevolucaoIsNull(
-                        itemCarro.getId(), pessoa.getId())) {
+                        itemCarro.getId(), pessoaBanco.getId())) {
 
                     RecursoDinamico emprestimoCarro = RecursoDinamico.builder()
-                        .pessoa(pessoa)
+                        .pessoa(pessoaBanco)
                         .item(itemCarro)
                         .dataEntrega(importacaoDto.getVaga() != null ?
                             importacaoDto.getVaga().getDataAdmissao() : LocalDate.now())
@@ -298,7 +318,7 @@ public class ExcelImportService {
             }
         }
 
-        // Importar CELULAR usando sistema dinâmico
+        // AGORA importar CELULAR usando sistema dinâmico (pessoa já tem ID)
         if (importacaoDto.getCelular() != null &&
             importacaoDto.getCelular().getImei() != null &&
             importacaoDto.getCelular().getImei().length() >= 10) {
@@ -318,10 +338,10 @@ public class ExcelImportService {
 
                 // Criar empréstimo se não existir já um ativo para este item e pessoa
                 if (!recursoDinamicoRepository.existsByItemIdAndPessoaIdAndDataDevolucaoIsNull(
-                        itemCelular.getId(), pessoa.getId())) {
+                        itemCelular.getId(), pessoaBanco.getId())) {
 
                     RecursoDinamico emprestimoCelular = RecursoDinamico.builder()
-                        .pessoa(pessoa)
+                        .pessoa(pessoaBanco)
                         .item(itemCelular)
                         .dataEntrega(importacaoDto.getVaga() != null ?
                             importacaoDto.getVaga().getDataAdmissao() : LocalDate.now())
@@ -336,29 +356,11 @@ public class ExcelImportService {
             }
         }
 
-        // Salvar foto se disponível
-        if (importacaoDto.getFoto() != null && importacaoDto.getFoto().length > 0) {
-            pessoa.setFoto(importacaoDto.getFoto());
-        }
-
-        Pessoa pessoaBanco = pessoaRepository.save(pessoa);
-
-        // Salvar dados bancários se disponíveis
-        if (importacaoDto.getDadosBancarios() != null &&
-            !importacaoDto.getDadosBancarios().isEmpty()) {
-
-            com.doban.cadastro_pessoas_docs.domain.pessoa.DadosBancarios dadosBancarios =
-                importacaoDto.getDadosBancarios().toEntity();
-            dadosBancarios.setPessoa(pessoaBanco);
-            pessoaBanco.setDadosBancarios(dadosBancarios);
-        }
-
+        // Importar vaga
         if (importacaoDto.getVaga() != null) {
-
-            Vaga vaga = importacaoDto.getVaga().toEntity(pessoa);
+            Vaga vaga = importacaoDto.getVaga().toEntity(pessoaBanco);
             vagaRepository.save(vaga);
             pessoaBanco.getVagas().add(vaga);
-
             pessoaRepository.save(pessoaBanco);
         }
     }

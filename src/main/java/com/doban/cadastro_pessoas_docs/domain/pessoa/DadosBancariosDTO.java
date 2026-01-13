@@ -37,12 +37,12 @@ public class DadosBancariosDTO {
 
     /**
      * Converte DTO em entidade.
+     * Nota: O ID não é setado aqui pois será gerado automaticamente pelo banco.
      *
      * @return Entidade DadosBancarios
      */
     public DadosBancarios toEntity() {
         return DadosBancarios.builder()
-                .id(this.id)
                 .banco(this.banco)
                 .agencia(this.agencia)
                 .conta(this.conta)

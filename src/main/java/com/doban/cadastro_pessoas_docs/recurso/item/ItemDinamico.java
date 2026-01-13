@@ -1,7 +1,6 @@
 package com.doban.cadastro_pessoas_docs.recurso.item;
 
 import com.doban.cadastro_pessoas_docs.recurso.tipo.TipoRecurso;
-import com.doban.cadastro_pessoas_docs.shared.schema.JsonMapConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,7 +39,7 @@ public class ItemDinamico {
 
     @Builder.Default
     @Column(columnDefinition = "jsonb")
-    @Convert(converter = JsonMapConverter.class)
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.JSON)
     private Map<String, Object> atributos = new HashMap<>();
 
     @Builder.Default

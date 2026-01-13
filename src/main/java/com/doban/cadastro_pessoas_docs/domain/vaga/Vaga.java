@@ -8,11 +8,9 @@ import java.util.Map;
 
 import com.doban.cadastro_pessoas_docs.domain.pessoa.Pessoa;
 import com.doban.cadastro_pessoas_docs.domain.vaga.tipo.TipoVaga;
-import com.doban.cadastro_pessoas_docs.shared.schema.JsonMapConverter;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -79,6 +77,6 @@ public class Vaga {
 
     @Builder.Default
     @Column(columnDefinition = "jsonb")
-    @Convert(converter = JsonMapConverter.class)
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.JSON)
     private Map<String, Object> atributosDinamicos = new HashMap<>();
 }

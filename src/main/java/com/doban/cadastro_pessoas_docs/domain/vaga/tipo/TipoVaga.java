@@ -2,7 +2,6 @@ package com.doban.cadastro_pessoas_docs.domain.vaga.tipo;
 
 import com.doban.cadastro_pessoas_docs.recurso.tipo.TipoRecurso;
 import com.doban.cadastro_pessoas_docs.shared.schema.FieldSchema;
-import com.doban.cadastro_pessoas_docs.shared.schema.JsonSchemaConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,7 +42,7 @@ public class TipoVaga {
     private Boolean ativo = true;
 
     @Column(columnDefinition = "jsonb")
-    @Convert(converter = JsonSchemaConverter.class)
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.JSON)
     private FieldSchema schema;
 
     @Builder.Default
