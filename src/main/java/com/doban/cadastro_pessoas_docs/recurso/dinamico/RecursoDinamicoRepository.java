@@ -25,4 +25,6 @@ public interface RecursoDinamicoRepository extends JpaRepository<RecursoDinamico
     List<RecursoDinamico> findByTipoRecurso(@Param("tipoRecursoCodigo") String tipoRecursoCodigo);
 
     boolean existsByItemIdAndDataDevolucaoIsNull(Long itemId);
+
+    boolean existsByItemIdAndPessoaIdAndDataDevolucaoIsNull(Long itemId, Long pessoaId);
 }

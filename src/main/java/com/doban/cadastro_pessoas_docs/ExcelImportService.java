@@ -11,9 +11,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -27,12 +29,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
-import com.doban.cadastro_pessoas_docs.domain.carro.Carro;
 import com.doban.cadastro_pessoas_docs.domain.carro.CarroDTO;
-import com.doban.cadastro_pessoas_docs.domain.carro.CarroRepository;
-import com.doban.cadastro_pessoas_docs.domain.celular.Celular;
 import com.doban.cadastro_pessoas_docs.domain.celular.CelularDTO;
-import com.doban.cadastro_pessoas_docs.domain.celular.CelularRepository;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.Pessoa;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaExcelDTO;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaRepository;
@@ -43,8 +41,10 @@ import com.doban.cadastro_pessoas_docs.domain.vaga.TipoContrato;
 import com.doban.cadastro_pessoas_docs.domain.vaga.Vaga;
 import com.doban.cadastro_pessoas_docs.domain.vaga.VagaDTO;
 import com.doban.cadastro_pessoas_docs.domain.vaga.VagaRepository;
-import com.doban.cadastro_pessoas_docs.recurso.recurso_carro.RecursoCarro;
-import com.doban.cadastro_pessoas_docs.recurso.recurso_celular.RecursoCelular;
+import com.doban.cadastro_pessoas_docs.recurso.dinamico.RecursoDinamico;
+import com.doban.cadastro_pessoas_docs.recurso.dinamico.RecursoDinamicoRepository;
+import com.doban.cadastro_pessoas_docs.recurso.item.ItemDinamico;
+import com.doban.cadastro_pessoas_docs.recurso.item.ItemDinamicoService;
 
 import jakarta.transaction.Transactional;
 
@@ -52,9 +52,9 @@ import jakarta.transaction.Transactional;
 public class ExcelImportService {
 
     private final PessoaRepository pessoaRepository;
-    private final CarroRepository carroRepository;
-    private final CelularRepository celularRepository;
     private final VagaRepository vagaRepository;
+    private final ItemDinamicoService itemDinamicoService;
+    private final RecursoDinamicoRepository recursoDinamicoRepository;
 
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private final DateTimeFormatter dtfPortugueseAbbr = DateTimeFormatter.ofPattern("dd-MMM-yyyy",
@@ -62,14 +62,15 @@ public class ExcelImportService {
     private final DateTimeFormatter dtfPortugueseFull = DateTimeFormatter.ofPattern("dd-MMMM-yyyy",
             new Locale("pt", "BR"));
 
-    public ExcelImportService(PessoaRepository pessoaRepository,
-            CarroRepository carroRepository,
-            CelularRepository celularRepository,
-            VagaRepository vagaRepository) {
+    public ExcelImportService(
+            PessoaRepository pessoaRepository,
+            VagaRepository vagaRepository,
+            ItemDinamicoService itemDinamicoService,
+            RecursoDinamicoRepository recursoDinamicoRepository) {
         this.pessoaRepository = pessoaRepository;
-        this.carroRepository = carroRepository;
-        this.celularRepository = celularRepository;
         this.vagaRepository = vagaRepository;
+        this.itemDinamicoService = itemDinamicoService;
+        this.recursoDinamicoRepository = recursoDinamicoRepository;
     }
 
     @Transactional
@@ -257,45 +258,81 @@ public class ExcelImportService {
             pessoa = importacaoDto.getPessoa().toEntity();
         }
 
-        Carro carro = null;
-        if (importacaoDto.getCarro() != null) {
-            carro = carroRepository.findByPlaca(importacaoDto.getCarro().getPlaca()).orElse(null);
-            if (carro == null) {
-                Carro novoCarro = importacaoDto.getCarro().toEntity();
-                if (novoCarro != null) {
-                    carro = carroRepository.save(novoCarro);
+        // Importar CARRO usando sistema dinâmico
+        if (importacaoDto.getCarro() != null &&
+            importacaoDto.getCarro().getPlaca() != null &&
+            !importacaoDto.getCarro().getPlaca().isBlank()) {
+
+            try {
+                Map<String, Object> atributosCarro = new HashMap<>();
+                atributosCarro.put("marca", importacaoDto.getCarro().getMarca());
+                atributosCarro.put("modelo", importacaoDto.getCarro().getModelo());
+                atributosCarro.put("cor", importacaoDto.getCarro().getCor());
+                atributosCarro.put("chassi", importacaoDto.getCarro().getChassi());
+                atributosCarro.put("anoModelo", importacaoDto.getCarro().getAnoModelo());
+
+                // Buscar ou criar item de carro
+                ItemDinamico itemCarro = itemDinamicoService.buscarOuCriarPorIdentificador(
+                    "CARRO",
+                    importacaoDto.getCarro().getPlaca(),
+                    atributosCarro
+                );
+
+                // Criar empréstimo se não existir já um ativo para este item e pessoa
+                if (!recursoDinamicoRepository.existsByItemIdAndPessoaIdAndDataDevolucaoIsNull(
+                        itemCarro.getId(), pessoa.getId())) {
+
+                    RecursoDinamico emprestimoCarro = RecursoDinamico.builder()
+                        .pessoa(pessoa)
+                        .item(itemCarro)
+                        .dataEntrega(importacaoDto.getVaga() != null ?
+                            importacaoDto.getVaga().getDataAdmissao() : LocalDate.now())
+                        .dataDevolucao(importacaoDto.getVaga() != null ?
+                            importacaoDto.getVaga().getDataDemissao() : null)
+                        .build();
+
+                    recursoDinamicoRepository.save(emprestimoCarro);
                 }
-            }
-
-            if (carro != null) {
-                RecursoCarro recursoCarro = new RecursoCarro();
-                recursoCarro.setCarro(carro);
-                recursoCarro.setPessoa(pessoa);
-                recursoCarro.setDataEntrega(importacaoDto.getVaga() != null ? importacaoDto.getVaga().getDataAdmissao() : null);
-                recursoCarro.setDataDevolucao(importacaoDto.getVaga() != null ? importacaoDto.getVaga().getDataDemissao() : null);
-
-                pessoa.getRecursos().add(recursoCarro);
+            } catch (Exception e) {
+                System.out.println("⚠️ Erro ao importar carro: " + e.getMessage());
             }
         }
 
-        Celular celular = null;
-        if (importacaoDto.getCelular() != null && importacaoDto.getCelular().getImei().length() >= 10) {
-            celular = celularRepository.findByImei(importacaoDto.getCelular().getImei()).orElse(null);
-            if (celular == null) {
-                Celular novoCelular = importacaoDto.getCelular().toEntity();
-                if (novoCelular != null) {
-                    celular = celularRepository.save(novoCelular);
+        // Importar CELULAR usando sistema dinâmico
+        if (importacaoDto.getCelular() != null &&
+            importacaoDto.getCelular().getImei() != null &&
+            importacaoDto.getCelular().getImei().length() >= 10) {
+
+            try {
+                Map<String, Object> atributosCelular = new HashMap<>();
+                atributosCelular.put("marca", importacaoDto.getCelular().getMarca());
+                atributosCelular.put("modelo", importacaoDto.getCelular().getModelo());
+                atributosCelular.put("chip", importacaoDto.getCelular().getChip());
+
+                // Buscar ou criar item de celular
+                ItemDinamico itemCelular = itemDinamicoService.buscarOuCriarPorIdentificador(
+                    "CELULAR",
+                    importacaoDto.getCelular().getImei(),
+                    atributosCelular
+                );
+
+                // Criar empréstimo se não existir já um ativo para este item e pessoa
+                if (!recursoDinamicoRepository.existsByItemIdAndPessoaIdAndDataDevolucaoIsNull(
+                        itemCelular.getId(), pessoa.getId())) {
+
+                    RecursoDinamico emprestimoCelular = RecursoDinamico.builder()
+                        .pessoa(pessoa)
+                        .item(itemCelular)
+                        .dataEntrega(importacaoDto.getVaga() != null ?
+                            importacaoDto.getVaga().getDataAdmissao() : LocalDate.now())
+                        .dataDevolucao(importacaoDto.getVaga() != null ?
+                            importacaoDto.getVaga().getDataDemissao() : null)
+                        .build();
+
+                    recursoDinamicoRepository.save(emprestimoCelular);
                 }
-            }
-
-            if (celular != null) {
-                RecursoCelular recursoCelular = new RecursoCelular();
-                recursoCelular.setCelular(celular);
-                recursoCelular.setPessoa(pessoa);
-                recursoCelular.setDataEntrega(importacaoDto.getVaga() != null ? importacaoDto.getVaga().getDataAdmissao() : null);
-                recursoCelular.setDataDevolucao(importacaoDto.getVaga() != null ? importacaoDto.getVaga().getDataDemissao() : null);
-
-                pessoa.getRecursos().add(recursoCelular);
+            } catch (Exception e) {
+                System.out.println("⚠️ Erro ao importar celular: " + e.getMessage());
             }
         }
 

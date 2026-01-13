@@ -127,4 +127,49 @@ public class ItemDinamicoService {
         }
         itemDinamicoRepository.deleteById(id);
     }
+
+    /**
+     * Busca um item existente pelo tipo e identificador, ou cria um novo caso não exista.
+     * Usado principalmente durante importação de dados do Excel.
+     *
+     * @param tipoRecursoCodigo Código do tipo de recurso (ex: "CARRO", "CELULAR")
+     * @param identificador Identificador único do item (ex: placa, IMEI)
+     * @param atributos Map com os atributos específicos do item
+     * @return ItemDinamico encontrado ou criado
+     */
+    @Transactional
+    public ItemDinamico buscarOuCriarPorIdentificador(
+            String tipoRecursoCodigo,
+            String identificador,
+            java.util.Map<String, Object> atributos) {
+
+        TipoRecurso tipoRecurso = tipoRecursoService.buscarEntidadePorCodigo(tipoRecursoCodigo);
+
+        // Tentar buscar item existente
+        return itemDinamicoRepository
+                .findByTipoRecursoIdAndIdentificador(tipoRecurso.getId(), identificador)
+                .orElseGet(() -> {
+                    // Se não existe, criar novo
+                    System.out.println("📦 Criando novo item: " + tipoRecursoCodigo + " - " + identificador);
+
+                    // Validar atributos contra o schema do tipo (se houver)
+                    if (tipoRecurso.getSchema() != null && atributos != null && !atributos.isEmpty()) {
+                        try {
+                            schemaValidatorService.validarOuLancarExcecao(atributos, tipoRecurso.getSchema());
+                        } catch (Exception e) {
+                            System.out.println("⚠️ Aviso: Atributos não passaram na validação do schema, " +
+                                    "mas o item será criado mesmo assim: " + e.getMessage());
+                        }
+                    }
+
+                    ItemDinamico novoItem = ItemDinamico.builder()
+                            .tipoRecurso(tipoRecurso)
+                            .identificador(identificador)
+                            .atributos(atributos != null ? atributos : new java.util.HashMap<>())
+                            .ativo(true)
+                            .build();
+
+                    return itemDinamicoRepository.save(novoItem);
+                });
+    }
 }
