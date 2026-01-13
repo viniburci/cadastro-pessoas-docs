@@ -1,5 +1,6 @@
 package com.doban.cadastro_pessoas_docs.shared.schema;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,7 @@ import java.util.List;
 @Builder
 public class FieldSchema {
 
+    @JsonProperty("fields")
     @Builder.Default
     private List<FieldDefinition> fields = new ArrayList<>();
 
