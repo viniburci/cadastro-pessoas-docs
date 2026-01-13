@@ -70,4 +70,7 @@ public class Pessoa {
     @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = false)
     private List<Recurso> recursos = new ArrayList<>();
 
+    @OneToOne(mappedBy = "pessoa", cascade = CascadeType.ALL, orphanRemoval = true)
+    private DadosBancarios dadosBancarios;
+
 }

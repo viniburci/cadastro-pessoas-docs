@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Termo de Devolução de Recursos</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #000;
+        }
+
+        .titulo {
+            text-align: center;
+            font-weight: bold;
+            font-size: 14pt;
+            margin: 20px 0;
+            text-transform: uppercase;
+        }
+
+        .subtitulo {
+            text-align: center;
+            font-size: 12pt;
+            margin-bottom: 30px;
+        }
+
+        .secao {
+            margin: 20px 0;
+        }
+
+        .secao-titulo {
+            font-weight: bold;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #000;
+            padding-bottom: 5px;
+        }
+
+        .dados-pessoa {
+            margin: 15px 0;
+        }
+
+        .dados-pessoa p {
+            margin: 5px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+
+        .assinatura {
+            margin-top: 60px;
+            text-align: center;
+        }
+
+        .linha-assinatura {
+            margin: 40px auto 10px auto;
+            width: 60%;
+            border-top: 1px solid #000;
+        }
+
+        .declaracao {
+            margin: 30px 0;
+            text-align: justify;
+            line-height: 1.8;
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 10pt;
+            color: #666;
+        }
+
+        .cabecalho-empresa {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .cabecalho-empresa h2 {
+            margin: 5px 0;
+            font-size: 16pt;
+        }
+
+        .cabecalho-empresa p {
+            margin: 3px 0;
+            font-size: 9pt;
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabeçalho da Empresa -->
+    <div class="cabecalho-empresa">
+        <h2>DOBAN PRESTADORA DE SERVIÇOS LTDA</h2>
+        <p>CNPJ: 09.326.350/0001-09</p>
+        <p>Av. Duque de Caxias, 882 - Zona 07 - Maringá/PR - CEP: 87020-025</p>
+        <p>Telefone: (44) 3025-3370 | E-mail: dobanmaringa@gmail.com</p>
+    </div>
+
+    <!-- Título -->
+    <div class="titulo">Termo de Devolução de Recursos</div>
+    <div class="subtitulo">Comprovante de Devolução de Equipamentos e Materiais</div>
+
+    <!-- Dados da Pessoa -->
+    <div class="secao">
+        <div class="secao-titulo">DADOS DO COLABORADOR</div>
+        <div class="dados-pessoa">
+            <p><strong>Nome:</strong> <span th:text="${pessoa.nome}"></span></p>
+            <p><strong>CPF:</strong> <span th:text="${pessoa.cpf}"></span></p>
+            <p><strong>RG:</strong> <span th:text="${pessoa.rg}"></span></p>
+        </div>
+    </div>
+
+    <!-- Tabela de Recursos Devolvidos -->
+    <div class="secao">
+        <div class="secao-titulo">RECURSOS DEVOLVIDOS</div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 20%;">Tipo de Recurso</th>
+                    <th style="width: 25%;">Identificador</th>
+                    <th style="width: 20%;">Data de Entrega</th>
+                    <th style="width: 20%;">Data de Devolução</th>
+                    <th style="width: 15%;">Dias de Uso</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${#lists.isEmpty(recursos)}">
+                    <td colspan="5" style="text-align: center; color: #999;">
+                        Nenhum recurso devolvido registrado
+                    </td>
+                </tr>
+                <tr th:each="recurso : ${recursos}">
+                    <td th:text="${recurso.tipoRecursoNome}">CELULAR</td>
+                    <td th:text="${recurso.identificador}">IMEI123456</td>
+                    <td th:text="${#temporals.format(recurso.dataEntrega, 'dd/MM/yyyy')}">01/01/2025</td>
+                    <td th:text="${#temporals.format(recurso.dataDevolucao, 'dd/MM/yyyy')}">12/01/2026</td>
+                    <td th:text="${recurso.diasUso != null ? recurso.diasUso + ' dias' : '-'}">376 dias</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Declaração -->
+    <div class="declaracao">
+        <p>
+            Declaro, para os devidos fins, que recebi e utilizei os recursos listados acima durante o período
+            de vínculo com a empresa DOBAN PRESTADORA DE SERVIÇOS LTDA, e que os devolvi em <strong>perfeito
+            estado de conservação e funcionamento</strong>, conforme estabelecido no termo de responsabilidade
+            assinado no ato da entrega.
+        </p>
+        <p>
+            Declaro ainda que não houve danos, perdas ou extravios dos recursos mencionados, e que os mesmos
+            foram devidamente conferidos pelo setor responsável no momento da devolução.
+        </p>
+    </div>
+
+    <!-- Assinatura -->
+    <div class="assinatura">
+        <div class="linha-assinatura"></div>
+        <p><strong>Assinatura do Colaborador</strong></p>
+        <p th:text="${pessoa.nome}"></p>
+        <p>CPF: <span th:text="${pessoa.cpf}"></span></p>
+    </div>
+
+    <!-- Data -->
+    <div class="footer">
+        <p th:text="${'Maringá/PR, ' + dataAtualExtenso}"></p>
+    </div>
+
+    <!-- Rodapé -->
+    <div class="footer" style="margin-top: 50px; border-top: 1px solid #ccc; padding-top: 10px;">
+        <p style="font-size: 8pt;">
+            Este documento comprova a devolução dos recursos listados e isenta o colaborador de
+            responsabilidade sobre os mesmos a partir da data de devolução registrada.
+        </p>
+    </div>
+</body>
+</html>

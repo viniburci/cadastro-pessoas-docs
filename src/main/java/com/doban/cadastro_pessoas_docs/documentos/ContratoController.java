@@ -20,7 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import static java.util.Map.entry;
@@ -352,6 +355,99 @@ public class ContratoController {
         String extenso = rbnf.format(valor);
 
         return extenso;
+    }
+
+    @GetMapping("/recibo_pagamento/{vagaId}")
+    public ResponseEntity<byte[]> downloadReciboPagamentoPdf(@PathVariable Long vagaId) {
+
+        VagaDTO vagaDTO = vagaService.obterVagaPorId(vagaId);
+        PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(vagaDTO.getPessoaId());
+
+        // Calcular valores
+        BigDecimal salarioBruto = vagaDTO.getSalario() != null ? vagaDTO.getSalario() : BigDecimal.ZERO;
+        BigDecimal valeTransporte = BigDecimal.ZERO;
+
+        // Se optante por VT, descontar 6% do salário
+        if (vagaDTO.getOptanteVT() != null && vagaDTO.getOptanteVT()) {
+            valeTransporte = salarioBruto.multiply(new BigDecimal("0.06"))
+                    .setScale(2, java.math.RoundingMode.HALF_UP);
+        }
+
+        BigDecimal liquido = salarioBruto.subtract(valeTransporte);
+
+        Map<String, Object> data = new HashMap<>();
+
+        Map<String, String> empregado = Map.of(
+                "nome", pessoaDTO.getNome(),
+                "cpf", pessoaDTO.getCpf(),
+                "cargo", vagaDTO.getCargo() != null ? vagaDTO.getCargo() : "N/A"
+        );
+
+        // Determinar mês de referência (mês atual ou mês da vaga)
+        String mesReferencia = LocalDate.now().getMonth().toString() + "/" + LocalDate.now().getYear();
+
+        Map<String, Object> contrato = new HashMap<>();
+        contrato.put("cliente", vagaDTO.getCliente() != null ? vagaDTO.getCliente() : "N/A");
+        contrato.put("salarioBruto", salarioBruto);
+        contrato.put("valeTransporte", valeTransporte);
+        contrato.put("salarioLiquido", liquido);
+        contrato.put("mesReferencia", mesReferencia);
+
+        data.put("empregado", empregado);
+        data.put("contrato", contrato);
+        data.put("dataAtualExtenso", obterDataPorExtenso());
+
+        byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("recibo_pagamento", data);
+
+        HttpHeaders headers = new HttpHeaders();
+        String nomeArquivo = "recibo_pagamento_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+
+        headers.setContentLength(pdfBytes.length);
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + nomeArquivo);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
+    @GetMapping("/termo_devolucao/{pessoaId}")
+    public ResponseEntity<byte[]> downloadTermoDevolucaoPdf(@PathVariable Long pessoaId) {
+
+        PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(pessoaId);
+
+        // Criar lista vazia de recursos devolvidos
+        // Nota: Quando RecursoDinamicoService tiver método para buscar recursos devolvidos,
+        // substituir por: recursoDinamicoService.listarPorPessoaComDevolucao(pessoaId)
+        List<Map<String, Object>> recursosDevolvidos = new ArrayList<>();
+
+        // Exemplo de estrutura esperada no template:
+        // Map com: tipoRecursoNome, identificador, dataEntrega, dataDevolucao, diasUso
+
+        Map<String, Object> data = new HashMap<>();
+
+        Map<String, String> pessoa = Map.of(
+                "nome", pessoaDTO.getNome(),
+                "cpf", pessoaDTO.getCpf(),
+                "rg", pessoaDTO.getNumeroRg() != null ? pessoaDTO.getNumeroRg() : "N/A"
+        );
+
+        data.put("pessoa", pessoa);
+        data.put("recursos", recursosDevolvidos);
+        data.put("dataAtualExtenso", obterDataPorExtenso());
+
+        byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("termo_devolucao", data);
+
+        HttpHeaders headers = new HttpHeaders();
+        String nomeArquivo = "termo_devolucao_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+
+        headers.setContentLength(pdfBytes.length);
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + nomeArquivo);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
     }
 
     @GetMapping("/cracha/{vagaId}")

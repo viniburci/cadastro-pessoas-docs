@@ -34,3 +34,20 @@ build/
 
 ### Environment Variables ###
 .env
+
+### Excel files with sensitive data ###
+*.xlsm
+*.xlsx
+*.xls
+src/main/resources/excel/
+
+### Analysis files with sensitive data ###
+ANALISE_EXCEL_PARA_JAVA.md
+RELATORIO_EXCEL_DOBAN.txt
+RELATORIO_FINAL_ANALISE_DOBAN.md
+analyze_excel.py
+excel_analysis_report.json
+extract_vba.py
+generate_summary_report.py
+vbaProject.bin
+vba_code_full.txt

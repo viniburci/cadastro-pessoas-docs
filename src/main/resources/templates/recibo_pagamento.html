@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Recibo de Pagamento</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1.5cm;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 10pt;
+            line-height: 1.4;
+            color: #000;
+        }
+
+        .cabecalho {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 15px;
+        }
+
+        .cabecalho h1 {
+            margin: 0;
+            font-size: 18pt;
+            font-weight: bold;
+        }
+
+        .cabecalho h2 {
+            margin: 5px 0;
+            font-size: 14pt;
+        }
+
+        .cabecalho p {
+            margin: 3px 0;
+            font-size: 9pt;
+        }
+
+        .secao {
+            margin: 15px 0;
+        }
+
+        .secao-titulo {
+            font-weight: bold;
+            background-color: #f0f0f0;
+            padding: 5px 10px;
+            border: 1px solid #000;
+            margin-bottom: 10px;
+        }
+
+        .dados-colaborador {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .dados-colaborador p {
+            margin: 3px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #e0e0e0;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .col-codigo {
+            width: 10%;
+            text-align: center;
+        }
+
+        .col-descricao {
+            width: 45%;
+        }
+
+        .col-referencia {
+            width: 15%;
+            text-align: center;
+        }
+
+        .col-valor {
+            width: 15%;
+            text-align: right;
+        }
+
+        .valor-positivo {
+            color: #006400;
+        }
+
+        .valor-negativo {
+            color: #8B0000;
+        }
+
+        .totalizadores {
+            margin-top: 20px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border: 2px solid #000;
+        }
+
+        .totalizadores table {
+            margin: 0;
+        }
+
+        .totalizadores td {
+            font-weight: bold;
+            padding: 10px;
+        }
+
+        .liquido {
+            background-color: #d4edda;
+            font-size: 14pt;
+        }
+
+        .assinatura {
+            margin-top: 50px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .linha-assinatura {
+            margin-top: 50px;
+            border-top: 1px solid #000;
+            padding-top: 5px;
+            text-align: center;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 9pt;
+            color: #666;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+
+        .observacoes {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px dashed #999;
+            background-color: #fffef0;
+        }
+
+        .observacoes h4 {
+            margin: 0 0 10px 0;
+            font-size: 11pt;
+        }
+
+        .observacoes p {
+            margin: 5px 0;
+            font-size: 9pt;
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <div class="cabecalho">
+        <h1>DOBAN PRESTADORA DE SERVIÇOS LTDA</h1>
+        <p>CNPJ: 09.326.350/0001-09</p>
+        <p>Av. Duque de Caxias, 882 - Zona 07 - Maringá/PR - CEP: 87020-025</p>
+        <p>Telefone: (44) 3025-3370 | E-mail: dobanmaringa@gmail.com</p>
+        <h2 style="margin-top: 15px;">RECIBO DE PAGAMENTO</h2>
+    </div>
+
+    <!-- Dados do Colaborador -->
+    <div class="secao">
+        <div class="secao-titulo">DADOS DO COLABORADOR</div>
+        <div class="dados-colaborador">
+            <div>
+                <p><strong>Nome:</strong> <span th:text="${empregado.nome}"></span></p>
+                <p><strong>CPF:</strong> <span th:text="${empregado.cpf}"></span></p>
+            </div>
+            <div>
+                <p><strong>Função:</strong> <span th:text="${empregado.cargo}"></span></p>
+                <p><strong>Mês Referência:</strong> <span th:text="${contrato.mesReferencia}"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dados do Contrato -->
+    <div class="secao">
+        <div class="secao-titulo">DADOS DO CONTRATO</div>
+        <p><strong>Cliente:</strong> <span th:text="${contrato.cliente}"></span></p>
+    </div>
+
+    <!-- Discriminação de Valores -->
+    <div class="secao">
+        <div class="secao-titulo">DISCRIMINAÇÃO DE VALORES</div>
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-codigo">Cód.</th>
+                    <th class="col-descricao">Descrição</th>
+                    <th class="col-referencia">Referência</th>
+                    <th class="col-valor">Vencimentos (R$)</th>
+                    <th class="col-valor">Descontos (R$)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Salário Base -->
+                <tr>
+                    <td class="col-codigo">001</td>
+                    <td class="col-descricao">Salário Base</td>
+                    <td class="col-referencia">30 dias</td>
+                    <td class="col-valor valor-positivo" th:text="${#numbers.formatDecimal(contrato.salarioBruto, 1, 'POINT', 2, 'COMMA')}">0,00</td>
+                    <td class="col-valor">-</td>
+                </tr>
+
+                <!-- Vale Transporte (se aplicável) -->
+                <tr th:if="${contrato.valeTransporte > 0}">
+                    <td class="col-codigo">101</td>
+                    <td class="col-descricao">Vale Transporte (6%)</td>
+                    <td class="col-referencia">Desconto</td>
+                    <td class="col-valor">-</td>
+                    <td class="col-valor valor-negativo" th:text="${#numbers.formatDecimal(contrato.valeTransporte, 1, 'POINT', 2, 'COMMA')}">0,00</td>
+                </tr>
+
+                <!-- Linha de Totais -->
+                <tr style="font-weight: bold; background-color: #f0f0f0;">
+                    <td colspan="3" style="text-align: right;">TOTAIS:</td>
+                    <td class="col-valor valor-positivo" th:text="${#numbers.formatDecimal(contrato.salarioBruto, 1, 'POINT', 2, 'COMMA')}">0,00</td>
+                    <td class="col-valor valor-negativo" th:text="${#numbers.formatDecimal(contrato.valeTransporte, 1, 'POINT', 2, 'COMMA')}">0,00</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Totalizadores -->
+    <div class="totalizadores">
+        <table style="border: none;">
+            <tr>
+                <td style="border: none; text-align: right;">Total de Vencimentos:</td>
+                <td style="border: none; text-align: right; width: 150px;" class="valor-positivo">
+                    R$ <span th:text="${#numbers.formatDecimal(contrato.salarioBruto, 1, 'POINT', 2, 'COMMA')}">0,00</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="border: none; text-align: right;">Total de Descontos:</td>
+                <td style="border: none; text-align: right;" class="valor-negativo">
+                    R$ <span th:text="${#numbers.formatDecimal(contrato.valeTransporte, 1, 'POINT', 2, 'COMMA')}">0,00</span>
+                </td>
+            </tr>
+            <tr class="liquido">
+                <td style="border: none; text-align: right; font-size: 14pt;">VALOR LÍQUIDO A RECEBER:</td>
+                <td style="border: none; text-align: right; font-size: 14pt;">
+                    R$ <span th:text="${#numbers.formatDecimal(contrato.salarioLiquido, 1, 'POINT', 2, 'COMMA')}">0,00</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Observações -->
+    <div class="observacoes">
+        <h4>Observações Importantes:</h4>
+        <p>• Este recibo comprova o pagamento dos valores discriminados acima.</p>
+        <p>• Os valores foram calculados conforme legislação trabalhista vigente.</p>
+        <p>• Guarde este documento para fins de comprovação de renda.</p>
+        <p th:if="${contrato.valeTransporte > 0}">
+            • O desconto de Vale Transporte (6%) é conforme estabelecido por lei.
+        </p>
+    </div>
+
+    <!-- Assinaturas -->
+    <div class="assinatura">
+        <div>
+            <div class="linha-assinatura">
+                <p><strong>Assinatura do Colaborador</strong></p>
+                <p th:text="${empregado.nome}"></p>
+                <p>CPF: <span th:text="${empregado.cpf}"></span></p>
+            </div>
+        </div>
+        <div>
+            <div class="linha-assinatura">
+                <p><strong>DOBAN Prestadora de Serviços Ltda</strong></p>
+                <p>Setor Financeiro</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <div class="footer">
+        <p th:text="${'Maringá/PR, ' + dataAtualExtenso}"></p>
+        <p style="margin-top: 10px; font-size: 8pt;">
+            Documento gerado eletronicamente. Válido sem assinatura digital conforme MP 2.200-2/2001.
+        </p>
+    </div>
+</body>
+</html>

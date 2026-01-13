@@ -80,16 +80,36 @@ public class ExcelImportService {
             Sheet sheet = workbook.getSheetAt(4);
             Set<String> cpfsImportados = new HashSet<>();
 
-            for (int i = 45; i >= 11; i--) {
+            // Detectar última linha com dados (máximo 309)
+            int ultimaLinha = Math.min(sheet.getLastRowNum(), 309);
+            System.out.println("📊 Iniciando importação do Excel. Linhas para processar: " + (ultimaLinha - 10));
+
+            int importadas = 0;
+            int puladas = 0;
+
+            // Processar de trás para frente (última linha até linha 11)
+            for (int i = ultimaLinha; i >= 11; i--) {
                 Row row = sheet.getRow(i);
-                if (row == null)
+                if (row == null || isLinhaVazia(row)) {
+                    puladas++;
                     continue;
+                }
 
-                ImportacaoDTO importacaoDto = lerLinhaDTO(row);
+                try {
+                    ImportacaoDTO importacaoDto = lerLinhaDTO(row);
+                    importarPessoa(importacaoDto);
+                    cpfsImportados.add(importacaoDto.getPessoa().getCpf());
+                    importadas++;
 
-                importarPessoa(importacaoDto);
-                cpfsImportados.add(importacaoDto.getPessoa().getCpf());
+                    if (importadas % 10 == 0) {
+                        System.out.println("✓ Importadas: " + importadas + " pessoas");
+                    }
+                } catch (Exception e) {
+                    System.out.println("⚠ Erro ao importar linha " + (i + 1) + ": " + e.getMessage());
+                }
             }
+
+            System.out.println("✅ Importação concluída! Total: " + importadas + " pessoas importadas, " + puladas + " linhas vazias puladas.");
         }
     }
 
@@ -202,11 +222,25 @@ public class ExcelImportService {
                 .imei(getString(row, 65))
                 .build();
 
+        // Foto será null - deve ser adicionada manualmente via API
+        // Campo foto existe no banco (BYTEA) e pode ser populado posteriormente
+
+        // Ler dados bancários (colunas 42-44)
+        com.doban.cadastro_pessoas_docs.domain.pessoa.DadosBancariosDTO dadosBancariosDto =
+                com.doban.cadastro_pessoas_docs.domain.pessoa.DadosBancariosDTO.builder()
+                .banco(getString(row, 42))
+                .agencia(getString(row, 43))
+                .conta(getString(row, 44))
+                .tipoConta(inferirTipoConta(getString(row, 44)))
+                .build();
+
         ImportacaoDTO importacaoDto = new ImportacaoDTO();
         importacaoDto.setPessoa(pessoaDto);
         importacaoDto.setVaga(vagaDto);
         importacaoDto.setCarro(carroDto);
         importacaoDto.setCelular(celularDto);
+        importacaoDto.setFoto(null); // Foto será adicionada via API posteriormente
+        importacaoDto.setDadosBancarios(dadosBancariosDto);
 
         return importacaoDto;
     }
@@ -265,7 +299,22 @@ public class ExcelImportService {
             }
         }
 
+        // Salvar foto se disponível
+        if (importacaoDto.getFoto() != null && importacaoDto.getFoto().length > 0) {
+            pessoa.setFoto(importacaoDto.getFoto());
+        }
+
         Pessoa pessoaBanco = pessoaRepository.save(pessoa);
+
+        // Salvar dados bancários se disponíveis
+        if (importacaoDto.getDadosBancarios() != null &&
+            !importacaoDto.getDadosBancarios().isEmpty()) {
+
+            com.doban.cadastro_pessoas_docs.domain.pessoa.DadosBancarios dadosBancarios =
+                importacaoDto.getDadosBancarios().toEntity();
+            dadosBancarios.setPessoa(pessoaBanco);
+            pessoaBanco.setDadosBancarios(dadosBancarios);
+        }
 
         if (importacaoDto.getVaga() != null) {
 
@@ -450,6 +499,41 @@ public class ExcelImportService {
 
     public boolean hasPessoas() {
         return pessoaRepository.count() > 0;
+    }
+
+    /**
+     * Verifica se uma linha do Excel está vazia (sem nome e sem CPF).
+     *
+     * @param row Linha do Excel
+     * @return true se a linha estiver vazia
+     */
+    private boolean isLinhaVazia(Row row) {
+        Cell nomeCell = row.getCell(2);
+        Cell cpfCell = row.getCell(17);
+        return (nomeCell == null || nomeCell.toString().isBlank()) &&
+               (cpfCell == null || cpfCell.toString().isBlank());
+    }
+
+    /**
+     * Infere o tipo de conta bancária baseado no texto da conta.
+     *
+     * @param conta String com número/descrição da conta
+     * @return TipoConta inferido
+     */
+    private com.doban.cadastro_pessoas_docs.domain.pessoa.TipoConta inferirTipoConta(String conta) {
+        if (conta == null || conta.isBlank()) {
+            return com.doban.cadastro_pessoas_docs.domain.pessoa.TipoConta.CORRENTE;
+        }
+
+        String lower = conta.toLowerCase();
+        if (lower.contains("poupança") || lower.contains("poupanca")) {
+            return com.doban.cadastro_pessoas_docs.domain.pessoa.TipoConta.POUPANCA;
+        }
+        if (lower.contains("salário") || lower.contains("salario")) {
+            return com.doban.cadastro_pessoas_docs.domain.pessoa.TipoConta.SALARIO;
+        }
+
+        return com.doban.cadastro_pessoas_docs.domain.pessoa.TipoConta.CORRENTE;
     }
 
 }
