@@ -29,8 +29,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
-import com.doban.cadastro_pessoas_docs.domain.carro.CarroDTO;
-import com.doban.cadastro_pessoas_docs.domain.celular.CelularDTO;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.Pessoa;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaExcelDTO;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaRepository;
@@ -82,7 +80,7 @@ public class ExcelImportService {
             Set<String> cpfsImportados = new HashSet<>();
 
             // Detectar última linha com dados (máximo 309)
-            int ultimaLinha = Math.min(sheet.getLastRowNum(), 309);
+            int ultimaLinha = 46;
             System.out.println("📊 Iniciando importação do Excel. Linhas para processar: " + (ultimaLinha - 10));
 
             int importadas = 0;
@@ -98,7 +96,7 @@ public class ExcelImportService {
 
                 try {
                     ImportacaoDTO importacaoDto = lerLinhaDTO(row);
-                    importarPessoa(importacaoDto);
+                    importarPessoa(importacaoDto, row);
                     cpfsImportados.add(importacaoDto.getPessoa().getCpf());
                     importadas++;
 
@@ -208,21 +206,6 @@ public class ExcelImportService {
         }
         vagaDto.setAcrescimoOuSubstituicao(tipoAcrescimoSubstituicao);
 
-        CarroDTO carroDto = CarroDTO.builder()
-                .marca(getString(row, 54))
-                .cor(getString(row, 55))
-                .chassi(getString(row, 56))
-                .placa(getString(row, 57))
-                .modelo(getString(row, 58))
-                .anoModelo(getString(row, 61))
-                .build();
-
-        CelularDTO celularDto = CelularDTO.builder()
-                .marca(getString(row, 62))
-                .modelo(getString(row, 63))
-                .chip(getString(row, 64))
-                .imei(getString(row, 65))
-                .build();
 
         // Foto será null - deve ser adicionada manualmente via API
         // Campo foto existe no banco (BYTEA) e pode ser populado posteriormente
@@ -239,8 +222,6 @@ public class ExcelImportService {
         ImportacaoDTO importacaoDto = new ImportacaoDTO();
         importacaoDto.setPessoa(pessoaDto);
         importacaoDto.setVaga(vagaDto);
-        importacaoDto.setCarro(carroDto);
-        importacaoDto.setCelular(celularDto);
         importacaoDto.setFoto(null); // Foto será adicionada via API posteriormente
         importacaoDto.setDadosBancarios(dadosBancariosDto);
 
@@ -248,7 +229,7 @@ public class ExcelImportService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    private void importarPessoa(ImportacaoDTO importacaoDto) {
+    private void importarPessoa(ImportacaoDTO importacaoDto, Row row) {
         Optional<Pessoa> existente = pessoaRepository.findByCpf(importacaoDto.getPessoa().getCpf());
 
         Pessoa pessoa = new Pessoa();
@@ -278,23 +259,21 @@ public class ExcelImportService {
         // Salvar a pessoa primeiro para obter o ID
         Pessoa pessoaBanco = pessoaRepository.save(pessoa);
 
-        // AGORA importar CARRO usando sistema dinâmico (pessoa já tem ID)
-        if (importacaoDto.getCarro() != null &&
-            importacaoDto.getCarro().getPlaca() != null &&
-            !importacaoDto.getCarro().getPlaca().isBlank()) {
-
+        // Importar CARRO usando sistema dinâmico
+        String placa = getString(row, 57);
+        if (placa != null && !placa.isBlank()) {
             try {
                 Map<String, Object> atributosCarro = new HashMap<>();
-                atributosCarro.put("marca", importacaoDto.getCarro().getMarca());
-                atributosCarro.put("modelo", importacaoDto.getCarro().getModelo());
-                atributosCarro.put("cor", importacaoDto.getCarro().getCor());
-                atributosCarro.put("chassi", importacaoDto.getCarro().getChassi());
-                atributosCarro.put("anoModelo", importacaoDto.getCarro().getAnoModelo());
+                atributosCarro.put("marca", getString(row, 54));
+                atributosCarro.put("modelo", getString(row, 58));
+                atributosCarro.put("cor", getString(row, 55));
+                atributosCarro.put("chassi", getString(row, 56));
+                atributosCarro.put("anoModelo", getString(row, 61));
 
                 // Buscar ou criar item de carro
                 ItemDinamico itemCarro = itemDinamicoService.buscarOuCriarPorIdentificador(
                     "CARRO",
-                    importacaoDto.getCarro().getPlaca(),
+                    placa,
                     atributosCarro
                 );
 
@@ -318,21 +297,19 @@ public class ExcelImportService {
             }
         }
 
-        // AGORA importar CELULAR usando sistema dinâmico (pessoa já tem ID)
-        if (importacaoDto.getCelular() != null &&
-            importacaoDto.getCelular().getImei() != null &&
-            importacaoDto.getCelular().getImei().length() >= 10) {
-
+        // Importar CELULAR usando sistema dinâmico
+        String imei = getString(row, 65);
+        if (imei != null && imei.length() >= 10) {
             try {
                 Map<String, Object> atributosCelular = new HashMap<>();
-                atributosCelular.put("marca", importacaoDto.getCelular().getMarca());
-                atributosCelular.put("modelo", importacaoDto.getCelular().getModelo());
-                atributosCelular.put("chip", importacaoDto.getCelular().getChip());
+                atributosCelular.put("marca", getString(row, 62));
+                atributosCelular.put("modelo", getString(row, 63));
+                atributosCelular.put("chip", getString(row, 64));
 
                 // Buscar ou criar item de celular
                 ItemDinamico itemCelular = itemDinamicoService.buscarOuCriarPorIdentificador(
                     "CELULAR",
-                    importacaoDto.getCelular().getImei(),
+                    imei,
                     atributosCelular
                 );
 
