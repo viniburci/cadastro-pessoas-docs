@@ -6,17 +6,28 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomi
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import jakarta.annotation.PostConstruct;
+
 /**
  * Configuração do Hibernate para usar o ObjectMapper do Spring para JSON
  */
 @Configuration
 public class HibernateConfig {
 
+    @PostConstruct
+    public void init() {
+        System.out.println("✅ HibernateConfig carregado!");
+    }
+
     @Bean
     public HibernatePropertiesCustomizer hibernatePropertiesCustomizer(ObjectMapper objectMapper) {
-        return (properties) -> properties.put(
-            "hibernate.type.json_format_mapper",
-            new JacksonJsonFormatMapper(objectMapper)
-        );
+        System.out.println("✅ HibernatePropertiesCustomizer configurado com ObjectMapper: " + objectMapper);
+        return (properties) -> {
+            System.out.println("✅ Aplicando json_format_mapper ao Hibernate");
+            properties.put(
+                "hibernate.type.json_format_mapper",
+                new JacksonJsonFormatMapper(objectMapper)
+            );
+        };
     }
 }

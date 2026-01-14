@@ -1,13 +1,14 @@
 package com.doban.cadastro_pessoas_docs.documentos;
 
-import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaDTO;
-import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaService;
-import com.doban.cadastro_pessoas_docs.domain.vaga.VagaDTO;
-import com.doban.cadastro_pessoas_docs.domain.vaga.VagaService;
-import com.doban.cadastro_pessoas_docs.recurso.recurso_carro.RecursoCarro;
-import com.doban.cadastro_pessoas_docs.recurso.recurso_carro.RecursoCarroService;
-import com.ibm.icu.text.RuleBasedNumberFormat;
-import com.ibm.icu.util.ULocale;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import static java.util.Map.entry;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -17,16 +18,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import static java.util.Map.entry;
+import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaDTO;
+import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaService;
+import com.doban.cadastro_pessoas_docs.domain.vaga.VagaDTO;
+import com.doban.cadastro_pessoas_docs.domain.vaga.VagaService;
+import com.doban.cadastro_pessoas_docs.recurso.recurso_carro.RecursoCarro;
+import com.doban.cadastro_pessoas_docs.recurso.recurso_carro.RecursoCarroService;
+import com.ibm.icu.text.RuleBasedNumberFormat;
+import com.ibm.icu.util.ULocale;
 
 @RestController
 @RequestMapping("/api/v1/documentos")
