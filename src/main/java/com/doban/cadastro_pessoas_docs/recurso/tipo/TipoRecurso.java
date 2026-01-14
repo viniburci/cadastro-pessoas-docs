@@ -1,6 +1,8 @@
 package com.doban.cadastro_pessoas_docs.recurso.tipo;
 
 import com.doban.cadastro_pessoas_docs.shared.schema.FieldSchema;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +25,8 @@ import java.time.LocalDateTime;
 @Builder
 public class TipoRecurso {
 
+    private static final ObjectMapper mapper = new ObjectMapper();
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,9 +45,55 @@ public class TipoRecurso {
     @Builder.Default
     private Boolean legado = false;
 
-    @Column(columnDefinition = "jsonb")
-    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.JSON)
+    @Column(columnDefinition = "text")
+    private String schemaJson;
+
+    @Transient
     private FieldSchema schema;
+
+    /**
+     * Retorna o schema. Se o campo transient estiver vazio mas existir JSON,
+     * deserializa do JSON.
+     */
+    public FieldSchema getSchema() {
+        if (schema != null) {
+            return schema;
+        }
+        if (schemaJson != null && !schemaJson.isEmpty()) {
+            try {
+                schema = mapper.readValue(schemaJson, FieldSchema.class);
+            } catch (JsonProcessingException e) {
+                // Log e retorna null em vez de lançar exceção
+                System.err.println("Erro ao deserializar schema: " + e.getMessage());
+                return null;
+            }
+        }
+        return schema;
+    }
+
+    /**
+     * Define o schema e sincroniza com schemaJson.
+     */
+    public void setSchema(FieldSchema schema) {
+        this.schema = schema;
+        serializarSchemaParaJson();
+    }
+
+    /**
+     * Callback JPA executado antes de persistir ou atualizar.
+     * Garante que schemaJson esteja sincronizado com schema.
+     */
+    @PrePersist
+    @PreUpdate
+    public void serializarSchemaParaJson() {
+        if (schema != null) {
+            try {
+                this.schemaJson = mapper.writeValueAsString(schema);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("Erro ao serializar schema", e);
+            }
+        }
+    }
 
     @CreationTimestamp
     private LocalDateTime createdAt;

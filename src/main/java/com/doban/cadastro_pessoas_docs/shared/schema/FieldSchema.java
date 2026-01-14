@@ -1,5 +1,7 @@
 package com.doban.cadastro_pessoas_docs.shared.schema;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class FieldSchema {
 
     @JsonProperty("fields")
@@ -41,7 +44,9 @@ public class FieldSchema {
 
     /**
      * Retorna os nomes de todos os campos obrigatórios.
+     * Anotado com @JsonIgnore para não ser serializado/deserializado.
      */
+    @JsonIgnore
     public List<String> getCamposObrigatorios() {
         return fields.stream()
                 .filter(f -> Boolean.TRUE.equals(f.getObrigatorio()))
