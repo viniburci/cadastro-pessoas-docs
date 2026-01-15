@@ -29,9 +29,12 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
+import com.doban.cadastro_pessoas_docs.domain.pessoa.DadosBancarios;
+import com.doban.cadastro_pessoas_docs.domain.pessoa.DadosBancariosDTO;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.Pessoa;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaExcelDTO;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaRepository;
+import com.doban.cadastro_pessoas_docs.domain.pessoa.TipoConta;
 import com.doban.cadastro_pessoas_docs.domain.vaga.AtestadoSaudeOcupacional;
 import com.doban.cadastro_pessoas_docs.domain.vaga.TipoAcrescimoSubstituicao;
 import com.doban.cadastro_pessoas_docs.domain.vaga.TipoContratante;
@@ -211,8 +214,8 @@ public class ExcelImportService {
         // Campo foto existe no banco (BYTEA) e pode ser populado posteriormente
 
         // Ler dados bancários (colunas 42-44)
-        com.doban.cadastro_pessoas_docs.domain.pessoa.DadosBancariosDTO dadosBancariosDto =
-                com.doban.cadastro_pessoas_docs.domain.pessoa.DadosBancariosDTO.builder()
+        DadosBancariosDTO dadosBancariosDto =
+                DadosBancariosDTO.builder()
                 .banco(getString(row, 42))
                 .agencia(getString(row, 43))
                 .conta(getString(row, 44))
@@ -250,7 +253,7 @@ public class ExcelImportService {
         if (importacaoDto.getDadosBancarios() != null &&
             !importacaoDto.getDadosBancarios().isEmpty()) {
 
-            com.doban.cadastro_pessoas_docs.domain.pessoa.DadosBancarios dadosBancarios =
+            DadosBancarios dadosBancarios =
                 importacaoDto.getDadosBancarios().toEntity();
             dadosBancarios.setPessoa(pessoa);
             pessoa.setDadosBancarios(dadosBancarios);
@@ -536,20 +539,20 @@ public class ExcelImportService {
      * @param conta String com número/descrição da conta
      * @return TipoConta inferido
      */
-    private com.doban.cadastro_pessoas_docs.domain.pessoa.TipoConta inferirTipoConta(String conta) {
+    private TipoConta inferirTipoConta(String conta) {
         if (conta == null || conta.isBlank()) {
-            return com.doban.cadastro_pessoas_docs.domain.pessoa.TipoConta.CORRENTE;
+            return TipoConta.CORRENTE;
         }
 
         String lower = conta.toLowerCase();
         if (lower.contains("poupança") || lower.contains("poupanca")) {
-            return com.doban.cadastro_pessoas_docs.domain.pessoa.TipoConta.POUPANCA;
+            return TipoConta.POUPANCA;
         }
         if (lower.contains("salário") || lower.contains("salario")) {
-            return com.doban.cadastro_pessoas_docs.domain.pessoa.TipoConta.SALARIO;
+            return TipoConta.SALARIO;
         }
 
-        return com.doban.cadastro_pessoas_docs.domain.pessoa.TipoConta.CORRENTE;
+        return TipoConta.CORRENTE;
     }
 
 }
