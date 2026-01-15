@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 /**
  * DTO de resposta para RecursoDinamico.
@@ -24,6 +25,7 @@ public class RecursoDinamicoDTO {
     private ItemDinamicoDTO item;
     private LocalDate dataEntrega;
     private LocalDate dataDevolucao;
+    private Map<String, Object> atributosSnapshot;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -34,6 +36,7 @@ public class RecursoDinamicoDTO {
         this.item = new ItemDinamicoDTO(entity.getItem());
         this.dataEntrega = entity.getDataEntrega();
         this.dataDevolucao = entity.getDataDevolucao();
+        this.atributosSnapshot = entity.getAtributosSnapshot();
         this.createdAt = entity.getCreatedAt();
         this.updatedAt = entity.getUpdatedAt();
     }

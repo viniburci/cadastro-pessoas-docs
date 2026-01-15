@@ -291,6 +291,7 @@ public class ExcelImportService {
                             importacaoDto.getVaga().getDataAdmissao() : LocalDate.now())
                         .dataDevolucao(importacaoDto.getVaga() != null ?
                             importacaoDto.getVaga().getDataDemissao() : null)
+                        .atributosSnapshot(itemCarro.getAtributos())
                         .build();
 
                     recursoDinamicoRepository.save(emprestimoCarro);
@@ -327,6 +328,7 @@ public class ExcelImportService {
                             importacaoDto.getVaga().getDataAdmissao() : LocalDate.now())
                         .dataDevolucao(importacaoDto.getVaga() != null ?
                             importacaoDto.getVaga().getDataDemissao() : null)
+                        .atributosSnapshot(itemCelular.getAtributos())
                         .build();
 
                     recursoDinamicoRepository.save(emprestimoCelular);

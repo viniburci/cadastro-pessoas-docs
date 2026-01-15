@@ -84,6 +84,7 @@ public class RecursoDinamicoService {
                 .pessoa(pessoa)
                 .item(item)
                 .dataEntrega(dto.getDataEntrega())
+                .atributosSnapshot(item.getAtributos())
                 .build();
 
         recurso = recursoDinamicoRepository.save(recurso);
