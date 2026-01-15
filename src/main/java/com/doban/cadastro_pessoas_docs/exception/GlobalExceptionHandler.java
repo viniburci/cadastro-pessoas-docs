@@ -100,7 +100,7 @@ public class GlobalExceptionHandler {
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Internal Server Error",
-                "Erro interno do servidor. Por favor, tente novamente mais tarde",
+                ex.getMessage() != null ? ex.getMessage() : "Erro interno do servidor",
                 request.getDescription(false).replace("uri=", "")
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
