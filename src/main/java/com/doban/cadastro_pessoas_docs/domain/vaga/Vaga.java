@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.doban.cadastro_pessoas_docs.domain.cliente.Cliente;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.Pessoa;
 import com.doban.cadastro_pessoas_docs.domain.vaga.tipo.TipoVaga;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -47,7 +48,13 @@ public class Vaga {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String cliente;
+    @Deprecated
+    private String cliente; // Campo legado - usar clienteEntity
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cliente_id")
+    private Cliente clienteEntity;
+
     private String cidade;
     private String uf;
     private String cargo;

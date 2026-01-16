@@ -18,7 +18,9 @@ public class VagaDTO {
     private Long id;
     private Long pessoaId;
     private TipoContratante contratante;
-    private String cliente;
+    private String cliente; // Campo legado
+    private Long clienteId;
+    private String clienteNome;
     private String setor;
     private String cargo;
     private String cidade;
@@ -49,6 +51,10 @@ public class VagaDTO {
         }
         this.contratante = vaga.getContratante();
         this.cliente = vaga.getCliente();
+        if (vaga.getClienteEntity() != null) {
+            this.clienteId = vaga.getClienteEntity().getId();
+            this.clienteNome = vaga.getClienteEntity().getNome();
+        }
         this.setor = vaga.getSetor();
         this.cargo = vaga.getCargo();
         this.cidade = vaga.getCidade();

@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import com.doban.cadastro_pessoas_docs.domain.cliente.Cliente;
+import com.doban.cadastro_pessoas_docs.domain.cliente.ClienteRepository;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.Pessoa;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaService;
 
@@ -19,6 +21,7 @@ public class VagaService {
 
     private final VagaRepository vagaRepository;
     private final PessoaService pessoaService;
+    private final ClienteRepository clienteRepository;
 
     public List<VagaDTO> obterVagasPorPessoa(Long pessoaId) {
         List<Vaga> vagas = vagaRepository.findByPessoaId(pessoaId).orElse(Collections.emptyList());
@@ -59,6 +62,13 @@ public class VagaService {
 
         Vaga vaga = vagaDTO.toEntity(pessoa);
 
+        // Associar cliente se clienteId foi informado
+        if (vagaDTO.getClienteId() != null) {
+            Cliente cliente = clienteRepository.findById(vagaDTO.getClienteId())
+                    .orElseThrow(() -> new EntityNotFoundException("Cliente com ID " + vagaDTO.getClienteId() + " não encontrado."));
+            vaga.setClienteEntity(cliente);
+        }
+
         Vaga vagaSalva;
         try {
             vagaSalva = vagaRepository.save(vaga);
@@ -75,6 +85,16 @@ public class VagaService {
                 .orElseThrow(() -> new EntityNotFoundException("Vaga não encontrada"));
 
         vagaAtualizada.atualizarEntidade(vagaExistente);
+
+        // Atualizar cliente se clienteId foi informado
+        if (vagaAtualizada.getClienteId() != null) {
+            Cliente cliente = clienteRepository.findById(vagaAtualizada.getClienteId())
+                    .orElseThrow(() -> new EntityNotFoundException("Cliente com ID " + vagaAtualizada.getClienteId() + " não encontrado."));
+            vagaExistente.setClienteEntity(cliente);
+        } else {
+            vagaExistente.setClienteEntity(null);
+        }
+
         return new VagaDTO(vagaRepository.save(vagaExistente));
     }
 
