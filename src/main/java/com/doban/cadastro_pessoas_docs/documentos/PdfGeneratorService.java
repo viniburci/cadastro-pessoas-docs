@@ -9,6 +9,7 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import java.io.ByteArrayOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -129,6 +130,43 @@ public class PdfGeneratorService {
                     // Log, mas não falha se não conseguir deletar
                 }
             }
+        }
+    }
+
+    /**
+     * Gera um único PDF combinando múltiplos templates/documentos
+     * @param templateNames Lista de nomes dos templates
+     * @param dataList Lista de dados correspondente a cada template
+     * @return Array de bytes do PDF combinado
+     */
+    public byte[] generateMultiplePdfs(List<String> templateNames, List<Map<String, Object>> dataList) {
+        if (templateNames.size() != dataList.size()) {
+            throw new IllegalArgumentException("O número de templates deve ser igual ao número de dados");
+        }
+
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            ITextRenderer renderer = new ITextRenderer();
+            String baseUrl = new ClassPathResource("static/").getURL().toString();
+
+            for (int i = 0; i < templateNames.size(); i++) {
+                Context context = new Context();
+                context.setVariables(dataList.get(i));
+                String htmlContent = templateEngine.process(templateNames.get(i), context);
+
+                renderer.setDocumentFromString(htmlContent, baseUrl);
+                renderer.layout();
+
+                if (i == 0) {
+                    renderer.createPDF(bos, false);
+                } else {
+                    renderer.writeNextDocument();
+                }
+            }
+
+            renderer.finishPDF();
+            return bos.toByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao gerar PDF múltiplo", e);
         }
     }
 }

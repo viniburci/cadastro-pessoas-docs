@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaDTO;
@@ -433,5 +434,170 @@ public class ContratoController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(pdfBytes);
+    }
+
+    @GetMapping("/documentos_combinados/{vagaId}")
+    public ResponseEntity<byte[]> downloadDocumentosCombinados(
+            @PathVariable Long vagaId,
+            @RequestParam List<String> tipos) {
+
+        VagaDTO vagaDTO = vagaService.obterVagaPorId(vagaId);
+        PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(vagaDTO.getPessoaId());
+
+        List<String> templates = new ArrayList<>();
+        List<Map<String, Object>> dataList = new ArrayList<>();
+
+        for (String tipo : tipos) {
+            Map<String, Object> data = prepararDadosParaTipo(tipo, vagaDTO, pessoaDTO);
+            if (data != null) {
+                templates.add(tipo);
+                dataList.add(data);
+            }
+        }
+
+        if (templates.isEmpty()) {
+            throw new IllegalArgumentException("Nenhum tipo de documento válido informado");
+        }
+
+        byte[] pdfBytes = pdfGeneratorService.generateMultiplePdfs(templates, dataList);
+
+        HttpHeaders headers = new HttpHeaders();
+        String nomeArquivo = "documentos_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+
+        headers.setContentLength(pdfBytes.length);
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + nomeArquivo);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
+    private Map<String, Object> prepararDadosParaTipo(String tipo, VagaDTO vagaDTO, PessoaDTO pessoaDTO) {
+        Map<String, Object> data = new HashMap<>();
+
+        switch (tipo) {
+            case "contrato":
+                data.put("empregado", criarMapEmpregadoBasico(pessoaDTO));
+                data.put("contrato", criarMapContratoBasico(vagaDTO));
+                data.put("dataAtualExtenso", obterDataPorExtenso());
+                break;
+
+            case "vt":
+                data.put("cliente", Map.of("nome", vagaDTO.getCliente()));
+                data.put("funcionario", Map.of(
+                        "nome", pessoaDTO.getNome(),
+                        "cpf", pessoaDTO.getCpf(),
+                        "endereço", pessoaDTO.getEndereco(),
+                        "bairro", pessoaDTO.getBairro(),
+                        "cidade", pessoaDTO.getCidade(),
+                        "uf", pessoaDTO.getEstado(),
+                        "cep", pessoaDTO.getCep(),
+                        "telefone", pessoaDTO.getTelefone()));
+                data.put("dataAtual", obterDataPorExtenso());
+                break;
+
+            case "contrato_ps":
+                Map<String, String> empregadoPs = new HashMap<>(criarMapEmpregadoBasico(pessoaDTO));
+                empregadoPs.put("pix", pessoaDTO.getChavePix());
+                data.put("empregado", empregadoPs);
+
+                Map<String, Object> contratoPs = new HashMap<>(criarMapContratoBasico(vagaDTO));
+                contratoPs.put("salarioExtenso", converterParaValorExtenso(vagaDTO.getSalario()));
+                data.put("contrato", contratoPs);
+                data.put("dataAtualExtenso", obterDataPorExtenso());
+                break;
+
+            case "termo_materiais":
+            case "entrega_epi":
+                data.put("empregado", criarMapEmpregadoCompleto(pessoaDTO));
+                data.put("contrato", criarMapContratoCompleto(vagaDTO));
+                data.put("dataAtualExtenso", obterDataPorExtenso());
+                break;
+
+            case "recibo_pagamento":
+                BigDecimal salarioBruto = vagaDTO.getSalario() != null ? vagaDTO.getSalario() : BigDecimal.ZERO;
+                BigDecimal valeTransporte = BigDecimal.ZERO;
+                if (vagaDTO.getOptanteVT() != null && vagaDTO.getOptanteVT()) {
+                    valeTransporte = salarioBruto.multiply(new BigDecimal("0.06"))
+                            .setScale(2, java.math.RoundingMode.HALF_UP);
+                }
+                BigDecimal liquido = salarioBruto.subtract(valeTransporte);
+
+                data.put("empregado", Map.of(
+                        "nome", pessoaDTO.getNome(),
+                        "cpf", pessoaDTO.getCpf(),
+                        "cargo", vagaDTO.getCargo() != null ? vagaDTO.getCargo() : "N/A"));
+
+                Map<String, Object> contratoRecibo = new HashMap<>();
+                contratoRecibo.put("cliente", vagaDTO.getCliente() != null ? vagaDTO.getCliente() : "N/A");
+                contratoRecibo.put("salarioBruto", salarioBruto);
+                contratoRecibo.put("valeTransporte", valeTransporte);
+                contratoRecibo.put("salarioLiquido", liquido);
+                contratoRecibo.put("mesReferencia", LocalDate.now().getMonth().toString() + "/" + LocalDate.now().getYear());
+                data.put("contrato", contratoRecibo);
+                data.put("dataAtualExtenso", obterDataPorExtenso());
+                break;
+
+            default:
+                return null;
+        }
+
+        return data;
+    }
+
+    private Map<String, String> criarMapEmpregadoBasico(PessoaDTO pessoaDTO) {
+        return Map.of(
+                "nome", pessoaDTO.getNome(),
+                "estadoCivil", pessoaDTO.getEstadoCivil(),
+                "rg", pessoaDTO.getNumeroRg(),
+                "cpf", pessoaDTO.getCpf(),
+                "ctps", pessoaDTO.getNumeroCtps(),
+                "ctpsSerie", pessoaDTO.getSerieCtps(),
+                "endereco", pessoaDTO.getEndereco(),
+                "cidade", pessoaDTO.getCidade(),
+                "uf", pessoaDTO.getEstado());
+    }
+
+    private Map<String, String> criarMapEmpregadoCompleto(PessoaDTO pessoaDTO) {
+        return Map.ofEntries(
+                entry("nome", pessoaDTO.getNome()),
+                entry("estadoCivil", pessoaDTO.getEstadoCivil()),
+                entry("rg", pessoaDTO.getNumeroRg()),
+                entry("cpf", pessoaDTO.getCpf()),
+                entry("ctps", pessoaDTO.getNumeroCtps()),
+                entry("ctpsSerie", pessoaDTO.getSerieCtps()),
+                entry("endereco", pessoaDTO.getEndereco()),
+                entry("bairro", pessoaDTO.getBairro()),
+                entry("cidade", pessoaDTO.getCidade()),
+                entry("uf", pessoaDTO.getEstado()),
+                entry("pix", pessoaDTO.getChavePix()),
+                entry("cep", pessoaDTO.getCep()),
+                entry("telefone", pessoaDTO.getTelefone()));
+    }
+
+    private Map<String, Object> criarMapContratoBasico(VagaDTO vagaDTO) {
+        return Map.of(
+                "funcao", vagaDTO.getCargo(),
+                "salario", vagaDTO.getSalario(),
+                "cidadeTrabalho", vagaDTO.getCidade(),
+                "dataInicio", vagaDTO.getDataAdmissao(),
+                "dataFim", vagaDTO.getDataDemissao(),
+                "horarioEntrada", vagaDTO.getHorarioEntrada(),
+                "horarioSaida", vagaDTO.getHorarioSaida());
+    }
+
+    private Map<String, Object> criarMapContratoCompleto(VagaDTO vagaDTO) {
+        return Map.of(
+                "cliente", vagaDTO.getCliente(),
+                "funcao", vagaDTO.getCargo(),
+                "salario", vagaDTO.getSalario(),
+                "salarioExtenso", converterParaValorExtenso(vagaDTO.getSalario()),
+                "cidadeTrabalho", vagaDTO.getCidade(),
+                "estadoTrabalho", vagaDTO.getUf(),
+                "dataInicio", vagaDTO.getDataAdmissao(),
+                "dataFim", vagaDTO.getDataDemissao(),
+                "horarioEntrada", vagaDTO.getHorarioEntrada(),
+                "horarioSaida", vagaDTO.getHorarioSaida());
     }
 }
