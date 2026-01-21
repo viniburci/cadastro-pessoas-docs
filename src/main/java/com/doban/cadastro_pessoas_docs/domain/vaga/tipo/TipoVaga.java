@@ -3,6 +3,7 @@ package com.doban.cadastro_pessoas_docs.domain.vaga.tipo;
 import com.doban.cadastro_pessoas_docs.recurso.tipo.TipoRecurso;
 import com.doban.cadastro_pessoas_docs.shared.schema.FieldSchema;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,7 +14,10 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -51,6 +55,13 @@ public class TipoVaga {
     @Transient
     private FieldSchema schema;
 
+    @Column(columnDefinition = "text")
+    private String itensPadraoJson;
+
+    @Transient
+    @Builder.Default
+    private List<Map<String, Object>> itensPadrao = new ArrayList<>();
+
     /**
      * Retorna o schema. Se o campo transient estiver vazio mas existir JSON,
      * deserializa do JSON.
@@ -75,21 +86,59 @@ public class TipoVaga {
      */
     public void setSchema(FieldSchema schema) {
         this.schema = schema;
-        serializarSchemaParaJson();
+        serializarParaJson();
+    }
+
+    /**
+     * Retorna os itens padrão. Se o campo transient estiver vazio mas existir JSON,
+     * deserializa do JSON.
+     */
+    public List<Map<String, Object>> getItensPadrao() {
+        if (itensPadrao != null && !itensPadrao.isEmpty()) {
+            return itensPadrao;
+        }
+        if (itensPadraoJson != null && !itensPadraoJson.isEmpty()) {
+            try {
+                itensPadrao = mapper.readValue(itensPadraoJson, new TypeReference<List<Map<String, Object>>>() {});
+            } catch (JsonProcessingException e) {
+                System.err.println("Erro ao deserializar itensPadrao: " + e.getMessage());
+                return new ArrayList<>();
+            }
+        }
+        return itensPadrao != null ? itensPadrao : new ArrayList<>();
+    }
+
+    /**
+     * Define os itens padrão e sincroniza com itensPadraoJson.
+     */
+    public void setItensPadrao(List<Map<String, Object>> itensPadrao) {
+        this.itensPadrao = itensPadrao;
+        serializarItensPadraoParaJson();
     }
 
     /**
      * Callback JPA executado antes de persistir ou atualizar.
-     * Garante que schemaJson esteja sincronizado com schema.
+     * Garante que schemaJson e itensPadraoJson estejam sincronizados.
      */
     @PrePersist
     @PreUpdate
-    public void serializarSchemaParaJson() {
+    public void serializarParaJson() {
         if (schema != null) {
             try {
                 this.schemaJson = mapper.writeValueAsString(schema);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException("Erro ao serializar schema", e);
+            }
+        }
+        serializarItensPadraoParaJson();
+    }
+
+    private void serializarItensPadraoParaJson() {
+        if (itensPadrao != null && !itensPadrao.isEmpty()) {
+            try {
+                this.itensPadraoJson = mapper.writeValueAsString(itensPadrao);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("Erro ao serializar itensPadrao", e);
             }
         }
     }

@@ -8,6 +8,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * DTO de atualização para TipoVaga.
  */
@@ -25,6 +28,8 @@ public class TipoVagaUpdateDTO {
     @Valid
     private FieldSchema schema;
 
+    private List<Map<String, Object>> itensPadrao;
+
     private Boolean ativo;
 
     public void atualizarEntidade(TipoVaga entity) {
@@ -36,6 +41,9 @@ public class TipoVagaUpdateDTO {
         }
         if (this.schema != null) {
             entity.setSchema(this.schema);
+        }
+        if (this.itensPadrao != null) {
+            entity.setItensPadrao(this.itensPadrao);
         }
         if (this.ativo != null) {
             entity.setAtivo(this.ativo);

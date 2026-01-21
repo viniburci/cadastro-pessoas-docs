@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * DTO de criação para TipoVaga.
@@ -35,15 +36,23 @@ public class TipoVagaCreateDTO {
     @Valid
     private FieldSchema schema;
 
+    private List<Map<String, Object>> itensPadrao;
+
     private List<Long> recursosPermitidosIds;
 
     public TipoVaga toEntity() {
-        return TipoVaga.builder()
+        TipoVaga tipoVaga = TipoVaga.builder()
                 .codigo(this.codigo)
                 .nome(this.nome)
                 .descricao(this.descricao)
                 .schema(this.schema)
                 .ativo(true)
                 .build();
+
+        if (this.itensPadrao != null) {
+            tipoVaga.setItensPadrao(this.itensPadrao);
+        }
+
+        return tipoVaga;
     }
 }

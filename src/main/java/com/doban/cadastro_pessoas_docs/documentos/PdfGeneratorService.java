@@ -4,6 +4,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import org.thymeleaf.templateresolver.StringTemplateResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.ByteArrayOutputStream;
@@ -168,5 +169,60 @@ public class PdfGeneratorService {
         } catch (Exception e) {
             throw new RuntimeException("Erro ao gerar PDF múltiplo", e);
         }
+    }
+
+    /**
+     * Gera um PDF a partir de um template HTML (string) do banco de dados
+     * @param htmlTemplate Conteúdo HTML do template com placeholders Thymeleaf
+     * @param data Dados para preencher o template
+     * @return Array de bytes do PDF
+     */
+    public byte[] generatePdfFromHtmlString(String htmlTemplate, Map<String, Object> data) {
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            // Cria um TemplateEngine específico para processar strings
+            TemplateEngine stringTemplateEngine = new TemplateEngine();
+            StringTemplateResolver stringResolver = new StringTemplateResolver();
+            stringResolver.setTemplateMode("HTML");
+            stringTemplateEngine.setTemplateResolver(stringResolver);
+
+            // Processa o template
+            Context context = new Context();
+            if (data != null) {
+                context.setVariables(data);
+            }
+            String htmlContent = stringTemplateEngine.process(htmlTemplate, context);
+
+            // Converte para PDF
+            ITextRenderer renderer = new ITextRenderer();
+            String baseUrl = new ClassPathResource("static/").getURL().toString();
+            renderer.setDocumentFromString(htmlContent, baseUrl);
+
+            renderer.layout();
+            renderer.createPDF(bos);
+
+            return bos.toByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao gerar PDF a partir do template HTML", e);
+        }
+    }
+
+    /**
+     * Renderiza um template HTML (string) do banco de dados sem converter para PDF
+     * @param htmlTemplate Conteúdo HTML do template com placeholders Thymeleaf
+     * @param data Dados para preencher o template
+     * @return HTML renderizado
+     */
+    public String renderHtmlFromString(String htmlTemplate, Map<String, Object> data) {
+        TemplateEngine stringTemplateEngine = new TemplateEngine();
+        StringTemplateResolver stringResolver = new StringTemplateResolver();
+        stringResolver.setTemplateMode("HTML");
+        stringTemplateEngine.setTemplateResolver(stringResolver);
+
+        Context context = new Context();
+        if (data != null) {
+            context.setVariables(data);
+        }
+
+        return stringTemplateEngine.process(htmlTemplate, context);
     }
 }
