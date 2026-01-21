@@ -28,7 +28,11 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.doban.cadastro_pessoas_docs.domain.cliente.Cliente;
+import com.doban.cadastro_pessoas_docs.domain.cliente.ClienteService;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.DadosBancarios;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.DadosBancariosDTO;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.Pessoa;
@@ -47,9 +51,6 @@ import com.doban.cadastro_pessoas_docs.recurso.dinamico.RecursoDinamicoRepositor
 import com.doban.cadastro_pessoas_docs.recurso.item.ItemDinamico;
 import com.doban.cadastro_pessoas_docs.recurso.item.ItemDinamicoService;
 
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 @Service
 public class ExcelImportService {
 
@@ -57,6 +58,7 @@ public class ExcelImportService {
     private final VagaRepository vagaRepository;
     private final ItemDinamicoService itemDinamicoService;
     private final RecursoDinamicoRepository recursoDinamicoRepository;
+    private final ClienteService clienteService;
 
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private final DateTimeFormatter dtfPortugueseAbbr = DateTimeFormatter.ofPattern("dd-MMM-yyyy",
@@ -68,11 +70,13 @@ public class ExcelImportService {
             PessoaRepository pessoaRepository,
             VagaRepository vagaRepository,
             ItemDinamicoService itemDinamicoService,
-            RecursoDinamicoRepository recursoDinamicoRepository) {
+            RecursoDinamicoRepository recursoDinamicoRepository,
+            ClienteService clienteService) {
         this.pessoaRepository = pessoaRepository;
         this.vagaRepository = vagaRepository;
         this.itemDinamicoService = itemDinamicoService;
         this.recursoDinamicoRepository = recursoDinamicoRepository;
+        this.clienteService = clienteService;
     }
 
     public void importar(String caminhoArquivo) throws IOException {
@@ -112,7 +116,8 @@ public class ExcelImportService {
                 }
             }
 
-            System.out.println("✅ Importação concluída! Total: " + importadas + " pessoas importadas, " + puladas + " linhas vazias puladas.");
+            System.out.println("✅ Importação concluída! Total: " + importadas + " pessoas importadas, " + puladas
+                    + " linhas vazias puladas.");
         }
     }
 
@@ -158,8 +163,10 @@ public class ExcelImportService {
         }
         pessoaDto.setCpf(cpf);
 
+        Cliente clienteExistente = clienteService.buscarOuCriarPorNome(getString(row, 26));
         VagaDTO vagaDto = VagaDTO.builder()
                 .cliente(getString(row, 26))
+                .clienteId(clienteExistente != null ? clienteExistente.getId() : null)
                 .cidade(getString(row, 27))
                 .uf(getString(row, 28))
                 .cargo(getString(row, 29))
@@ -209,13 +216,11 @@ public class ExcelImportService {
         }
         vagaDto.setAcrescimoOuSubstituicao(tipoAcrescimoSubstituicao);
 
-
         // Foto será null - deve ser adicionada manualmente via API
         // Campo foto existe no banco (BYTEA) e pode ser populado posteriormente
 
         // Ler dados bancários (colunas 42-44)
-        DadosBancariosDTO dadosBancariosDto =
-                DadosBancariosDTO.builder()
+        DadosBancariosDTO dadosBancariosDto = DadosBancariosDTO.builder()
                 .banco(getString(row, 42))
                 .agencia(getString(row, 43))
                 .conta(getString(row, 44))
@@ -234,11 +239,9 @@ public class ExcelImportService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     private void importarPessoa(ImportacaoDTO importacaoDto, Row row) {
         Optional<Pessoa> existente = pessoaRepository.findByCpf(importacaoDto.getPessoa().getCpf());
-
         Pessoa pessoa = new Pessoa();
 
         if (existente.isPresent()) {
-            System.out.println("Pessoa já existe: " + importacaoDto.getPessoa().getNome() + ". Atualizando dados...");
             pessoa = atualizarPessoaExistente(existente.get(), importacaoDto.getPessoa().toEntity());
         } else {
             pessoa = importacaoDto.getPessoa().toEntity();
@@ -251,16 +254,16 @@ public class ExcelImportService {
 
         // Salvar dados bancários se disponíveis ANTES de salvar a pessoa
         if (importacaoDto.getDadosBancarios() != null &&
-            !importacaoDto.getDadosBancarios().isEmpty()) {
+                !importacaoDto.getDadosBancarios().isEmpty()) {
 
-            DadosBancarios dadosBancarios =
-                importacaoDto.getDadosBancarios().toEntity();
+            DadosBancarios dadosBancarios = importacaoDto.getDadosBancarios().toEntity();
             dadosBancarios.setPessoa(pessoa);
             pessoa.setDadosBancarios(dadosBancarios);
         }
 
         // Salvar a pessoa primeiro para obter o ID
         Pessoa pessoaBanco = pessoaRepository.save(pessoa);
+
 
         // Importar CARRO usando sistema dinâmico
         String placa = getString(row, 57);
@@ -275,24 +278,23 @@ public class ExcelImportService {
 
                 // Buscar ou criar item de carro
                 ItemDinamico itemCarro = itemDinamicoService.buscarOuCriarPorIdentificador(
-                    "CARRO",
-                    placa,
-                    atributosCarro
-                );
+                        "CARRO",
+                        placa,
+                        atributosCarro);
 
                 // Criar empréstimo se não existir já um ativo para este item e pessoa
                 if (!recursoDinamicoRepository.existsByItemIdAndPessoaIdAndDataDevolucaoIsNull(
                         itemCarro.getId(), pessoaBanco.getId())) {
 
                     RecursoDinamico emprestimoCarro = RecursoDinamico.builder()
-                        .pessoa(pessoaBanco)
-                        .item(itemCarro)
-                        .dataEntrega(importacaoDto.getVaga() != null ?
-                            importacaoDto.getVaga().getDataAdmissao() : LocalDate.now())
-                        .dataDevolucao(importacaoDto.getVaga() != null ?
-                            importacaoDto.getVaga().getDataDemissao() : null)
-                        .atributosSnapshot(itemCarro.getAtributos())
-                        .build();
+                            .pessoa(pessoaBanco)
+                            .item(itemCarro)
+                            .dataEntrega(importacaoDto.getVaga() != null ? importacaoDto.getVaga().getDataAdmissao()
+                                    : LocalDate.now())
+                            .dataDevolucao(
+                                    importacaoDto.getVaga() != null ? importacaoDto.getVaga().getDataDemissao() : null)
+                            .atributosSnapshot(itemCarro.getAtributos())
+                            .build();
 
                     recursoDinamicoRepository.save(emprestimoCarro);
                 }
@@ -312,24 +314,23 @@ public class ExcelImportService {
 
                 // Buscar ou criar item de celular
                 ItemDinamico itemCelular = itemDinamicoService.buscarOuCriarPorIdentificador(
-                    "CELULAR",
-                    imei,
-                    atributosCelular
-                );
+                        "CELULAR",
+                        imei,
+                        atributosCelular);
 
                 // Criar empréstimo se não existir já um ativo para este item e pessoa
                 if (!recursoDinamicoRepository.existsByItemIdAndPessoaIdAndDataDevolucaoIsNull(
                         itemCelular.getId(), pessoaBanco.getId())) {
 
                     RecursoDinamico emprestimoCelular = RecursoDinamico.builder()
-                        .pessoa(pessoaBanco)
-                        .item(itemCelular)
-                        .dataEntrega(importacaoDto.getVaga() != null ?
-                            importacaoDto.getVaga().getDataAdmissao() : LocalDate.now())
-                        .dataDevolucao(importacaoDto.getVaga() != null ?
-                            importacaoDto.getVaga().getDataDemissao() : null)
-                        .atributosSnapshot(itemCelular.getAtributos())
-                        .build();
+                            .pessoa(pessoaBanco)
+                            .item(itemCelular)
+                            .dataEntrega(importacaoDto.getVaga() != null ? importacaoDto.getVaga().getDataAdmissao()
+                                    : LocalDate.now())
+                            .dataDevolucao(
+                                    importacaoDto.getVaga() != null ? importacaoDto.getVaga().getDataDemissao() : null)
+                            .atributosSnapshot(itemCelular.getAtributos())
+                            .build();
 
                     recursoDinamicoRepository.save(emprestimoCelular);
                 }
@@ -341,6 +342,8 @@ public class ExcelImportService {
         // Importar vaga
         if (importacaoDto.getVaga() != null) {
             Vaga vaga = importacaoDto.getVaga().toEntity(pessoaBanco);
+            Cliente clienteExistente = clienteService.buscarOuCriarPorNome(importacaoDto.getVaga().getCliente());
+            vaga.setClienteEntity(clienteExistente);
             vagaRepository.save(vaga);
             pessoaBanco.getVagas().add(vaga);
             pessoaRepository.save(pessoaBanco);
@@ -532,7 +535,7 @@ public class ExcelImportService {
         Cell nomeCell = row.getCell(2);
         Cell cpfCell = row.getCell(17);
         return (nomeCell == null || nomeCell.toString().isBlank()) &&
-               (cpfCell == null || cpfCell.toString().isBlank());
+                (cpfCell == null || cpfCell.toString().isBlank());
     }
 
     /**
