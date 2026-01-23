@@ -96,7 +96,7 @@ public class ContratoController {
         Map<String, Object> data = new HashMap<>();
 
         Map<String, String> cliente = Map.of(
-                "nome", vagaDTO.getCliente());
+                "nome", vagaDTO.getClienteNome());
 
         Map<String, Object> funcionario = Map.of(
                 "nome", pessoaDTO.getNome(),
@@ -199,7 +199,7 @@ public class ContratoController {
         );
 
         Map<String, Object> contrato = Map.of(
-                "cliente", vagaDTO.getCliente(),
+                "cliente", vagaDTO.getClienteNome(),
                 "funcao", vagaDTO.getCargo(),
                 "salario", vagaDTO.getSalario(),
                 "salarioExtenso", converterParaValorExtenso(vagaDTO.getSalario()),
@@ -253,7 +253,7 @@ public class ContratoController {
         );
 
         Map<String, Object> contrato = Map.of(
-                "cliente", vagaDTO.getCliente(),
+                "cliente", vagaDTO.getClienteNome(),
                 "funcao", vagaDTO.getCargo(),
                 "salario", vagaDTO.getSalario(),
                 "salarioExtenso", converterParaValorExtenso(vagaDTO.getSalario()),
@@ -333,7 +333,7 @@ public class ContratoController {
         String mesReferencia = LocalDate.now().getMonth().toString() + "/" + LocalDate.now().getYear();
 
         Map<String, Object> contrato = new HashMap<>();
-        contrato.put("cliente", vagaDTO.getCliente() != null ? vagaDTO.getCliente() : "N/A");
+        contrato.put("cliente", vagaDTO.getClienteNome() != null ? vagaDTO.getClienteNome() : "N/A");
         contrato.put("salarioBruto", salarioBruto);
         contrato.put("valeTransporte", valeTransporte);
         contrato.put("salarioLiquido", liquido);
@@ -484,7 +484,7 @@ public class ContratoController {
                 break;
 
             case "vt":
-                data.put("cliente", Map.of("nome", vagaDTO.getCliente()));
+                data.put("cliente", Map.of("nome", vagaDTO.getClienteNome()));
                 data.put("funcionario", Map.of(
                         "nome", pessoaDTO.getNome(),
                         "cpf", pessoaDTO.getCpf(),
@@ -530,7 +530,7 @@ public class ContratoController {
                         "cargo", vagaDTO.getCargo() != null ? vagaDTO.getCargo() : "N/A"));
 
                 Map<String, Object> contratoRecibo = new HashMap<>();
-                contratoRecibo.put("cliente", vagaDTO.getCliente() != null ? vagaDTO.getCliente() : "N/A");
+                contratoRecibo.put("cliente", vagaDTO.getClienteNome() != null ? vagaDTO.getClienteNome() : "N/A");
                 contratoRecibo.put("salarioBruto", salarioBruto);
                 contratoRecibo.put("valeTransporte", valeTransporte);
                 contratoRecibo.put("salarioLiquido", liquido);
@@ -589,7 +589,7 @@ public class ContratoController {
 
     private Map<String, Object> criarMapContratoCompleto(VagaDTO vagaDTO) {
         return Map.of(
-                "cliente", vagaDTO.getCliente(),
+                "cliente", vagaDTO.getClienteNome(),
                 "funcao", vagaDTO.getCargo(),
                 "salario", vagaDTO.getSalario(),
                 "salarioExtenso", converterParaValorExtenso(vagaDTO.getSalario()),

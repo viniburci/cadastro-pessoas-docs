@@ -112,7 +112,6 @@ public class ExcelImportService {
                     }
                 } catch (Exception e) {
                     System.out.println("⚠ Erro ao importar linha " + (i + 1) + ": " + e.getMessage());
-                    e.printStackTrace();
                 }
             }
 
@@ -165,8 +164,8 @@ public class ExcelImportService {
 
         Cliente clienteExistente = clienteService.buscarOuCriarPorNome(getString(row, 26));
         VagaDTO vagaDto = VagaDTO.builder()
-                .cliente(getString(row, 26))
                 .clienteId(clienteExistente != null ? clienteExistente.getId() : null)
+                .clienteNome(clienteExistente != null ? clienteExistente.getNome() : null)
                 .cidade(getString(row, 27))
                 .uf(getString(row, 28))
                 .cargo(getString(row, 29))
@@ -342,7 +341,7 @@ public class ExcelImportService {
         // Importar vaga
         if (importacaoDto.getVaga() != null) {
             Vaga vaga = importacaoDto.getVaga().toEntity(pessoaBanco);
-            Cliente clienteExistente = clienteService.buscarOuCriarPorNome(importacaoDto.getVaga().getCliente());
+            Cliente clienteExistente = clienteService.buscarOuCriarPorNome(importacaoDto.getVaga().getClienteNome());
             vaga.setClienteEntity(clienteExistente);
             vagaRepository.save(vaga);
             pessoaBanco.getVagas().add(vaga);

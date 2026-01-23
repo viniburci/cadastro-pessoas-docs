@@ -48,16 +48,12 @@ public class Vaga {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Deprecated
-    private String cliente; // Campo legado - usar clienteEntity
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id")
     private Cliente clienteEntity;
 
     private String cidade;
     private String uf;
-    private String cargo;
     private String setor;
 
     @Column(precision = 10, scale = 2)

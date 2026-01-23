@@ -5,7 +5,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Map;
 
+import com.doban.cadastro_pessoas_docs.domain.cliente.Cliente;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.Pessoa;
+import com.doban.cadastro_pessoas_docs.domain.vaga.tipo.TipoVaga;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,11 +20,8 @@ public class VagaDTO {
     private Long id;
     private Long pessoaId;
     private TipoContratante contratante;
-    private String cliente; // Campo legado
     private Long clienteId;
     private String clienteNome;
-    private String setor;
-    private String cargo;
     private String cidade;
     private String uf;
     private BigDecimal salario;
@@ -50,13 +49,11 @@ public class VagaDTO {
             this.pessoaId = vaga.getPessoa().getId();
         }
         this.contratante = vaga.getContratante();
-        this.cliente = vaga.getCliente();
+        this.clienteId = vaga.getClienteEntity() != null ? vaga.getClienteEntity().getId() : null;
         if (vaga.getClienteEntity() != null) {
             this.clienteId = vaga.getClienteEntity().getId();
             this.clienteNome = vaga.getClienteEntity().getNome();
         }
-        this.setor = vaga.getSetor();
-        this.cargo = vaga.getCargo();
         this.cidade = vaga.getCidade();
         this.uf = vaga.getUf();
         this.salario = vaga.getSalario();
@@ -81,9 +78,7 @@ public class VagaDTO {
     public Vaga toEntity(Pessoa pessoa) {
         Vaga.VagaBuilder vagaBuilder = Vaga.builder()
                 .contratante(this.contratante)
-                .cliente(this.cliente)
-                .setor(this.setor)
-                .cargo(this.cargo)
+                .clienteEntity(this.clienteId != null ? Cliente.builder().id(this.clienteId).build() : null)
                 .cidade(this.cidade)
                 .uf(this.uf)
                 .salario(this.salario)
@@ -96,6 +91,7 @@ public class VagaDTO {
                 .optanteVT(this.optanteVT)
                 .aso(this.aso)
                 .pessoa(pessoa)
+                .tipoVaga(this.tipoVagaId != null ? TipoVaga.builder().id(this.tipoVagaId).build() : null)
                 .atributosDinamicos(this.atributosDinamicos);
 
         if (this.id != null) {
@@ -106,11 +102,10 @@ public class VagaDTO {
     }
 
     public void atualizarEntidade(Vaga vaga) {
-        vaga.setCliente(this.cliente);
+        vaga.setContratante(this.contratante);
+        vaga.setClienteEntity(this.clienteId != null ? Cliente.builder().id(this.clienteId).build() : null);
         vaga.setCidade(this.cidade);
         vaga.setUf(this.uf);
-        vaga.setCargo(this.cargo);
-        vaga.setSetor(this.setor);
         vaga.setSalario(this.salario);
         vaga.setTipoContrato(this.tipoContrato);
         vaga.setDataAdmissao(this.dataAdmissao);
@@ -120,6 +115,7 @@ public class VagaDTO {
         vaga.setOptanteVT(this.optanteVT);
         vaga.setHorarioEntrada(this.horarioEntrada);
         vaga.setHorarioSaida(this.horarioSaida);
+        vaga.setTipoVaga(this.tipoVagaId != null ? TipoVaga.builder().id(this.tipoVagaId).build() : null);
         if (this.atributosDinamicos != null) {
             vaga.setAtributosDinamicos(this.atributosDinamicos);
         }

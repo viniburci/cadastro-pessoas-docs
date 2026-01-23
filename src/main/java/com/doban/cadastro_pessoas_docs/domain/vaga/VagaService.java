@@ -23,6 +23,7 @@ public class VagaService {
     private final PessoaService pessoaService;
     private final ClienteRepository clienteRepository;
 
+    @Transactional
     public List<VagaDTO> obterVagasPorPessoa(Long pessoaId) {
         List<Vaga> vagas = vagaRepository.findByPessoaId(pessoaId).orElse(Collections.emptyList());
         return vagas.stream().map(vaga -> {
@@ -31,6 +32,7 @@ public class VagaService {
         }).toList();
     }
 
+    @Transactional
     public VagaDTO obterVagaMaisRecentePorPessoa(Long pessoaId) {
         Vaga vaga = vagaRepository.findFirstByPessoaIdOrderByDataAdmissaoDesc(pessoaId)
                 .orElseThrow(() -> new EntityNotFoundException("Essa pessoa não tem vagas cadastradas."));
@@ -46,6 +48,7 @@ public class VagaService {
         return vagaDTO;
     }
 
+    @Transactional
     public VagaDTO criarVaga(Long pessoaId, VagaDTO vagaDTO) {
         if (vagaDTO == null) {
             throw new IllegalArgumentException("Dados da vaga não podem ser nulos.");
@@ -80,6 +83,7 @@ public class VagaService {
         return new VagaDTO(vagaSalva);
     }
 
+    @Transactional
     public VagaDTO atualizarVaga(Long vagaId, VagaDTO vagaAtualizada) {
         Vaga vagaExistente = vagaRepository.findById(vagaId)
                 .orElseThrow(() -> new EntityNotFoundException("Vaga não encontrada"));
@@ -98,6 +102,7 @@ public class VagaService {
         return new VagaDTO(vagaRepository.save(vagaExistente));
     }
 
+    @Transactional
     public void deletarVaga(Long vagaId) {
         if (!vagaRepository.existsById(vagaId)) {
             throw new EntityNotFoundException("Vaga não encontrada");

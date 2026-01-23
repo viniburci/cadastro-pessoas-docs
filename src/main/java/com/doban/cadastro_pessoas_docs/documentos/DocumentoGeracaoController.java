@@ -1,5 +1,24 @@
 package com.doban.cadastro_pessoas_docs.documentos;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.doban.cadastro_pessoas_docs.documentos.template.TemplateDocumento;
 import com.doban.cadastro_pessoas_docs.documentos.template.TemplateDocumentoService;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaDTO;
@@ -8,14 +27,6 @@ import com.doban.cadastro_pessoas_docs.domain.vaga.VagaDTO;
 import com.doban.cadastro_pessoas_docs.domain.vaga.VagaService;
 import com.doban.cadastro_pessoas_docs.domain.vaga.tipo.TipoVaga;
 import com.doban.cadastro_pessoas_docs.domain.vaga.tipo.TipoVagaRepository;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
 
 /**
  * Controller para geração dinâmica de documentos usando templates do banco de dados.
@@ -235,7 +246,7 @@ public class DocumentoGeracaoController {
         Map<String, Object> vaga = new HashMap<>();
         vaga.put("id", vagaDTO.getId());
         vaga.put("cargo", vagaDTO.getCargo());
-        vaga.put("cliente", vagaDTO.getCliente());
+        vaga.put("cliente", vagaDTO.getClienteNome());
         vaga.put("clienteNome", vagaDTO.getClienteNome());
         vaga.put("cidade", vagaDTO.getCidade());
         vaga.put("uf", vagaDTO.getUf());
