@@ -54,7 +54,6 @@ public class Vaga {
 
     private String cidade;
     private String uf;
-    private String setor;
 
     @Column(precision = 10, scale = 2)
     private BigDecimal salario;

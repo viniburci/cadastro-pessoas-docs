@@ -168,8 +168,6 @@ public class ExcelImportService {
                 .clienteNome(clienteExistente != null ? clienteExistente.getNome() : null)
                 .cidade(getString(row, 27))
                 .uf(getString(row, 28))
-                .cargo(getString(row, 29))
-                .setor(getString(row, 30))
                 .salario(parseBigDecimal(getString(row, 31)))
                 .dataAdmissao(parseDate(row, 33))
                 .dataDemissao(parseDate(row, 34))

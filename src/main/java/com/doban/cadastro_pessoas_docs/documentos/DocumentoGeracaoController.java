@@ -245,7 +245,6 @@ public class DocumentoGeracaoController {
     private Map<String, Object> criarMapVaga(VagaDTO vagaDTO) {
         Map<String, Object> vaga = new HashMap<>();
         vaga.put("id", vagaDTO.getId());
-        vaga.put("cargo", vagaDTO.getCargo());
         vaga.put("cliente", vagaDTO.getClienteNome());
         vaga.put("clienteNome", vagaDTO.getClienteNome());
         vaga.put("cidade", vagaDTO.getCidade());
@@ -257,6 +256,8 @@ public class DocumentoGeracaoController {
         vaga.put("horarioSaida", vagaDTO.getHorarioSaida());
         vaga.put("tipoVagaCodigo", vagaDTO.getTipoVagaCodigo());
         vaga.put("tipoVagaNome", vagaDTO.getTipoVagaNome());
+        vaga.put("cargo", vagaDTO.getTipoVagaNome());
+        vaga.put("funcao", vagaDTO.getTipoVagaNome());
         return vaga;
     }
 

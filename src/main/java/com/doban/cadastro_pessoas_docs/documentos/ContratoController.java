@@ -61,7 +61,7 @@ public class ContratoController {
                 "uf", pessoaDTO.getEstado());
 
         Map<String, Object> contrato = Map.of(
-                "funcao", vagaDTO.getCargo(),
+                "funcao", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "N/A",
                 "salario", vagaDTO.getSalario(),
                 "cidadeTrabalho", vagaDTO.getCidade(),
                 "dataInicio", vagaDTO.getDataAdmissao(),
@@ -147,7 +147,7 @@ public class ContratoController {
                 "pix", pessoaDTO.getChavePix());
 
         Map<String, Object> contrato = Map.of(
-                "funcao", vagaDTO.getCargo(),
+                "funcao", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "N/A",
                 "salario", vagaDTO.getSalario(),
                 "salarioExtenso", converterParaValorExtenso(vagaDTO.getSalario()),
                 "cidadeTrabalho", vagaDTO.getCidade(),
@@ -200,7 +200,7 @@ public class ContratoController {
 
         Map<String, Object> contrato = Map.of(
                 "cliente", vagaDTO.getClienteNome(),
-                "funcao", vagaDTO.getCargo(),
+                "funcao", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "N/A",
                 "salario", vagaDTO.getSalario(),
                 "salarioExtenso", converterParaValorExtenso(vagaDTO.getSalario()),
                 "cidadeTrabalho", vagaDTO.getCidade(),
@@ -254,7 +254,7 @@ public class ContratoController {
 
         Map<String, Object> contrato = Map.of(
                 "cliente", vagaDTO.getClienteNome(),
-                "funcao", vagaDTO.getCargo(),
+                "funcao", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "N/A",
                 "salario", vagaDTO.getSalario(),
                 "salarioExtenso", converterParaValorExtenso(vagaDTO.getSalario()),
                 "cidadeTrabalho", vagaDTO.getCidade(),
@@ -326,7 +326,7 @@ public class ContratoController {
         Map<String, String> empregado = Map.of(
                 "nome", pessoaDTO.getNome(),
                 "cpf", pessoaDTO.getCpf(),
-                "cargo", vagaDTO.getCargo() != null ? vagaDTO.getCargo() : "N/A"
+                "cargo", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "N/A"
         );
 
         // Determinar mês de referência (mês atual ou mês da vaga)
@@ -410,7 +410,7 @@ public class ContratoController {
         );
 
         Map<String, String> contrato = Map.of(
-                "funcao", vagaDTO.getCargo(),
+                "funcao", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "N/A",
                 "numero", vagaDTO.getDataAdmissao() != null ? vagaDTO.getDataAdmissao().toString() : ""
         );
 
@@ -527,7 +527,8 @@ public class ContratoController {
                 data.put("empregado", Map.of(
                         "nome", pessoaDTO.getNome(),
                         "cpf", pessoaDTO.getCpf(),
-                        "cargo", vagaDTO.getCargo() != null ? vagaDTO.getCargo() : "N/A"));
+                        "cargo", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "N/A"
+                ));
 
                 Map<String, Object> contratoRecibo = new HashMap<>();
                 contratoRecibo.put("cliente", vagaDTO.getClienteNome() != null ? vagaDTO.getClienteNome() : "N/A");
@@ -578,7 +579,7 @@ public class ContratoController {
 
     private Map<String, Object> criarMapContratoBasico(VagaDTO vagaDTO) {
         return Map.of(
-                "funcao", vagaDTO.getCargo(),
+                "funcao", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "N/A",
                 "salario", vagaDTO.getSalario(),
                 "cidadeTrabalho", vagaDTO.getCidade(),
                 "dataInicio", vagaDTO.getDataAdmissao(),
@@ -590,7 +591,7 @@ public class ContratoController {
     private Map<String, Object> criarMapContratoCompleto(VagaDTO vagaDTO) {
         return Map.of(
                 "cliente", vagaDTO.getClienteNome(),
-                "funcao", vagaDTO.getCargo(),
+                "funcao", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "N/A",
                 "salario", vagaDTO.getSalario(),
                 "salarioExtenso", converterParaValorExtenso(vagaDTO.getSalario()),
                 "cidadeTrabalho", vagaDTO.getCidade(),
