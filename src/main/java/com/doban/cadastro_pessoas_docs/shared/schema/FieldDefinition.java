@@ -35,4 +35,11 @@ public class FieldDefinition {
 
     private Double valorMinimo;    // Valor mínimo para INTEGER/DECIMAL
     private Double valorMaximo;    // Valor máximo para INTEGER/DECIMAL
+
+    /**
+     * Nome do campo de tamanho na Pessoa que deve preencher este campo automaticamente.
+     * Ex: "tamanhoCamisa", "tamanhoCalcado", "tamanhoCapacete"
+     * Se preenchido, o sistema busca o valor desse campo na Pessoa e usa como valor padrão.
+     */
+    private String campoTamanhoPessoa;
 }

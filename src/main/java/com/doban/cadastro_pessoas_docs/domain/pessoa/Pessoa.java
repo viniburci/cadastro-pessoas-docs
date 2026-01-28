@@ -58,6 +58,13 @@ public class Pessoa {
 
     private String chavePix;
 
+    // Tamanhos de roupa/EPI
+    private String tamanhoCamisa;
+    private String tamanhoCalca;
+    private String tamanhoCalcado;
+    private String tamanhoLuva;
+    private String tamanhoCapacete;
+
     @Column(name = "foto", columnDefinition = "BYTEA")
     private byte[] foto;
 

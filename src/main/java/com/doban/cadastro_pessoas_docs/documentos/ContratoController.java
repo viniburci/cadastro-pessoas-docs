@@ -23,8 +23,12 @@ import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaDTO;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaService;
 import com.doban.cadastro_pessoas_docs.domain.vaga.VagaDTO;
 import com.doban.cadastro_pessoas_docs.domain.vaga.VagaService;
+import com.doban.cadastro_pessoas_docs.domain.vaga.tipo.TipoVaga;
+import com.doban.cadastro_pessoas_docs.domain.vaga.tipo.TipoVagaRepository;
 import com.ibm.icu.text.RuleBasedNumberFormat;
 import com.ibm.icu.util.ULocale;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/documentos")
@@ -33,12 +37,14 @@ public class ContratoController {
     private final VagaService vagaService;
     private final PessoaService pessoaService;
     private final PdfGeneratorService pdfGeneratorService;
+    private final TipoVagaRepository tipoVagaRepository;
 
     public ContratoController(PdfGeneratorService pdfGeneratorService, VagaService vagaService,
-            PessoaService pessoaService) {
+            PessoaService pessoaService, TipoVagaRepository tipoVagaRepository) {
         this.pdfGeneratorService = pdfGeneratorService;
         this.vagaService = vagaService;
         this.pessoaService = pessoaService;
+        this.tipoVagaRepository = tipoVagaRepository;
     }
 
     @GetMapping("/contrato/{vagaId}")
@@ -214,10 +220,15 @@ public class ContratoController {
         data.put("contrato", contrato);
         data.put("dataAtualExtenso", obterDataPorExtenso());
 
+        // Buscar itens do TipoVaga e resolver tamanhos
+        List<Map<String, Object>> itens = buscarItensComTamanhos(vagaDTO, pessoaDTO);
+        data.put("itens", itens);
+        data.put("valorTotal", calcularValorTotal(itens));
+
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("termo_materiais", data);
 
         HttpHeaders headers = new HttpHeaders();
-        String nomeArquivo = "contrato_" + Math.random() + ".pdf";
+        String nomeArquivo = "termo_materiais_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
 
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -268,10 +279,14 @@ public class ContratoController {
         data.put("contrato", contrato);
         data.put("dataAtualExtenso", obterDataPorExtenso());
 
+        // Buscar itens do TipoVaga e resolver tamanhos
+        List<Map<String, Object>> itens = buscarItensComTamanhos(vagaDTO, pessoaDTO);
+        data.put("itens", itens);
+
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("entrega_epi", data);
 
         HttpHeaders headers = new HttpHeaders();
-        String nomeArquivo = "contrato_" + Math.random() + ".pdf";
+        String nomeArquivo = "entrega_epi_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
 
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -561,20 +576,27 @@ public class ContratoController {
     }
 
     private Map<String, String> criarMapEmpregadoCompleto(PessoaDTO pessoaDTO) {
-        return Map.ofEntries(
-                entry("nome", pessoaDTO.getNome()),
-                entry("estadoCivil", pessoaDTO.getEstadoCivil()),
-                entry("rg", pessoaDTO.getNumeroRg()),
-                entry("cpf", pessoaDTO.getCpf()),
-                entry("ctps", pessoaDTO.getNumeroCtps()),
-                entry("ctpsSerie", pessoaDTO.getSerieCtps()),
-                entry("endereco", pessoaDTO.getEndereco()),
-                entry("bairro", pessoaDTO.getBairro()),
-                entry("cidade", pessoaDTO.getCidade()),
-                entry("uf", pessoaDTO.getEstado()),
-                entry("pix", pessoaDTO.getChavePix()),
-                entry("cep", pessoaDTO.getCep()),
-                entry("telefone", pessoaDTO.getTelefone()));
+        Map<String, String> empregado = new HashMap<>();
+        empregado.put("nome", pessoaDTO.getNome());
+        empregado.put("estadoCivil", pessoaDTO.getEstadoCivil());
+        empregado.put("rg", pessoaDTO.getNumeroRg());
+        empregado.put("cpf", pessoaDTO.getCpf());
+        empregado.put("ctps", pessoaDTO.getNumeroCtps());
+        empregado.put("ctpsSerie", pessoaDTO.getSerieCtps());
+        empregado.put("endereco", pessoaDTO.getEndereco());
+        empregado.put("bairro", pessoaDTO.getBairro());
+        empregado.put("cidade", pessoaDTO.getCidade());
+        empregado.put("uf", pessoaDTO.getEstado());
+        empregado.put("pix", pessoaDTO.getChavePix());
+        empregado.put("cep", pessoaDTO.getCep());
+        empregado.put("telefone", pessoaDTO.getTelefone());
+        // Tamanhos de roupa/EPI
+        empregado.put("tamanhoCamisa", pessoaDTO.getTamanhoCamisa());
+        empregado.put("tamanhoCalca", pessoaDTO.getTamanhoCalca());
+        empregado.put("tamanhoCalcado", pessoaDTO.getTamanhoCalcado());
+        empregado.put("tamanhoLuva", pessoaDTO.getTamanhoLuva());
+        empregado.put("tamanhoCapacete", pessoaDTO.getTamanhoCapacete());
+        return empregado;
     }
 
     private Map<String, Object> criarMapContratoBasico(VagaDTO vagaDTO) {
@@ -600,5 +622,74 @@ public class ContratoController {
                 "dataFim", vagaDTO.getDataDemissao(),
                 "horarioEntrada", vagaDTO.getHorarioEntrada(),
                 "horarioSaida", vagaDTO.getHorarioSaida());
+    }
+
+    /**
+     * Busca os itens padrão do TipoVaga e resolve os tamanhos baseado na Pessoa.
+     */
+    private List<Map<String, Object>> buscarItensComTamanhos(VagaDTO vagaDTO, PessoaDTO pessoaDTO) {
+        List<Map<String, Object>> itensPadrao = new ArrayList<>();
+
+        if (vagaDTO.getTipoVagaId() != null) {
+            Optional<TipoVaga> tipoVagaOpt = tipoVagaRepository.findById(vagaDTO.getTipoVagaId());
+            if (tipoVagaOpt.isPresent()) {
+                itensPadrao = tipoVagaOpt.get().getItensPadrao();
+            }
+        }
+
+        return resolverTamanhosItens(itensPadrao != null ? itensPadrao : new ArrayList<>(), pessoaDTO);
+    }
+
+    /**
+     * Resolve os tamanhos dos itens baseado nos campos de tamanho da Pessoa.
+     */
+    private List<Map<String, Object>> resolverTamanhosItens(List<Map<String, Object>> itens, PessoaDTO pessoaDTO) {
+        if (itens == null || itens.isEmpty()) {
+            return itens;
+        }
+
+        // Mapa de campos de tamanho da Pessoa
+        Map<String, String> tamanhosPessoa = new HashMap<>();
+        tamanhosPessoa.put("tamanhoCamisa", pessoaDTO.getTamanhoCamisa());
+        tamanhosPessoa.put("tamanhoCalca", pessoaDTO.getTamanhoCalca());
+        tamanhosPessoa.put("tamanhoCalcado", pessoaDTO.getTamanhoCalcado());
+        tamanhosPessoa.put("tamanhoLuva", pessoaDTO.getTamanhoLuva());
+        tamanhosPessoa.put("tamanhoCapacete", pessoaDTO.getTamanhoCapacete());
+
+        List<Map<String, Object>> itensResolvidos = new ArrayList<>();
+        for (Map<String, Object> item : itens) {
+            Map<String, Object> itemCopia = new HashMap<>(item);
+
+            // Se o item tem campoTamanhoPessoa, resolve o tamanho
+            Object campoTamanho = itemCopia.get("campoTamanhoPessoa");
+            if (campoTamanho != null && !campoTamanho.toString().isEmpty()) {
+                String valorTamanho = tamanhosPessoa.get(campoTamanho.toString());
+                if (valorTamanho != null && !valorTamanho.isEmpty()) {
+                    itemCopia.put("tamanho", valorTamanho);
+                }
+            }
+
+            itensResolvidos.add(itemCopia);
+        }
+
+        return itensResolvidos;
+    }
+
+    /**
+     * Calcula o valor total dos itens.
+     */
+    private BigDecimal calcularValorTotal(List<Map<String, Object>> itens) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (Map<String, Object> item : itens) {
+            Object valor = item.get("valor");
+            if (valor != null) {
+                if (valor instanceof BigDecimal) {
+                    total = total.add((BigDecimal) valor);
+                } else if (valor instanceof Number) {
+                    total = total.add(BigDecimal.valueOf(((Number) valor).doubleValue()));
+                }
+            }
+        }
+        return total;
     }
 }

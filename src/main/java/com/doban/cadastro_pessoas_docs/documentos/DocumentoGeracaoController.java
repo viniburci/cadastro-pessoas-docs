@@ -78,7 +78,10 @@ public class DocumentoGeracaoController {
                 itensPadrao = tipoVagaOpt.get().getItensPadrao();
             }
         }
-        dados.put("itens", itensPadrao != null ? itensPadrao : new ArrayList<>());
+        // Resolver tamanhos dos itens baseado nos dados da Pessoa
+        List<Map<String, Object>> itensResolvidos = resolverTamanhosItens(
+                itensPadrao != null ? itensPadrao : new ArrayList<>(), pessoaDTO);
+        dados.put("itens", itensResolvidos);
 
         // Incluir schema do template para o frontend saber a estrutura dos itens
         TemplateDocumento template = templateDocumentoService.buscarEntidadePorCodigo(templateCodigo);
@@ -134,6 +137,11 @@ public class DocumentoGeracaoController {
             dados.put("itens", itensPadrao != null ? itensPadrao : new ArrayList<>());
         }
 
+        // Resolver tamanhos dos itens baseado nos dados da Pessoa
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> itensParaResolver = (List<Map<String, Object>>) dados.get("itens");
+        dados.put("itens", resolverTamanhosItens(itensParaResolver, pessoaDTO));
+
         // Gerar PDF usando o template do banco
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtmlString(template.getConteudoHtml(), dados);
 
@@ -174,7 +182,11 @@ public class DocumentoGeracaoController {
                 itensPadrao = tipoVagaOpt.get().getItensPadrao();
             }
         }
-        dados.put("itens", itensPadrao != null ? itensPadrao : new ArrayList<>());
+
+        // Resolver tamanhos dos itens baseado nos dados da Pessoa
+        List<Map<String, Object>> itensResolvidos = resolverTamanhosItens(
+                itensPadrao != null ? itensPadrao : new ArrayList<>(), pessoaDTO);
+        dados.put("itens", itensResolvidos);
 
         String htmlRenderizado = pdfGeneratorService.renderHtmlFromString(template.getConteudoHtml(), dados);
 
@@ -239,6 +251,13 @@ public class DocumentoGeracaoController {
         pessoa.put("ctps", pessoaDTO.getNumeroCtps());
         pessoa.put("ctpsSerie", pessoaDTO.getSerieCtps());
         pessoa.put("pix", pessoaDTO.getChavePix());
+
+        // Tamanhos de roupa/EPI
+        pessoa.put("tamanhoCamisa", pessoaDTO.getTamanhoCamisa());
+        pessoa.put("tamanhoCalca", pessoaDTO.getTamanhoCalca());
+        pessoa.put("tamanhoCalcado", pessoaDTO.getTamanhoCalcado());
+        pessoa.put("tamanhoLuva", pessoaDTO.getTamanhoLuva());
+        pessoa.put("tamanhoCapacete", pessoaDTO.getTamanhoCapacete());
         return pessoa;
     }
 
@@ -267,5 +286,46 @@ public class DocumentoGeracaoController {
                 "d 'de' MMMM 'de' yyyy",
                 new Locale.Builder().setLanguage("pt").setRegion("BR").build());
         return hoje.format(formatador);
+    }
+
+    /**
+     * Resolve os tamanhos dos itens baseado nos campos de tamanho da Pessoa.
+     * Para cada item que possui 'campoTamanhoPessoa', busca o valor correspondente
+     * na Pessoa e preenche o campo 'tamanho' do item.
+     *
+     * @param itens Lista de itens a processar
+     * @param pessoaDTO Dados da pessoa com os tamanhos
+     * @return Lista de itens com tamanhos resolvidos
+     */
+    private List<Map<String, Object>> resolverTamanhosItens(List<Map<String, Object>> itens, PessoaDTO pessoaDTO) {
+        if (itens == null || itens.isEmpty()) {
+            return itens;
+        }
+
+        // Mapa de campos de tamanho da Pessoa
+        Map<String, String> tamanhosPessoa = new HashMap<>();
+        tamanhosPessoa.put("tamanhoCamisa", pessoaDTO.getTamanhoCamisa());
+        tamanhosPessoa.put("tamanhoCalca", pessoaDTO.getTamanhoCalca());
+        tamanhosPessoa.put("tamanhoCalcado", pessoaDTO.getTamanhoCalcado());
+        tamanhosPessoa.put("tamanhoLuva", pessoaDTO.getTamanhoLuva());
+        tamanhosPessoa.put("tamanhoCapacete", pessoaDTO.getTamanhoCapacete());
+
+        List<Map<String, Object>> itensResolvidos = new ArrayList<>();
+        for (Map<String, Object> item : itens) {
+            Map<String, Object> itemCopia = new HashMap<>(item);
+
+            // Se o item tem campoTamanhoPessoa, resolve o tamanho
+            Object campoTamanho = itemCopia.get("campoTamanhoPessoa");
+            if (campoTamanho != null && !campoTamanho.toString().isEmpty()) {
+                String valorTamanho = tamanhosPessoa.get(campoTamanho.toString());
+                if (valorTamanho != null && !valorTamanho.isEmpty()) {
+                    itemCopia.put("tamanho", valorTamanho);
+                }
+            }
+
+            itensResolvidos.add(itemCopia);
+        }
+
+        return itensResolvidos;
     }
 }
