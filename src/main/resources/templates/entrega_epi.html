@@ -176,11 +176,11 @@
         </thead>
         <tbody>
             <tr th:each="item : ${itens}">
-                <td style="text-align: center;" th:text="${#strings.toString(item.quantidade)}">01</td>
-                <td th:text="${item.descricao}">DESCRIÇÃO DO EPI</td>
-                <td style="text-align: center;" th:text="${item.tamanho != null ? item.tamanho : 'ÚNICO'}">ÚNICO</td>
+                <td style="text-align: center;" th:text="${item['quantidade'] ?: 1}">01</td>
+                <td th:text="${item['descricao'] ?: '-'}">DESCRIÇÃO DO EPI</td>
+                <td style="text-align: center;" th:text="${item['tamanho'] ?: 'ÚNICO'}">ÚNICO</td>
             </tr>
-            <tr th:if="${itens == null or itens.empty}">
+            <tr th:if="${itens == null or #lists.isEmpty(itens)}">
                 <td colspan="3" style="text-align: center; font-style: italic;">Nenhum EPI registrado</td>
             </tr>
         </tbody>
