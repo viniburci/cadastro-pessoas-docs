@@ -178,14 +178,14 @@
         </thead>
         <tbody>
             <tr th:each="item : ${itens}">
-                <td style="text-align: center;" th:text="${item.quantidade}">1</td>
-                <td style="text-align: center;" th:text="${item.marca} ?: '-'">MARCA</td>
-                <td th:text="${item.descricao}">DESCRIÇÃO</td>
-                <td style="text-align: center;" th:text="${item.numeroSerie} ?: '-'">-</td>
-                <td style="text-align: center;" th:text="${item.tamanho} ?: '-'">-</td>
+                <td style="text-align: center;" th:text="${item.quantidade ?: 1}">1</td>
+                <td style="text-align: center;" th:text="${item.marca ?: '-'}">MARCA</td>
+                <td th:text="${item.descricao ?: '-'}">DESCRIÇÃO</td>
+                <td style="text-align: center;" th:text="${item.numeroSerie ?: '-'}">-</td>
+                <td style="text-align: center;" th:text="${item.tamanho ?: '-'}">-</td>
                 <td style="text-align: right;">
                     <span th:if="${item.valor != null}" th:text="${'R$ ' + #numbers.formatDecimal(item.valor, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</span>
-                    <span th:if="${item.valor == null}">-</span>
+                    <span th:unless="${item.valor != null}">-</span>
                 </td>
             </tr>
             <tr th:if="${#lists.isEmpty(itens)}">
