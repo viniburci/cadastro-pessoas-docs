@@ -524,10 +524,22 @@ public class ContratoController {
                 break;
 
             case "termo_materiais":
+                data.put("empregado", criarMapEmpregadoCompleto(pessoaDTO));
+                data.put("contrato", criarMapContratoCompleto(vagaDTO));
+                data.put("dataAtualExtenso", obterDataPorExtenso());
+                // Buscar itens do TipoVaga e resolver tamanhos
+                List<Map<String, Object>> itensMateriais = buscarItensComTamanhos(vagaDTO, pessoaDTO);
+                data.put("itens", itensMateriais);
+                data.put("valorTotal", calcularValorTotal(itensMateriais));
+                break;
+
             case "entrega_epi":
                 data.put("empregado", criarMapEmpregadoCompleto(pessoaDTO));
                 data.put("contrato", criarMapContratoCompleto(vagaDTO));
                 data.put("dataAtualExtenso", obterDataPorExtenso());
+                // Buscar itens do TipoVaga e resolver tamanhos
+                List<Map<String, Object>> itensEpi = buscarItensComTamanhos(vagaDTO, pessoaDTO);
+                data.put("itens", itensEpi);
                 break;
 
             case "recibo_pagamento":
