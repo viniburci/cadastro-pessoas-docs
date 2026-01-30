@@ -25,6 +25,8 @@ import com.doban.cadastro_pessoas_docs.domain.vaga.VagaDTO;
 import com.doban.cadastro_pessoas_docs.domain.vaga.VagaService;
 import com.doban.cadastro_pessoas_docs.domain.vaga.tipo.TipoVaga;
 import com.doban.cadastro_pessoas_docs.domain.vaga.tipo.TipoVagaRepository;
+import com.doban.cadastro_pessoas_docs.recurso.item.ItemDinamico;
+import com.doban.cadastro_pessoas_docs.recurso.item.ItemDinamicoRepository;
 import com.ibm.icu.text.RuleBasedNumberFormat;
 import com.ibm.icu.util.ULocale;
 
@@ -38,13 +40,16 @@ public class ContratoController {
     private final PessoaService pessoaService;
     private final PdfGeneratorService pdfGeneratorService;
     private final TipoVagaRepository tipoVagaRepository;
+    private final ItemDinamicoRepository itemDinamicoRepository;
 
     public ContratoController(PdfGeneratorService pdfGeneratorService, VagaService vagaService,
-            PessoaService pessoaService, TipoVagaRepository tipoVagaRepository) {
+            PessoaService pessoaService, TipoVagaRepository tipoVagaRepository,
+            ItemDinamicoRepository itemDinamicoRepository) {
         this.pdfGeneratorService = pdfGeneratorService;
         this.vagaService = vagaService;
         this.pessoaService = pessoaService;
         this.tipoVagaRepository = tipoVagaRepository;
+        this.itemDinamicoRepository = itemDinamicoRepository;
     }
 
     @GetMapping("/contrato/{vagaId}")
@@ -180,50 +185,76 @@ public class ContratoController {
                 .body(pdfBytes);
     }
 
-    @GetMapping("/termo_responsabilidade_materiais/{vagaId}")
-    public ResponseEntity<byte[]> downloadTermoResponsabilidadeMateriaisPdf(@PathVariable Long vagaId) {
+    /**
+     * Gera o Termo de Responsabilidade de Materiais baseado em Pessoa e ItemDinamico.
+     * @param pessoaId ID da pessoa responsável
+     * @param itemIds Lista de IDs dos itens/equipamentos emprestados
+     */
+    @GetMapping("/termo_responsabilidade_materiais/{pessoaId}")
+    public ResponseEntity<byte[]> downloadTermoResponsabilidadeMateriaisPdf(
+            @PathVariable Long pessoaId,
+            @RequestParam List<Long> itemIds) {
 
-        VagaDTO vagaDTO = vagaService.obterVagaPorId(vagaId);
-        PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(vagaDTO.getPessoaId());
+        PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(pessoaId);
 
         Map<String, Object> data = new HashMap<>();
 
         Map<String, String> empregado = Map.ofEntries(
                 entry("nome", pessoaDTO.getNome()),
-                entry("estadoCivil", pessoaDTO.getEstadoCivil()),
-                entry("rg", pessoaDTO.getNumeroRg()),
-                entry("cpf", pessoaDTO.getCpf()),
-                entry("ctps", pessoaDTO.getNumeroCtps()),
-                entry("ctpsSerie", pessoaDTO.getSerieCtps()),
-                entry("endereco", pessoaDTO.getEndereco()),
-                entry("bairro", pessoaDTO.getBairro()),
-                entry("cidade", pessoaDTO.getCidade()),
-                entry("uf", pessoaDTO.getEstado()),
-                entry("pix", pessoaDTO.getChavePix()),
-                entry("cep", pessoaDTO.getCep()),
-                entry("telefone", pessoaDTO.getTelefone())
+                entry("estadoCivil", pessoaDTO.getEstadoCivil() != null ? pessoaDTO.getEstadoCivil() : ""),
+                entry("rg", pessoaDTO.getNumeroRg() != null ? pessoaDTO.getNumeroRg() : ""),
+                entry("cpf", pessoaDTO.getCpf() != null ? pessoaDTO.getCpf() : ""),
+                entry("ctps", pessoaDTO.getNumeroCtps() != null ? pessoaDTO.getNumeroCtps() : ""),
+                entry("ctpsSerie", pessoaDTO.getSerieCtps() != null ? pessoaDTO.getSerieCtps() : ""),
+                entry("endereco", pessoaDTO.getEndereco() != null ? pessoaDTO.getEndereco() : ""),
+                entry("bairro", pessoaDTO.getBairro() != null ? pessoaDTO.getBairro() : ""),
+                entry("cidade", pessoaDTO.getCidade() != null ? pessoaDTO.getCidade() : ""),
+                entry("uf", pessoaDTO.getEstado() != null ? pessoaDTO.getEstado() : ""),
+                entry("pix", pessoaDTO.getChavePix() != null ? pessoaDTO.getChavePix() : ""),
+                entry("cep", pessoaDTO.getCep() != null ? pessoaDTO.getCep() : ""),
+                entry("telefone", pessoaDTO.getTelefone() != null ? pessoaDTO.getTelefone() : "")
         );
 
-        Map<String, Object> contrato = Map.of(
-                "cliente", vagaDTO.getClienteNome(),
-                "funcao", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "N/A",
-                "salario", vagaDTO.getSalario(),
-                "salarioExtenso", converterParaValorExtenso(vagaDTO.getSalario()),
-                "cidadeTrabalho", vagaDTO.getCidade(),
-                "estadoTrabalho", vagaDTO.getUf(),
-                "dataInicio", vagaDTO.getDataAdmissao(),
-                "dataFim", vagaDTO.getDataDemissao(),
-                "horarioEntrada", vagaDTO.getHorarioEntrada(),
-                "horarioSaida", vagaDTO.getHorarioSaida());
+        // Buscar os ItemDinamicos pelos IDs
+        List<ItemDinamico> itensDinamicos = itemDinamicoRepository.findAllById(itemIds);
+
+        // Converter ItemDinamico para formato do template
+        List<Map<String, Object>> itens = new ArrayList<>();
+        BigDecimal valorTotal = BigDecimal.ZERO;
+
+        for (ItemDinamico item : itensDinamicos) {
+            Map<String, Object> itemMap = new HashMap<>();
+            Map<String, Object> atributos = item.getAtributos();
+
+            // Mapear atributos do ItemDinamico para colunas do template
+            itemMap.put("quantidade", atributos.getOrDefault("quantidade", 1));
+            itemMap.put("marca", atributos.getOrDefault("marca", item.getTipoRecurso().getNome()));
+            itemMap.put("descricao", atributos.getOrDefault("descricao", item.getIdentificador()));
+            itemMap.put("numeroSerie", atributos.getOrDefault("numeroSerie", atributos.getOrDefault("imei", "")));
+            itemMap.put("ddd", atributos.getOrDefault("ddd", ""));
+
+            Object valorObj = atributos.get("valor");
+            if (valorObj != null) {
+                BigDecimal valor;
+                if (valorObj instanceof BigDecimal) {
+                    valor = (BigDecimal) valorObj;
+                } else if (valorObj instanceof Number) {
+                    valor = BigDecimal.valueOf(((Number) valorObj).doubleValue());
+                } else {
+                    valor = new BigDecimal(valorObj.toString());
+                }
+                itemMap.put("valor", valor);
+                valorTotal = valorTotal.add(valor);
+            }
+
+            itens.add(itemMap);
+        }
 
         data.put("empregado", empregado);
-        data.put("contrato", contrato);
+        data.put("contrato", Map.of("cliente", "")); // Não há contrato/vaga associado
         data.put("dataAtualExtenso", obterDataPorExtenso());
-
-        // Buscar itens do TipoVaga e resolver tamanhos
-        List<Map<String, Object>> itens = buscarItensComTamanhos(vagaDTO, pessoaDTO);
         data.put("itens", itens);
-        data.put("valorTotal", calcularValorTotal(itens));
+        data.put("valorTotal", valorTotal);
 
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("termo_responsabilidade_materiais", data);
 
@@ -523,15 +554,7 @@ public class ContratoController {
                 data.put("dataAtualExtenso", obterDataPorExtenso());
                 break;
 
-            case "termo_responsabilidade_materiais":
-                data.put("empregado", criarMapEmpregadoCompleto(pessoaDTO));
-                data.put("contrato", criarMapContratoCompleto(vagaDTO));
-                data.put("dataAtualExtenso", obterDataPorExtenso());
-                // Buscar itens do TipoVaga e resolver tamanhos
-                List<Map<String, Object>> itensMateriais = buscarItensComTamanhos(vagaDTO, pessoaDTO);
-                data.put("itens", itensMateriais);
-                data.put("valorTotal", calcularValorTotal(itensMateriais));
-                break;
+            // termo_responsabilidade_materiais não usa vaga - possui endpoint próprio com pessoaId e itemIds
 
             case "entrega_epi":
                 data.put("empregado", criarMapEmpregadoCompleto(pessoaDTO));
