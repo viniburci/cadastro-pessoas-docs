@@ -328,6 +328,51 @@ public class ContratoController {
                 .body(pdfBytes);
     }
 
+    @GetMapping("/registro_entrega_epi/{vagaId}")
+    public ResponseEntity<byte[]> downloadRegistroEntregaEpiPdf(@PathVariable Long vagaId) {
+
+        VagaDTO vagaDTO = vagaService.obterVagaPorId(vagaId);
+        PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(vagaDTO.getPessoaId());
+
+        Map<String, Object> data = new HashMap<>();
+
+        Map<String, String> empregado = Map.ofEntries(
+                entry("nome", pessoaDTO.getNome() != null ? pessoaDTO.getNome() : ""),
+                entry("cpf", pessoaDTO.getCpf() != null ? pessoaDTO.getCpf() : ""),
+                entry("endereco", pessoaDTO.getEndereco() != null ? pessoaDTO.getEndereco() : ""),
+                entry("bairro", pessoaDTO.getBairro() != null ? pessoaDTO.getBairro() : ""),
+                entry("cidade", pessoaDTO.getCidade() != null ? pessoaDTO.getCidade() : ""),
+                entry("uf", pessoaDTO.getEstado() != null ? pessoaDTO.getEstado() : ""),
+                entry("cep", pessoaDTO.getCep() != null ? pessoaDTO.getCep() : ""),
+                entry("telefone", pessoaDTO.getTelefone() != null ? pessoaDTO.getTelefone() : "")
+        );
+
+        Map<String, Object> contrato = Map.of(
+                "cliente", vagaDTO.getClienteNome() != null ? vagaDTO.getClienteNome() : "",
+                "funcao", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "",
+                "cidadeTrabalho", vagaDTO.getCidade() != null ? vagaDTO.getCidade() : "");
+
+        data.put("empregado", empregado);
+        data.put("contrato", contrato);
+        data.put("dataAtualExtenso", obterDataPorExtenso());
+
+        // Buscar itens do TipoVaga e resolver tamanhos
+        List<Map<String, Object>> itens = buscarItensComTamanhos(vagaDTO, pessoaDTO);
+        data.put("itens", itens);
+
+        byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("registro_entrega_epi", data);
+
+        HttpHeaders headers = new HttpHeaders();
+        String nomeArquivo = "registro_entrega_epi_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+
+        headers.setContentLength(pdfBytes.length);
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + nomeArquivo);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
 
     public static String obterDataPorExtenso() {
         LocalDate hoje = LocalDate.now();
@@ -563,6 +608,28 @@ public class ContratoController {
                 // Buscar itens do TipoVaga e resolver tamanhos
                 List<Map<String, Object>> itensEpi = buscarItensComTamanhos(vagaDTO, pessoaDTO);
                 data.put("itens", itensEpi);
+                break;
+
+            case "registro_entrega_epi":
+                Map<String, String> empregadoReg = Map.ofEntries(
+                        entry("nome", pessoaDTO.getNome() != null ? pessoaDTO.getNome() : ""),
+                        entry("cpf", pessoaDTO.getCpf() != null ? pessoaDTO.getCpf() : ""),
+                        entry("endereco", pessoaDTO.getEndereco() != null ? pessoaDTO.getEndereco() : ""),
+                        entry("bairro", pessoaDTO.getBairro() != null ? pessoaDTO.getBairro() : ""),
+                        entry("cidade", pessoaDTO.getCidade() != null ? pessoaDTO.getCidade() : ""),
+                        entry("uf", pessoaDTO.getEstado() != null ? pessoaDTO.getEstado() : ""),
+                        entry("cep", pessoaDTO.getCep() != null ? pessoaDTO.getCep() : ""),
+                        entry("telefone", pessoaDTO.getTelefone() != null ? pessoaDTO.getTelefone() : "")
+                );
+                Map<String, Object> contratoReg = Map.of(
+                        "cliente", vagaDTO.getClienteNome() != null ? vagaDTO.getClienteNome() : "",
+                        "funcao", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "",
+                        "cidadeTrabalho", vagaDTO.getCidade() != null ? vagaDTO.getCidade() : "");
+                data.put("empregado", empregadoReg);
+                data.put("contrato", contratoReg);
+                data.put("dataAtualExtenso", obterDataPorExtenso());
+                List<Map<String, Object>> itensReg = buscarItensComTamanhos(vagaDTO, pessoaDTO);
+                data.put("itens", itensReg);
                 break;
 
             case "recibo_pagamento":

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Registro de Entrega de EPI</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1.5cm;
+            @top-center {
+                content: "";
+            }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+            line-height: 1.3;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            display: table;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .header-logo {
+            display: table-cell;
+            width: 20%;
+            vertical-align: middle;
+        }
+
+        .header-title {
+            display: table-cell;
+            width: 80%;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 16pt;
+            font-weight: bold;
+        }
+
+        .dados-tabela {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        .dados-tabela td {
+            border: 1px solid black;
+            padding: 3px 5px;
+            font-size: 9pt;
+        }
+
+        .dados-tabela .label {
+            font-weight: bold;
+        }
+
+        .linha-destaque {
+            background-color: #e0e0e0;
+            font-weight: bold;
+        }
+
+        .linha-destaque td {
+            border: 1px solid black;
+            padding: 5px;
+            font-size: 10pt;
+        }
+
+        .texto-compromisso {
+            margin: 10px 0;
+            text-align: justify;
+            font-size: 9pt;
+        }
+
+        .obrigacoes {
+            margin-left: 10px;
+            font-size: 9pt;
+        }
+
+        .obrigacoes div {
+            margin-bottom: 3px;
+        }
+
+        .texto-sancao {
+            margin: 10px 0;
+            text-align: justify;
+            font-size: 9pt;
+        }
+
+        .data-local {
+            margin: 20px 0 10px 0;
+            font-size: 10pt;
+        }
+
+        .assinatura-colaborador {
+            width: 50%;
+            margin-top: 30px;
+        }
+
+        .linha-assinatura {
+            border-bottom: 1px solid black;
+            height: 20px;
+            margin-bottom: 3px;
+        }
+
+        .nome-colaborador {
+            font-size: 9pt;
+        }
+
+        .epi-tabela {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .epi-tabela th,
+        .epi-tabela td {
+            border: 1px solid black;
+            padding: 4px;
+            font-size: 9pt;
+        }
+
+        .epi-tabela th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .epi-tabela td.qtde {
+            text-align: center;
+            width: 8%;
+        }
+
+        .epi-tabela td.descricao {
+            width: 72%;
+        }
+
+        .epi-tabela td.tamanho {
+            text-align: center;
+            width: 20%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Cabeçalho com Logo e Título -->
+    <div class="header">
+        <div class="header-logo">
+            <img th:src="@{/images/logo_doban.png}" src="images/logo_doban.png" alt="DOBAN" style="height: 50px;" />
+        </div>
+        <div class="header-title">
+            REGISTRO DE ENTREGA DE EPI
+        </div>
+    </div>
+
+    <!-- Tabela de Qualificação -->
+    <table class="dados-tabela">
+        <tr>
+            <td><span class="label">Empresa:</span></td>
+            <td colspan="2">DOBAN PRESTADORA DE SERVIÇOS LTDA.</td>
+            <td><span class="label">Cliente:</span></td>
+            <td th:text="${contrato.cliente}">CLIENTE</td>
+            <td><span class="label">Cidade/UF:</span></td>
+            <td>MARINGÁ - PR</td>
+            <td><span class="label">CEP:</span></td>
+            <td>87014-210</td>
+            <td><span class="label">CNPJ</span></td>
+            <td>23.292.453/0001-34</td>
+        </tr>
+        <tr>
+            <td><span class="label">Nome Colaborador:</span></td>
+            <td colspan="8" th:text="${empregado.nome}">NOME DO COLABORADOR</td>
+            <td><span class="label">CPF:</span></td>
+            <td th:text="${empregado.cpf}">000.000.000-00</td>
+        </tr>
+        <tr>
+            <td><span class="label">Endereço:</span></td>
+            <td colspan="5" th:text="${empregado.endereco}">ENDEREÇO</td>
+            <td><span class="label">Bairro:</span></td>
+            <td colspan="4" th:text="${empregado.bairro}">BAIRRO</td>
+        </tr>
+        <tr>
+            <td><span class="label">Cidade:</span></td>
+            <td colspan="2" th:text="${empregado.cidade}">CIDADE</td>
+            <td><span class="label">UF:</span></td>
+            <td th:text="${empregado.uf}">UF</td>
+            <td><span class="label">CEP:</span></td>
+            <td th:text="${empregado.cep}">00000-000</td>
+            <td><span class="label">Telefones de Contato:</span></td>
+            <td colspan="3" th:text="${empregado.telefone}">(00) 00000-0000</td>
+        </tr>
+    </table>
+
+    <!-- Linha de Destaque: Cliente, Local, Cargo -->
+    <table class="dados-tabela">
+        <tr class="linha-destaque">
+            <td style="width: 33%;"><span class="label">CLIENTE:</span> <span th:text="${contrato.cliente}">CLIENTE</span></td>
+            <td style="width: 33%;"><span class="label">LOCAL:</span> <span th:text="${contrato.cidadeTrabalho}">LOCAL</span></td>
+            <td style="width: 34%;"><span class="label">CARGO:</span> <span th:text="${contrato.funcao}">CARGO</span></td>
+        </tr>
+    </table>
+
+    <!-- Texto de Recebimento -->
+    <div class="texto-compromisso">
+        Recebo de DOBAN PRESTADORA DE SERVIÇOS LTDA., os EPI's e uniformes abaixo relacionados para serem utilizados no desempenho de minhas funções, comprometendo-me desde já às seguintes obrigações:
+    </div>
+
+    <!-- Obrigações -->
+    <div class="obrigacoes">
+        <div><strong>A)</strong> Usá-los, utilizando-os apenas para a finalidade a que se destina;</div>
+        <div><strong>B)</strong> Responsabilizar-se pela guarda e conservação;</div>
+        <div><strong>C)</strong> Comunicar ao empregador qualquer alteração que torne impróprio para uso;</div>
+        <div><strong>D)</strong> Cumprir as determinações do empregador sobre o uso adequado.</div>
+    </div>
+
+    <!-- Texto de Sanção -->
+    <div class="texto-sancao">
+        Estou ciente e de pleno acordo que o não uso do EPI caracteriza-se como ato faltoso, estando sujeito às sanções disciplinares previstas na legislação trabalhista vigente.
+    </div>
+
+    <div class="texto-sancao">
+        Minha assinatura ou rúbrica posta no local indicado no Termo, confirma minha concordância.
+    </div>
+
+    <!-- Data e Local -->
+    <div class="data-local">
+        MARINGÁ - PR, <span th:text="${dataAtualExtenso}">00 de janeiro de 0000</span>
+    </div>
+
+    <!-- Assinatura do Colaborador -->
+    <div class="assinatura-colaborador">
+        <div class="linha-assinatura"></div>
+        <div class="nome-colaborador" th:text="${empregado.nome}">NOME DO COLABORADOR</div>
+    </div>
+
+    <!-- Tabela de EPIs -->
+    <table class="epi-tabela">
+        <thead>
+            <tr>
+                <th>QTDE</th>
+                <th>DESCRIÇÃO</th>
+                <th>TAMANHO</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="item : ${itens}">
+                <td class="qtde" th:text="${item['quantidade'] ?: ''}"></td>
+                <td class="descricao" th:text="${item['descricao'] ?: ''}"></td>
+                <td class="tamanho" th:text="${item['tamanho'] ?: ''}"></td>
+            </tr>
+            <!-- Linhas vazias para preenchimento manual se necessário -->
+            <tr th:if="${itens == null or #lists.isEmpty(itens)}">
+                <td class="qtde"></td>
+                <td class="descricao"></td>
+                <td class="tamanho"></td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+
+</html>
