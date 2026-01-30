@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Termo de Devolucao de Uniformes e EPI</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1.5cm;
+            @top-center {
+                content: "";
+            }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+            line-height: 1.3;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            display: table;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .header-logo {
+            display: table-cell;
+            width: 15%;
+            vertical-align: middle;
+        }
+
+        .header-title {
+            display: table-cell;
+            width: 85%;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 14pt;
+            font-weight: bold;
+        }
+
+        .dados-tabela {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        .dados-tabela td {
+            border: 1px solid black;
+            padding: 3px 5px;
+            font-size: 9pt;
+        }
+
+        .dados-tabela .label {
+            font-weight: bold;
+        }
+
+        .linha-destaque {
+            background-color: #e0e0e0;
+            font-weight: bold;
+        }
+
+        .linha-destaque td {
+            border: 1px solid black;
+            padding: 5px;
+            font-size: 10pt;
+        }
+
+        .texto-declaracao {
+            margin: 15px 0 10px 0;
+            text-align: justify;
+            font-size: 10pt;
+        }
+
+        .motivos {
+            margin-left: 30px;
+            margin-bottom: 15px;
+            font-size: 10pt;
+        }
+
+        .motivos div {
+            margin-bottom: 3px;
+        }
+
+        .checkbox-box {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 1px solid black;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .texto-aviso {
+            margin: 15px 0;
+            text-align: justify;
+            font-size: 9pt;
+        }
+
+        .texto-concordancia {
+            margin: 10px 0 20px 0;
+            font-size: 9pt;
+        }
+
+        .epi-tabela {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .epi-tabela th,
+        .epi-tabela td {
+            border: 1px solid black;
+            padding: 4px;
+            font-size: 9pt;
+        }
+
+        .epi-tabela th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .epi-tabela td.qtde {
+            text-align: center;
+            width: 8%;
+        }
+
+        .epi-tabela td.descricao {
+            width: 72%;
+        }
+
+        .epi-tabela td.tamanho {
+            text-align: center;
+            width: 20%;
+        }
+
+        .assinatura-section {
+            margin-top: 40px;
+            font-size: 10pt;
+        }
+
+        .linha-data-assinatura {
+            margin-bottom: 25px;
+        }
+
+        .nome-colaborador {
+            text-align: right;
+            margin-right: 50px;
+            margin-bottom: 30px;
+        }
+
+        .recebido-por {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Cabecalho com Logo e Titulo -->
+    <div class="header">
+        <div class="header-logo">
+            <img th:src="@{/images/logo_doban.png}" src="images/logo_doban.png" alt="DOBAN" style="height: 50px;" />
+        </div>
+        <div class="header-title">
+            TERMO DE DEVOLUCAO DE UNIFORMES E EPI
+        </div>
+    </div>
+
+    <!-- Tabela de Qualificacao -->
+    <table class="dados-tabela">
+        <tr>
+            <td><span class="label">Empresa:</span></td>
+            <td colspan="2">DOBAN PRESTADORA DE SERVICOS LTDA.</td>
+            <td><span class="label">Cliente:</span></td>
+            <td th:text="${contrato.cliente}">CLIENTE</td>
+            <td><span class="label">Cidade/UF:</span></td>
+            <td>MARINGA - PR</td>
+            <td><span class="label">CEP:</span></td>
+            <td>87014-210</td>
+            <td><span class="label">CNPJ</span></td>
+            <td>23.292.453/0001-34</td>
+        </tr>
+        <tr>
+            <td><span class="label">Nome Colaborador:</span></td>
+            <td colspan="8" th:text="${empregado.nome}">NOME DO COLABORADOR</td>
+            <td><span class="label">CPF:</span></td>
+            <td th:text="${empregado.cpf}">000.000.000-00</td>
+        </tr>
+        <tr>
+            <td><span class="label">Endereco:</span></td>
+            <td colspan="5" th:text="${empregado.endereco}">ENDERECO</td>
+            <td><span class="label">Bairro:</span></td>
+            <td colspan="4" th:text="${empregado.bairro}">BAIRRO</td>
+        </tr>
+        <tr>
+            <td><span class="label">Cidade:</span></td>
+            <td colspan="2" th:text="${empregado.cidade}">CIDADE</td>
+            <td><span class="label">UF:</span></td>
+            <td th:text="${empregado.uf}">UF</td>
+            <td><span class="label">CEP:</span></td>
+            <td th:text="${empregado.cep}">00000-000</td>
+            <td><span class="label">Telefones de Contato:</span></td>
+            <td colspan="3" th:text="${empregado.telefone}">(00) 00000-0000</td>
+        </tr>
+    </table>
+
+    <!-- Linha de Destaque: Cliente, Local, Cargo -->
+    <table class="dados-tabela">
+        <tr class="linha-destaque">
+            <td style="width: 33%;"><span class="label">CLIENTE:</span> <span th:text="${contrato.cliente}">CLIENTE</span></td>
+            <td style="width: 33%;"><span class="label">LOCAL:</span> <span th:text="${contrato.cidadeTrabalho}">LOCAL</span></td>
+            <td style="width: 34%;"><span class="label">CARGO:</span> <span th:text="${contrato.funcao}">CARGO</span></td>
+        </tr>
+    </table>
+
+    <!-- Texto de Declaracao -->
+    <div class="texto-declaracao">
+        Declaro devolver para a Empresa DOBAN PRESTADORA DE SERVICOS LTDA., os EPI's e uniformes abaixo relacionados em funcao de:
+    </div>
+
+    <!-- Motivos -->
+    <div class="motivos">
+        <div><span class="checkbox-box"></span> DESGASTE</div>
+        <div><span class="checkbox-box"></span> TROCA DE UNIFORME</div>
+        <div><span class="checkbox-box"></span> DESLIGAMENTO</div>
+    </div>
+
+    <!-- Texto de Aviso -->
+    <div class="texto-aviso">
+        Estou ciente e de pleno acordo que a nao devolucao de qualquer item, podera ser descontado do meu pagamento.
+    </div>
+
+    <!-- Texto de Concordancia -->
+    <div class="texto-concordancia">
+        Minha assinatura ou rubrica posta no local indicado no Termo, confirma minha concordancia.
+    </div>
+
+    <!-- Tabela de EPIs -->
+    <table class="epi-tabela">
+        <thead>
+            <tr>
+                <th>QTDE</th>
+                <th>DESCRICAO</th>
+                <th>TAMANHO</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="item : ${itens}">
+                <td class="qtde" th:text="${item['quantidade'] ?: ''}"></td>
+                <td class="descricao" th:text="${item['descricao'] ?: ''}"></td>
+                <td class="tamanho" th:text="${item['tamanho'] ?: ''}"></td>
+            </tr>
+            <tr th:if="${itens == null or #lists.isEmpty(itens)}">
+                <td class="qtde"></td>
+                <td class="descricao"></td>
+                <td class="tamanho"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Assinatura -->
+    <div class="assinatura-section">
+        <div class="linha-data-assinatura">
+            Data _____/_____/_____&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Assinatura: ________________________________________________
+        </div>
+        <div class="nome-colaborador">
+            <span th:text="${empregado.nome}">NOME DO COLABORADOR</span>
+        </div>
+        <div class="recebido-por">
+            Recebido por:_________________________________
+        </div>
+    </div>
+
+</body>
+
+</html>
