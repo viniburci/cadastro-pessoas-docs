@@ -488,6 +488,50 @@ public class ContratoController {
                 .body(pdfBytes);
     }
 
+    @GetMapping("/termo_recebimento_epi/{vagaId}")
+    public ResponseEntity<byte[]> downloadTermoRecebimentoEpiPdf(@PathVariable Long vagaId) {
+
+        VagaDTO vagaDTO = vagaService.obterVagaPorId(vagaId);
+        PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(vagaDTO.getPessoaId());
+
+        Map<String, Object> data = new HashMap<>();
+
+        Map<String, String> empregado = Map.ofEntries(
+                entry("nome", pessoaDTO.getNome() != null ? pessoaDTO.getNome() : ""),
+                entry("cpf", pessoaDTO.getCpf() != null ? pessoaDTO.getCpf() : ""),
+                entry("endereco", pessoaDTO.getEndereco() != null ? pessoaDTO.getEndereco() : ""),
+                entry("bairro", pessoaDTO.getBairro() != null ? pessoaDTO.getBairro() : ""),
+                entry("cidade", pessoaDTO.getCidade() != null ? pessoaDTO.getCidade() : ""),
+                entry("uf", pessoaDTO.getEstado() != null ? pessoaDTO.getEstado() : ""),
+                entry("cep", pessoaDTO.getCep() != null ? pessoaDTO.getCep() : ""),
+                entry("telefone", pessoaDTO.getTelefone() != null ? pessoaDTO.getTelefone() : "")
+        );
+
+        Map<String, Object> contrato = Map.of(
+                "cliente", vagaDTO.getClienteNome() != null ? vagaDTO.getClienteNome() : "");
+
+        data.put("empregado", empregado);
+        data.put("contrato", contrato);
+        data.put("dataAtualExtenso", obterDataPorExtenso());
+
+        // Buscar itens do TipoVaga e resolver tamanhos + calcular valores
+        List<Map<String, Object>> itens = buscarItensComTamanhosEValores(vagaDTO, pessoaDTO);
+        data.put("itens", itens);
+
+        byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("termo_recebimento_epi", data);
+
+        HttpHeaders headers = new HttpHeaders();
+        String nomeArquivo = "termo_recebimento_epi_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+
+        headers.setContentLength(pdfBytes.length);
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + nomeArquivo);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
     public static String obterDataPorExtenso() {
         LocalDate hoje = LocalDate.now();
 
@@ -767,6 +811,26 @@ public class ContratoController {
                 data.put("itens", itensDev);
                 break;
 
+            case "termo_recebimento_epi":
+                Map<String, String> empregadoRec = Map.ofEntries(
+                        entry("nome", pessoaDTO.getNome() != null ? pessoaDTO.getNome() : ""),
+                        entry("cpf", pessoaDTO.getCpf() != null ? pessoaDTO.getCpf() : ""),
+                        entry("endereco", pessoaDTO.getEndereco() != null ? pessoaDTO.getEndereco() : ""),
+                        entry("bairro", pessoaDTO.getBairro() != null ? pessoaDTO.getBairro() : ""),
+                        entry("cidade", pessoaDTO.getCidade() != null ? pessoaDTO.getCidade() : ""),
+                        entry("uf", pessoaDTO.getEstado() != null ? pessoaDTO.getEstado() : ""),
+                        entry("cep", pessoaDTO.getCep() != null ? pessoaDTO.getCep() : ""),
+                        entry("telefone", pessoaDTO.getTelefone() != null ? pessoaDTO.getTelefone() : "")
+                );
+                Map<String, Object> contratoRec = Map.of(
+                        "cliente", vagaDTO.getClienteNome() != null ? vagaDTO.getClienteNome() : "");
+                data.put("empregado", empregadoRec);
+                data.put("contrato", contratoRec);
+                data.put("dataAtualExtenso", obterDataPorExtenso());
+                List<Map<String, Object>> itensRec = buscarItensComTamanhosEValores(vagaDTO, pessoaDTO);
+                data.put("itens", itensRec);
+                break;
+
             case "recibo_pagamento":
                 BigDecimal salarioBruto = vagaDTO.getSalario() != null ? vagaDTO.getSalario() : BigDecimal.ZERO;
                 BigDecimal valeTransporte = BigDecimal.ZERO;
@@ -862,6 +926,23 @@ public class ContratoController {
     }
 
     /**
+     * Busca os itens padrão do TipoVaga, resolve os tamanhos e calcula valores totais.
+     * Usado para termo_recebimento_epi que precisa de valores unitários e totais.
+     */
+    private List<Map<String, Object>> buscarItensComTamanhosEValores(VagaDTO vagaDTO, PessoaDTO pessoaDTO) {
+        List<Map<String, Object>> itensPadrao = new ArrayList<>();
+
+        if (vagaDTO.getTipoVagaId() != null) {
+            Optional<TipoVaga> tipoVagaOpt = tipoVagaRepository.findById(vagaDTO.getTipoVagaId());
+            if (tipoVagaOpt.isPresent()) {
+                itensPadrao = tipoVagaOpt.get().getItensPadrao();
+            }
+        }
+
+        return resolverTamanhosEValoresItens(itensPadrao != null ? itensPadrao : new ArrayList<>(), pessoaDTO);
+    }
+
+    /**
      * Busca os itens padrão do TipoVaga e resolve os tamanhos baseado na Pessoa.
      */
     private List<Map<String, Object>> buscarItensComTamanhos(VagaDTO vagaDTO, PessoaDTO pessoaDTO) {
@@ -875,6 +956,83 @@ public class ContratoController {
         }
 
         return resolverTamanhosItens(itensPadrao != null ? itensPadrao : new ArrayList<>(), pessoaDTO);
+    }
+
+    /**
+     * Resolve os tamanhos dos itens e calcula valores totais (quantidade × valorUnitario).
+     * Também adiciona a data atual a cada item.
+     */
+    private List<Map<String, Object>> resolverTamanhosEValoresItens(List<Map<String, Object>> itens, PessoaDTO pessoaDTO) {
+        if (itens == null || itens.isEmpty()) {
+            return itens;
+        }
+
+        // Mapa de campos de tamanho da Pessoa
+        Map<String, String> tamanhosPessoa = new HashMap<>();
+        tamanhosPessoa.put("tamanhoCamisa", pessoaDTO.getTamanhoCamisa());
+        tamanhosPessoa.put("tamanhoCalca", pessoaDTO.getTamanhoCalca());
+        tamanhosPessoa.put("tamanhoCalcado", pessoaDTO.getTamanhoCalcado());
+        tamanhosPessoa.put("tamanhoLuva", pessoaDTO.getTamanhoLuva());
+        tamanhosPessoa.put("tamanhoCapacete", pessoaDTO.getTamanhoCapacete());
+
+        // Data atual formatada
+        String dataAtual = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM"));
+
+        List<Map<String, Object>> itensResolvidos = new ArrayList<>();
+        for (Map<String, Object> item : itens) {
+            Map<String, Object> itemCopia = new HashMap<>(item);
+
+            // Adicionar data atual
+            itemCopia.put("data", dataAtual);
+
+            // Se o item tem campoTamanhoPessoa, resolve o tamanho
+            Object campoTamanho = itemCopia.get("campoTamanhoPessoa");
+            if (campoTamanho != null && !campoTamanho.toString().isEmpty()) {
+                String valorTamanho = tamanhosPessoa.get(campoTamanho.toString());
+                if (valorTamanho != null && !valorTamanho.isEmpty()) {
+                    itemCopia.put("tamanho", valorTamanho);
+                }
+            }
+
+            // Calcular valor total (quantidade × valorUnitario)
+            Object quantidadeObj = itemCopia.get("quantidade");
+            Object valorUnitarioObj = itemCopia.get("valorUnitario");
+
+            int quantidade = 1;
+            if (quantidadeObj != null) {
+                if (quantidadeObj instanceof Number) {
+                    quantidade = ((Number) quantidadeObj).intValue();
+                } else {
+                    try {
+                        quantidade = Integer.parseInt(quantidadeObj.toString());
+                    } catch (NumberFormatException e) {
+                        quantidade = 1;
+                    }
+                }
+            }
+
+            if (valorUnitarioObj != null) {
+                BigDecimal valorUnitario;
+                if (valorUnitarioObj instanceof BigDecimal) {
+                    valorUnitario = (BigDecimal) valorUnitarioObj;
+                } else if (valorUnitarioObj instanceof Number) {
+                    valorUnitario = BigDecimal.valueOf(((Number) valorUnitarioObj).doubleValue());
+                } else {
+                    try {
+                        valorUnitario = new BigDecimal(valorUnitarioObj.toString());
+                    } catch (NumberFormatException e) {
+                        valorUnitario = BigDecimal.ZERO;
+                    }
+                }
+
+                BigDecimal valorTotal = valorUnitario.multiply(BigDecimal.valueOf(quantidade));
+                itemCopia.put("valorTotal", valorTotal);
+            }
+
+            itensResolvidos.add(itemCopia);
+        }
+
+        return itensResolvidos;
     }
 
     /**
