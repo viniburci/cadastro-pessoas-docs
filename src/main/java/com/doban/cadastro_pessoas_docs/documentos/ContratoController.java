@@ -270,6 +270,75 @@ public class ContratoController {
                 .body(pdfBytes);
     }
 
+    /**
+     * Gera a Declaracao de Devolucao de Aparelho Corporativo baseado em Pessoa e ItemDinamico.
+     * @param pessoaId ID da pessoa que esta devolvendo
+     * @param itemIds Lista de IDs dos itens/equipamentos devolvidos
+     */
+    @GetMapping("/declaracao_devolucao_aparelho/{pessoaId}")
+    public ResponseEntity<byte[]> downloadDeclaracaoDevolucaoAparelhoPdf(
+            @PathVariable Long pessoaId,
+            @RequestParam List<Long> itemIds) {
+
+        PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(pessoaId);
+
+        Map<String, Object> data = new HashMap<>();
+
+        Map<String, String> empregado = Map.ofEntries(
+                entry("nome", pessoaDTO.getNome() != null ? pessoaDTO.getNome() : ""),
+                entry("rg", pessoaDTO.getNumeroRg() != null ? pessoaDTO.getNumeroRg() : ""),
+                entry("cpf", pessoaDTO.getCpf() != null ? pessoaDTO.getCpf() : "")
+        );
+
+        // Buscar os ItemDinamicos pelos IDs
+        List<ItemDinamico> itensDinamicos = itemDinamicoRepository.findAllById(itemIds);
+
+        // Converter ItemDinamico para formato do template
+        List<Map<String, Object>> itens = new ArrayList<>();
+
+        for (ItemDinamico item : itensDinamicos) {
+            Map<String, Object> itemMap = new HashMap<>();
+            Map<String, Object> atributos = item.getAtributos();
+
+            itemMap.put("quantidade", atributos.getOrDefault("quantidade", 1));
+            itemMap.put("marca", atributos.getOrDefault("marca", item.getTipoRecurso().getNome()));
+            itemMap.put("descricao", atributos.getOrDefault("descricao", item.getIdentificador()));
+            itemMap.put("modelo", atributos.getOrDefault("modelo", ""));
+            itemMap.put("numeroSerie", atributos.getOrDefault("numeroSerie", atributos.getOrDefault("imei", "")));
+
+            Object valorObj = atributos.get("valor");
+            if (valorObj != null) {
+                BigDecimal valor;
+                if (valorObj instanceof BigDecimal) {
+                    valor = (BigDecimal) valorObj;
+                } else if (valorObj instanceof Number) {
+                    valor = BigDecimal.valueOf(((Number) valorObj).doubleValue());
+                } else {
+                    valor = new BigDecimal(valorObj.toString());
+                }
+                itemMap.put("valor", valor);
+            }
+
+            itens.add(itemMap);
+        }
+
+        data.put("empregado", empregado);
+        data.put("itens", itens);
+
+        byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("declaracao_devolucao_aparelho", data);
+
+        HttpHeaders headers = new HttpHeaders();
+        String nomeArquivo = "declaracao_devolucao_aparelho_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+
+        headers.setContentLength(pdfBytes.length);
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + nomeArquivo);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
     @GetMapping("/entrega_epi/{vagaId}")
     public ResponseEntity<byte[]> downloadEntregaEpiPdf(@PathVariable Long vagaId) {
 
