@@ -180,8 +180,8 @@ public class ContratoController {
                 .body(pdfBytes);
     }
 
-    @GetMapping("/termo_materiais/{vagaId}")
-    public ResponseEntity<byte[]> downloadTermoMateriaisPdf(@PathVariable Long vagaId) {
+    @GetMapping("/termo_responsabilidade_materiais/{vagaId}")
+    public ResponseEntity<byte[]> downloadTermoResponsabilidadeMateriaisPdf(@PathVariable Long vagaId) {
 
         VagaDTO vagaDTO = vagaService.obterVagaPorId(vagaId);
         PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(vagaDTO.getPessoaId());
@@ -225,10 +225,10 @@ public class ContratoController {
         data.put("itens", itens);
         data.put("valorTotal", calcularValorTotal(itens));
 
-        byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("termo_materiais", data);
+        byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("termo_responsabilidade_materiais", data);
 
         HttpHeaders headers = new HttpHeaders();
-        String nomeArquivo = "termo_materiais_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+        String nomeArquivo = "termo_responsabilidade_materiais_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
 
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -523,7 +523,7 @@ public class ContratoController {
                 data.put("dataAtualExtenso", obterDataPorExtenso());
                 break;
 
-            case "termo_materiais":
+            case "termo_responsabilidade_materiais":
                 data.put("empregado", criarMapEmpregadoCompleto(pessoaDTO));
                 data.put("contrato", criarMapContratoCompleto(vagaDTO));
                 data.put("dataAtualExtenso", obterDataPorExtenso());
