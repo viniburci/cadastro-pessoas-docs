@@ -7,7 +7,7 @@
     <style>
         @page {
             size: A4;
-            margin: 1.5cm;
+            margin: 2cm;
             @top-center {
                 content: "";
             }
@@ -15,133 +15,72 @@
 
         body {
             font-family: Arial, sans-serif;
-            font-size: 10pt;
-            line-height: 1.3;
-            margin: 0;
-            padding: 0;
+            font-size: 11pt;
+            line-height: 1.5;
+            text-align: justify;
+        }
+
+        h2 {
+            font-size: 12pt;
+            margin-top: 20px;
+            margin-bottom: 10px;
         }
 
         .header {
             display: table;
             width: 100%;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
 
         .header-logo {
             display: table-cell;
-            width: 15%;
+            width: 20%;
             vertical-align: middle;
         }
 
         .header-title {
             display: table-cell;
-            width: 85%;
+            width: 80%;
             text-align: center;
             vertical-align: middle;
             font-size: 14pt;
             font-weight: bold;
+            text-decoration: underline;
         }
 
-        .dados-tabela {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 10px;
-        }
-
-        .dados-tabela td {
-            border: 1px solid black;
-            padding: 3px 5px;
-            font-size: 9pt;
-        }
-
-        .dados-tabela .label {
-            font-weight: bold;
-        }
-
-        .declaracao-texto {
-            margin: 15px 0;
-            text-align: justify;
-            font-size: 10pt;
-        }
-
-        .itens-numerados {
-            margin: 10px 0 15px 0;
-            font-size: 10pt;
-        }
-
-        .itens-numerados div {
-            margin-bottom: 10px;
-            text-align: justify;
-        }
-
-        .data-local {
-            margin: 20px 0 10px 0;
-            font-size: 10pt;
-        }
-
-        .assinatura-colaborador {
-            width: 50%;
-            margin-top: 30px;
-        }
-
-        .linha-assinatura {
-            border-bottom: 1px solid black;
-            height: 20px;
-            margin-bottom: 3px;
-        }
-
-        .nome-colaborador {
-            font-size: 9pt;
-        }
-
-        .epi-tabela {
+        .dados-tabela,
+        .materiais-tabela {
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
+            margin-bottom: 25px;
         }
 
-        .epi-tabela th,
-        .epi-tabela td {
+        .dados-tabela td,
+        .materiais-tabela th,
+        .materiais-tabela td {
             border: 1px solid black;
-            padding: 4px;
-            font-size: 9pt;
+            padding: 5px;
+            text-align: left;
+            vertical-align: top;
+            font-size: 10pt;
         }
 
-        .epi-tabela th {
+        .materiais-tabela th {
+            text-align: center;
             background-color: #f0f0f0;
             font-weight: bold;
-            text-align: center;
         }
 
-        .epi-tabela td.data {
-            text-align: center;
-            width: 10%;
-        }
-
-        .epi-tabela td.descricao {
-            width: 40%;
-        }
-
-        .epi-tabela td.qtde {
-            text-align: center;
-            width: 8%;
-        }
-
-        .epi-tabela td.valor {
-            text-align: right;
-            width: 12%;
-        }
-
-        .epi-tabela td.valor-total {
-            text-align: right;
-            width: 12%;
+        .termos-uso {
+            margin-bottom: 15px;
+            padding-left: 20px;
         }
     </style>
 </head>
 
 <body>
 
-    <!-- Cabecalho com Logo e Titulo -->
     <div class="header">
         <div class="header-logo">
             <img src="images/logo_doban.png" alt="DOBAN" style="height: 50px;" />
@@ -151,103 +90,87 @@
         </div>
     </div>
 
-    <!-- Tabela de Qualificacao -->
+    <h2>1. QUALIFICACAO DAS PARTES</h2>
     <table class="dados-tabela">
         <tr>
-            <td><span class="label">Empresa:</span></td>
-            <td colspan="2">DOBAN PRESTADORA DE SERVICOS LTDA.</td>
-            <td><span class="label">Cliente:</span></td>
-            <td th:text="${contrato.cliente}">CLIENTE</td>
-            <td><span class="label">Cidade/UF:</span></td>
-            <td>MARINGA - PR</td>
-            <td><span class="label">CEP:</span></td>
-            <td>87014-210</td>
-            <td><span class="label">CNPJ</span></td>
-            <td>23.292.453/0001-34</td>
+            <td colspan="4"><strong>Empresa:</strong> DOBAN PRESTADORA DE SERVICOS LTDA.</td>
+            <td><strong>CNPJ:</strong> 23.292.453/0001-34</td>
         </tr>
         <tr>
-            <td><span class="label">Nome Colaborador:</span></td>
-            <td colspan="8" th:text="${empregado.nome}">NOME DO COLABORADOR</td>
-            <td><span class="label">CPF:</span></td>
-            <td th:text="${empregado.cpf}">000.000.000-00</td>
+            <td colspan="2"><strong>Cliente:</strong> <span th:text="${contrato.cliente}">CLIENTE</span></td>
+            <td><strong>Cidade/UF:</strong> MARINGA - PR</td>
+            <td colspan="2"><strong>CEP:</strong> 87014-210</td>
         </tr>
         <tr>
-            <td><span class="label">Endereco:</span></td>
-            <td colspan="5" th:text="${empregado.endereco}">ENDERECO</td>
-            <td><span class="label">Bairro:</span></td>
-            <td colspan="4" th:text="${empregado.bairro}">BAIRRO</td>
+            <td colspan="4"><strong>Nome Colaborador:</strong> <span th:text="${empregado.nome}">NOME</span></td>
+            <td><strong>CPF:</strong> <span th:text="${empregado.cpf}">CPF</span></td>
         </tr>
         <tr>
-            <td><span class="label">Cidade:</span></td>
-            <td colspan="2" th:text="${empregado.cidade}">CIDADE</td>
-            <td><span class="label">UF:</span></td>
-            <td th:text="${empregado.uf}">UF</td>
-            <td><span class="label">CEP:</span></td>
-            <td th:text="${empregado.cep}">00000-000</td>
-            <td><span class="label">Telefones de Contato:</span></td>
-            <td colspan="3" th:text="${empregado.telefone}">(00) 00000-0000</td>
+            <td colspan="3"><strong>Endereco:</strong> <span th:text="${empregado.endereco}">ENDERECO</span></td>
+            <td colspan="2"><strong>Bairro:</strong> <span th:text="${empregado.bairro}">BAIRRO</span></td>
+        </tr>
+        <tr>
+            <td><strong>Cidade:</strong> <span th:text="${empregado.cidade}">CIDADE</span></td>
+            <td><strong>UF:</strong> <span th:text="${empregado.uf}">ESTADO</span></td>
+            <td><strong>CEP:</strong> <span th:text="${empregado.cep}">CEP</span></td>
+            <td colspan="2"><strong>Telefone:</strong> <span th:text="${empregado.telefone}">TELEFONE</span></td>
         </tr>
     </table>
 
-    <!-- Texto de Declaracao -->
-    <div class="declaracao-texto">
+    <h2>2. DECLARACAO DE RECEBIMENTO</h2>
+    <div style="margin-bottom: 15px;">
         Declaro ter recebido gratuitamente da empresa o uniforme e os EPI'S (Equipamento de Protecao Individual)
         relacionados abaixo, com a finalidade de proteger minha integridade fisica, considerando:
     </div>
 
-    <!-- Itens Numerados -->
-    <div class="itens-numerados">
-        <div>
-            <strong>1-</strong> Apos orientacao, usa-los obrigatoriamente durante o trabalho e guarda-lo em lugar seguro (higienizando-o corretamente);
-        </div>
-        <div>
-            <strong>2-</strong> Tenho compromisso de devolve-los limpo quando solicitado ou por ocasiao de rescisao do meu contrato de trabalho. Na falta, perda ou extravio de qualquer EPI/Uniforme e danificado por uso inadequado, autorizo o desconto do valor atualizado em salario;
-        </div>
-        <div>
-            <strong>3-</strong> Estou ciente do artigo 158 da CLT: "Constitui ato faltoso do colaborador a recusa injustificada ao uso dos EPI's fornecidos pela empresa"
-        </div>
+    <div class="termos-uso">
+        <strong>1-</strong> Apos orientacao, usa-los obrigatoriamente durante o trabalho e guarda-lo em lugar seguro (higienizando-o corretamente);
+    </div>
+    <div class="termos-uso">
+        <strong>2-</strong> Tenho compromisso de devolve-los limpo quando solicitado ou por ocasiao de rescisao do meu contrato de trabalho. Na falta, perda ou extravio de qualquer EPI/Uniforme e danificado por uso inadequado, autorizo o desconto do valor atualizado em salario;
+    </div>
+    <div class="termos-uso">
+        <strong>3-</strong> Estou ciente do artigo 158 da CLT: "Constitui ato faltoso do colaborador a recusa injustificada ao uso dos EPI's fornecidos pela empresa"
     </div>
 
-    <!-- Data e Local -->
-    <div class="data-local">
-        MARINGA - PR, <span th:text="${dataAtualExtenso}">00 de janeiro de 0000</span>
-    </div>
+    <p style="margin-top: 30px;">
+        MARINGA - PR, <strong th:text="${dataAtualExtenso}"></strong>.
+    </p>
 
-    <!-- Assinatura do Colaborador -->
-    <div class="assinatura-colaborador">
-        <div class="linha-assinatura"></div>
-        <div class="nome-colaborador" th:text="${empregado.nome}">NOME DO COLABORADOR</div>
-    </div>
+    <table style="width: 50%; border-collapse: collapse; margin-top: 50px;">
+        <tr>
+            <td style="width: 45%; text-align: center; padding: 0 10px; vertical-align: top;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                <span th:text="${empregado.nome}">NOME</span>
+            </td>
+        </tr>
+    </table>
 
-    <!-- Tabela de EPIs -->
-    <table class="epi-tabela">
+    <h2>3. EPI's E UNIFORMES RECEBIDOS</h2>
+    <table class="materiais-tabela">
         <thead>
             <tr>
-                <th>DATA</th>
-                <th>DESCRICAO</th>
-                <th>QTDE</th>
-                <th>VLR UNIT.</th>
-                <th>VLR TOTAL</th>
+                <th style="width: 10%;">DATA</th>
+                <th style="width: 40%;">DESCRICAO</th>
+                <th style="width: 10%;">QTDE</th>
+                <th style="width: 20%;">VLR UNIT.</th>
+                <th style="width: 20%;">VLR TOTAL</th>
             </tr>
         </thead>
         <tbody>
             <tr th:each="item : ${itens}">
-                <td class="data" th:text="${item['data'] ?: ''}"></td>
-                <td class="descricao" th:text="${item['descricao'] ?: ''}"></td>
-                <td class="qtde" th:text="${item['quantidade'] ?: ''}"></td>
-                <td class="valor">
+                <td style="text-align: center;" th:text="${item['data'] ?: ''}"></td>
+                <td th:text="${item['descricao'] ?: '-'}">DESCRICAO DO EPI</td>
+                <td style="text-align: center;" th:text="${item['quantidade'] ?: 1}">01</td>
+                <td style="text-align: right;">
                     <span th:if="${item['valorUnitario'] != null}" th:text="${'R$ ' + #numbers.formatDecimal(item['valorUnitario'], 1, 'POINT', 2, 'COMMA')}"></span>
                 </td>
-                <td class="valor-total">
+                <td style="text-align: right;">
                     <span th:if="${item['valorTotal'] != null}" th:text="${'R$ ' + #numbers.formatDecimal(item['valorTotal'], 1, 'POINT', 2, 'COMMA')}"></span>
                 </td>
             </tr>
             <tr th:if="${itens == null or #lists.isEmpty(itens)}">
-                <td class="data"></td>
-                <td class="descricao"></td>
-                <td class="qtde"></td>
-                <td class="valor"></td>
-                <td class="valor-total"></td>
+                <td colspan="5" style="text-align: center; font-style: italic;">Nenhum EPI registrado</td>
             </tr>
         </tbody>
     </table>
