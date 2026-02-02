@@ -1025,6 +1025,9 @@ public class ContratoController {
                     }
                 }
 
+                // Atualiza valorUnitario como BigDecimal para o template
+                itemCopia.put("valorUnitario", valorUnitario);
+
                 BigDecimal valorTotal = valorUnitario.multiply(BigDecimal.valueOf(quantidade));
                 itemCopia.put("valorTotal", valorTotal);
             }
