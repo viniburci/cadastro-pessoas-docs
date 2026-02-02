@@ -150,9 +150,10 @@
     <table class="materiais-tabela">
         <thead>
             <tr>
-                <th style="width: 10%;">DATA</th>
-                <th style="width: 40%;">DESCRICAO</th>
-                <th style="width: 10%;">QTDE</th>
+                <th style="width: 8%;">DATA</th>
+                <th style="width: 32%;">DESCRICAO</th>
+                <th style="width: 12%;">TAMANHO</th>
+                <th style="width: 8%;">QTDE</th>
                 <th style="width: 20%;">VLR UNIT.</th>
                 <th style="width: 20%;">VLR TOTAL</th>
             </tr>
@@ -161,16 +162,19 @@
             <tr th:each="item : ${itens}">
                 <td style="text-align: center;" th:text="${item['data'] ?: ''}"></td>
                 <td th:text="${item['descricao'] ?: '-'}">DESCRICAO DO EPI</td>
+                <td style="text-align: center;" th:text="${item['tamanho'] ?: ''}"></td>
                 <td style="text-align: center;" th:text="${item['quantidade'] ?: 1}">01</td>
                 <td style="text-align: right;">
                     <span th:if="${item['valorUnitario'] != null}" th:text="${'R$ ' + #numbers.formatDecimal(item['valorUnitario'], 1, 'POINT', 2, 'COMMA')}"></span>
+                    <span th:unless="${item['valorUnitario'] != null}">-</span>
                 </td>
                 <td style="text-align: right;">
                     <span th:if="${item['valorTotal'] != null}" th:text="${'R$ ' + #numbers.formatDecimal(item['valorTotal'], 1, 'POINT', 2, 'COMMA')}"></span>
+                    <span th:unless="${item['valorTotal'] != null}">-</span>
                 </td>
             </tr>
             <tr th:if="${itens == null or #lists.isEmpty(itens)}">
-                <td colspan="5" style="text-align: center; font-style: italic;">Nenhum EPI registrado</td>
+                <td colspan="6" style="text-align: center; font-style: italic;">Nenhum EPI registrado</td>
             </tr>
         </tbody>
     </table>
