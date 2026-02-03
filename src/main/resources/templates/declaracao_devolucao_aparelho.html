@@ -7,7 +7,7 @@
     <style>
         @page {
             size: A4;
-            margin: 1.5cm;
+            margin: 2cm;
             @top-center {
                 content: "";
             }
@@ -15,158 +15,65 @@
 
         body {
             font-family: Arial, sans-serif;
-            font-size: 10pt;
-            line-height: 1.4;
-            margin: 0;
+            font-size: 11pt;
+            line-height: 1.5;
+            text-align: justify;
+        }
+
+        h1 {
+            font-size: 14pt;
+            text-align: center;
+            margin-bottom: 20px;
+            text-decoration: underline;
+        }
+
+        h2 {
+            font-size: 12pt;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .header-table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+
+        .header-table td {
+            vertical-align: middle;
+            border: none;
             padding: 0;
         }
 
-        .header {
-            display: table;
-            width: 100%;
-            margin-bottom: 15px;
-        }
-
-        .header-logo {
-            display: table-cell;
-            width: 15%;
-            vertical-align: middle;
-        }
-
         .header-title {
-            display: table-cell;
-            width: 85%;
             text-align: center;
-            vertical-align: middle;
             font-size: 14pt;
             font-weight: bold;
+            text-decoration: underline;
         }
 
-        .declaracao-texto {
-            margin: 15px 0;
-            text-align: justify;
+        .dados-tabela,
+        .materiais-tabela {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            margin-bottom: 25px;
+        }
+
+        .dados-tabela td,
+        .materiais-tabela th,
+        .materiais-tabela td {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: left;
+            vertical-align: top;
             font-size: 10pt;
         }
 
-        .itens-tabela {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 15px 0;
-        }
-
-        .itens-tabela th,
-        .itens-tabela td {
-            border: 1px solid black;
-            padding: 5px;
-            font-size: 9pt;
+        .materiais-tabela th {
             text-align: center;
-        }
-
-        .itens-tabela th {
             background-color: #f0f0f0;
             font-weight: bold;
-        }
-
-        .itens-tabela td.descricao {
-            text-align: left;
-        }
-
-        .itens-tabela td.valor {
-            text-align: right;
-        }
-
-        .pergunta-estado {
-            font-weight: bold;
-            margin: 20px 0 10px 0;
-            font-size: 10pt;
-        }
-
-        .opcoes-estado {
-            display: table;
-            width: 50%;
-            margin-bottom: 15px;
-        }
-
-        .opcoes-estado td {
-            border: 1px solid black;
-            padding: 8px 20px;
-            text-align: center;
-            font-size: 10pt;
-        }
-
-        .problemas-header {
-            display: table;
-            width: 100%;
-            background-color: #d0d0d0;
-            margin-top: 15px;
-        }
-
-        .problemas-header div {
-            display: table-cell;
-            border: 1px solid black;
-            padding: 5px;
-            font-weight: bold;
-            text-align: center;
-            font-size: 9pt;
-        }
-
-        .problemas-tabela {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .problemas-tabela td {
-            border: 1px solid black;
-            padding: 4px;
-            font-size: 9pt;
-        }
-
-        .problemas-tabela td.checkbox {
-            width: 15%;
-            text-align: center;
-        }
-
-        .problemas-tabela td.problema {
-            width: 55%;
-        }
-
-        .problemas-tabela td.valor {
-            width: 30%;
-            text-align: right;
-        }
-
-        .campo-outro {
-            margin: 15px 0;
-            font-size: 10pt;
-        }
-
-        .campo-outro span {
-            display: inline-block;
-            border-bottom: 1px solid black;
-            width: 80%;
-            margin-left: 10px;
-        }
-
-        .motivo-section {
-            margin-top: 20px;
-        }
-
-        .motivo-header {
-            background-color: #d0d0d0;
-            border: 1px solid black;
-            padding: 8px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 10pt;
-        }
-
-        .motivo-opcoes {
-            margin: 10px 0 10px 20px;
-            font-size: 10pt;
-        }
-
-        .motivo-opcoes div {
-            margin-bottom: 5px;
         }
 
         .checkbox-box {
@@ -178,174 +85,145 @@
             vertical-align: middle;
         }
 
+        .motivos {
+            margin-left: 30px;
+            margin-bottom: 15px;
+            font-size: 11pt;
+        }
+
+        .motivos div {
+            margin-bottom: 8px;
+        }
+
         .texto-legal {
             margin: 20px 0;
             text-align: justify;
-            font-size: 9pt;
+            font-size: 10pt;
         }
 
         .texto-legal li {
             margin-bottom: 10px;
-        }
-
-        .assinatura-section {
-            margin-top: 30px;
-            font-size: 10pt;
-        }
-
-        .linha-data-assinatura {
-            margin-bottom: 25px;
-        }
-
-        .nome-colaborador {
-            text-align: right;
-            margin-right: 50px;
-            margin-bottom: 30px;
-        }
-
-        .recebido-por {
-            margin-top: 20px;
         }
     </style>
 </head>
 
 <body>
 
-    <!-- Cabecalho com Logo e Titulo -->
-    <div class="header">
-        <div class="header-logo">
-            <img src="images/logo_doban.png" alt="DOBAN" style="height: 50px;" />
-        </div>
-        <div class="header-title">
-            DECLARACAO DE DEVOLUCAO DE APARELHO CORPORATIVO - COLABORADOR
-        </div>
-    </div>
+    <table class="header-table">
+        <tr>
+            <td style="width: 80px;">
+                <img src="logo.jpg" alt="DOBAN" style="height: 50px;" />
+            </td>
+            <td class="header-title">
+                DECLARACAO DE DEVOLUCAO DE APARELHO CORPORATIVO
+            </td>
+            <td style="width: 80px;"></td>
+        </tr>
+    </table>
 
-    <!-- Texto de Declaracao -->
-    <div class="declaracao-texto">
-        Eu, <strong th:text="${empregado.nome}">NOME DO COLABORADOR</strong>, portador(a) da cedula de identidade RG n°
-        <strong th:text="${empregado.rg}">000000000</strong>, e do CPF: <strong th:text="${empregado.cpf}">000.000.000-00</strong>,
-        declaro ter devolvido o Aparelho Celular Corporativo, para a EMPRESA.
-    </div>
+    <h2>1. QUALIFICACAO DAS PARTES</h2>
+    <table class="dados-tabela">
+        <tr>
+            <td colspan="4"><strong>Empresa:</strong> DOBAN PRESTADORA DE SERVICOS LTDA.</td>
+            <td><strong>CNPJ:</strong> 23.292.453/0001-34</td>
+        </tr>
+        <tr>
+            <td colspan="4"><strong>Nome Colaborador:</strong> <span th:text="${empregado.nome}">NOME</span></td>
+            <td><strong>CPF:</strong> <span th:text="${empregado.cpf}">CPF</span></td>
+        </tr>
+        <tr>
+            <td colspan="5"><strong>RG:</strong> <span th:text="${empregado.rg}">RG</span></td>
+        </tr>
+    </table>
 
-    <!-- Tabela de Itens Devolvidos -->
-    <table class="itens-tabela">
+    <h2>2. APARELHO DEVOLVIDO</h2>
+    <table class="materiais-tabela">
         <thead>
             <tr>
                 <th style="width: 8%;">QTDE</th>
                 <th style="width: 15%;">MARCA</th>
                 <th style="width: 27%;">MODELO</th>
-                <th style="width: 25%;">N° SERIE/IMEI</th>
-                <th style="width: 25%;">VALORES DEVIDOS, EM CASO<br/>DE NAO DEVOLUCAO/AVARIAS</th>
+                <th style="width: 25%;">N SERIE/IMEI</th>
+                <th style="width: 25%;">VALOR (NAO DEVOLUCAO)</th>
             </tr>
         </thead>
         <tbody>
             <tr th:each="item : ${itens}">
-                <td th:text="${item['quantidade'] ?: ''}"></td>
+                <td style="text-align: center;" th:text="${item['quantidade'] ?: '1'}">1</td>
                 <td th:text="${item['marca'] ?: ''}"></td>
-                <td class="descricao" th:text="${item['descricao'] ?: item['modelo'] ?: ''}"></td>
+                <td th:text="${item['descricao'] ?: item['modelo'] ?: ''}"></td>
                 <td th:text="${item['numeroSerie'] ?: ''}"></td>
-                <td class="valor">
+                <td style="text-align: right;">
                     <span th:if="${item['valor'] != null}" th:text="${'R$ ' + #numbers.formatDecimal(item['valor'], 1, 'POINT', 2, 'COMMA')}"></span>
                 </td>
             </tr>
             <tr th:if="${itens == null or #lists.isEmpty(itens)}">
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td colspan="5" style="text-align: center; font-style: italic;">Nenhum item registrado</td>
             </tr>
         </tbody>
     </table>
 
-    <!-- Pergunta sobre estado -->
-    <div class="pergunta-estado">O APARELHO DEVOLVIDO ESTA EM BOM ESTADO?</div>
-    <table class="opcoes-estado">
-        <tr>
-            <td style="width: 50%;">SIM</td>
-            <td style="width: 50%;">NAO</td>
-        </tr>
-    </table>
-
-    <!-- Tabela de Problemas -->
-    <table class="problemas-tabela">
-        <tr style="background-color: #d0d0d0;">
-            <td class="checkbox" style="font-weight: bold;">Marcar com "X",<br/>o(s) problema(s)</td>
-            <td class="problema" style="font-weight: bold; text-align: center;">Descricao do problema</td>
-            <td class="valor" style="font-weight: bold; text-align: center;">Valor do Reparo</td>
-        </tr>
-        <tr>
-            <td class="checkbox"></td>
-            <td class="problema">CONECTOR</td>
-            <td class="valor">R$ 150,00</td>
-        </tr>
-        <tr>
-            <td class="checkbox"></td>
-            <td class="problema">TAMPA TRASEIRA</td>
-            <td class="valor">R$ 300,00</td>
-        </tr>
-        <tr>
-            <td class="checkbox"></td>
-            <td class="problema">BOTAO HOME</td>
-            <td class="valor">R$ 209,00</td>
-        </tr>
-        <tr>
-            <td class="checkbox"></td>
-            <td class="problema">ALTO FALANTE</td>
-            <td class="valor">R$ 289,00</td>
-        </tr>
-        <tr>
-            <td class="checkbox"></td>
-            <td class="problema">CAMERA TRASEIRA</td>
-            <td class="valor">R$ 379,00</td>
-        </tr>
-        <tr>
-            <td class="checkbox"></td>
-            <td class="problema">BOTAO POWER</td>
-            <td class="valor">R$ 209,00</td>
-        </tr>
-        <tr>
-            <td class="checkbox"></td>
-            <td class="problema">TELA</td>
-            <td class="valor">R$ 889,00</td>
-        </tr>
-    </table>
-
-    <!-- Campo Outro -->
-    <div class="campo-outro">
-        OUTRO: <span>&nbsp;</span>
+    <h2>3. APARELHO DEVOLVIDO ESTA EM BOM ESTADO?</h2>
+    <div class="motivos">
+        <div><span class="checkbox-box"></span> SIM</div>
+        <div><span class="checkbox-box"></span> NAO</div>
     </div>
 
-    <!-- Motivo da Devolucao -->
-    <div class="motivo-section">
-        <div class="motivo-header">MOTIVO DA DEVOLUCAO</div>
-        <div class="motivo-opcoes">
-            <div><span class="checkbox-box"></span> Manutencao</div>
-            <div><span class="checkbox-box"></span> Troca de Aparelho;</div>
-            <div><span class="checkbox-box"></span> Afastamento - A partir do dia: _____/_____/_____</div>
-            <div><span class="checkbox-box"></span> Desligamento</div>
-        </div>
+    <div style="margin-bottom: 15px;"><strong>Em caso de problemas, marcar com "X":</strong></div>
+    <table class="materiais-tabela">
+        <thead>
+            <tr>
+                <th style="width: 15%;">MARCAR</th>
+                <th style="width: 55%;">DESCRICAO DO PROBLEMA</th>
+                <th style="width: 30%;">VALOR DO REPARO</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td style="text-align: center;"></td><td>CONECTOR</td><td style="text-align: right;">R$ 150,00</td></tr>
+            <tr><td style="text-align: center;"></td><td>TAMPA TRASEIRA</td><td style="text-align: right;">R$ 300,00</td></tr>
+            <tr><td style="text-align: center;"></td><td>BOTAO HOME</td><td style="text-align: right;">R$ 209,00</td></tr>
+            <tr><td style="text-align: center;"></td><td>ALTO FALANTE</td><td style="text-align: right;">R$ 289,00</td></tr>
+            <tr><td style="text-align: center;"></td><td>CAMERA TRASEIRA</td><td style="text-align: right;">R$ 379,00</td></tr>
+            <tr><td style="text-align: center;"></td><td>BOTAO POWER</td><td style="text-align: right;">R$ 209,00</td></tr>
+            <tr><td style="text-align: center;"></td><td>TELA</td><td style="text-align: right;">R$ 889,00</td></tr>
+            <tr><td style="text-align: center;"></td><td>OUTRO:</td><td style="text-align: right;"></td></tr>
+        </tbody>
+    </table>
+
+    <h2>4. MOTIVO DA DEVOLUCAO</h2>
+    <div class="motivos">
+        <div><span class="checkbox-box"></span> MANUTENCAO</div>
+        <div><span class="checkbox-box"></span> TROCA DE APARELHO</div>
+        <div><span class="checkbox-box"></span> AFASTAMENTO - A partir do dia: _____/_____/_____</div>
+        <div><span class="checkbox-box"></span> DESLIGAMENTO</div>
     </div>
 
-    <!-- Textos Legais -->
+    <h2>5. TERMOS E CONDICOES</h2>
     <ul class="texto-legal">
-        <li>Fica o colaborador ciente de que, ao entregar o aparelho com qualquer tipo de avaria(s), a empresa realizara o desconto integral do valor do celular <strong>R$ 2.000,00 (Dois mil reais)</strong>, ate que este passe pela analise de um tecnico. Com o laudo em maos, a <strong>EMPREGADORA</strong> fara o abatimento do conserto e depositara, caso haja diferenca, em rescisao complementar, para o <strong>COLABORADOR/EX COLABORADOR</strong>;</li>
-        <li>Caso o celular seja entregue com senha ou resetado, o <strong>COLABORADOR/EX COLABORADOR</strong> devera retira-la ou sera descontado o valor de <strong>R$ 190,00 (Cento e noventa reais)</strong> para arcar com os custos do tecnico, para a realizacao do desbloqueio do aparelho.</li>
+        <li>Fica o colaborador ciente de que, ao entregar o aparelho com qualquer tipo de avaria(s), a empresa realizara o desconto integral do valor do celular <strong>R$ 2.000,00 (Dois mil reais)</strong>, ate que este passe pela analise de um tecnico. Com o laudo em maos, a <strong>EMPREGADORA</strong> fara o abatimento do conserto e depositara, caso haja diferenca, em rescisao complementar.</li>
+        <li>Caso o celular seja entregue com senha ou resetado, o <strong>COLABORADOR</strong> devera retira-la ou sera descontado o valor de <strong>R$ 190,00 (Cento e noventa reais)</strong> para arcar com os custos do tecnico para desbloqueio do aparelho.</li>
     </ul>
 
-    <!-- Assinatura -->
-    <div class="assinatura-section">
-        <div class="linha-data-assinatura">
-            Data _____/_____/_____&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Assinatura: ________________________________________________
-        </div>
-        <div class="nome-colaborador">
-            <span th:text="${empregado.nome}">NOME DO COLABORADOR</span>
-        </div>
-        <div class="recebido-por">
-            Recebido por:_________________________________
-        </div>
-    </div>
+    <p style="margin-top: 40px; font-size: 10pt;">Data _____/_____/_____</p>
+
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    
+    <table style="width: 100%; border-collapse: collapse; margin-top: 30px;">
+        <tr>
+            <td style="width: 50%; text-align: center; padding: 0 10px; vertical-align: top; border: none;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                <span th:text="${empregado.nome}">NOME DO COLABORADOR</span>
+                <br/><small>Assinatura do Colaborador</small>
+            </td>
+            <td style="width: 50%; text-align: center; padding: 0 10px; vertical-align: top; border: none;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                Recebido por
+            </td>
+        </tr>
+    </table>
 
 </body>
 

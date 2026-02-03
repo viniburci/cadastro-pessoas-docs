@@ -1,197 +1,140 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8"/>
-    <title>Termo de Devolução de Recursos</title>
+    <meta charset="UTF-8" />
+    <title>Termo de Devolucao de Recursos</title>
     <style>
         @page {
             size: A4;
             margin: 2cm;
+            @top-center {
+                content: "";
+            }
         }
 
         body {
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: Arial, sans-serif;
             font-size: 11pt;
             line-height: 1.5;
-            color: #000;
+            text-align: justify;
         }
 
-        .titulo {
-            text-align: center;
-            font-weight: bold;
+        h1 {
             font-size: 14pt;
-            margin: 20px 0;
-            text-transform: uppercase;
-        }
-
-        .subtitulo {
             text-align: center;
+            margin-bottom: 20px;
+            text-decoration: underline;
+        }
+
+        h2 {
             font-size: 12pt;
-            margin-bottom: 30px;
-        }
-
-        .secao {
-            margin: 20px 0;
-        }
-
-        .secao-titulo {
-            font-weight: bold;
+            margin-top: 20px;
             margin-bottom: 10px;
-            border-bottom: 1px solid #000;
-            padding-bottom: 5px;
         }
 
-        .dados-pessoa {
-            margin: 15px 0;
-        }
-
-        .dados-pessoa p {
-            margin: 5px 0;
-        }
-
-        table {
+        .dados-tabela,
+        .materiais-tabela {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            margin-top: 15px;
+            margin-bottom: 25px;
         }
 
-        th, td {
-            border: 1px solid #000;
-            padding: 8px;
+        .dados-tabela td,
+        .materiais-tabela th,
+        .materiais-tabela td {
+            border: 1px solid black;
+            padding: 5px;
             text-align: left;
+            vertical-align: top;
+            font-size: 10pt;
         }
 
-        th {
+        .materiais-tabela th {
+            text-align: center;
             background-color: #f0f0f0;
             font-weight: bold;
         }
 
-        .assinatura {
-            margin-top: 60px;
-            text-align: center;
-        }
-
-        .linha-assinatura {
-            margin: 40px auto 10px auto;
-            width: 60%;
-            border-top: 1px solid #000;
-        }
-
         .declaracao {
-            margin: 30px 0;
+            margin: 20px 0;
             text-align: justify;
-            line-height: 1.8;
-        }
-
-        .footer {
-            margin-top: 40px;
-            text-align: center;
-            font-size: 10pt;
-            color: #666;
-        }
-
-        .cabecalho-empresa {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .cabecalho-empresa h2 {
-            margin: 5px 0;
-            font-size: 16pt;
-        }
-
-        .cabecalho-empresa p {
-            margin: 3px 0;
-            font-size: 9pt;
         }
     </style>
 </head>
+
 <body>
-    <!-- Cabeçalho da Empresa -->
-    <div class="cabecalho-empresa">
-        <h2>DOBAN PRESTADORA DE SERVIÇOS LTDA</h2>
-        <p>CNPJ: 09.326.350/0001-09</p>
-        <p>Av. Duque de Caxias, 882 - Zona 07 - Maringá/PR - CEP: 87020-025</p>
-        <p>Telefone: (44) 3025-3370 | E-mail: dobanmaringa@gmail.com</p>
-    </div>
 
-    <!-- Título -->
-    <div class="titulo">Termo de Devolução de Recursos</div>
-    <div class="subtitulo">Comprovante de Devolução de Equipamentos e Materiais</div>
+    <h1>TERMO DE DEVOLUCAO DE RECURSOS</h1>
 
-    <!-- Dados da Pessoa -->
-    <div class="secao">
-        <div class="secao-titulo">DADOS DO COLABORADOR</div>
-        <div class="dados-pessoa">
-            <p><strong>Nome:</strong> <span th:text="${pessoa.nome}"></span></p>
-            <p><strong>CPF:</strong> <span th:text="${pessoa.cpf}"></span></p>
-            <p><strong>RG:</strong> <span th:text="${pessoa.rg}"></span></p>
-        </div>
-    </div>
+    <h2>1. QUALIFICACAO DAS PARTES</h2>
+    <table class="dados-tabela">
+        <tr>
+            <td colspan="4"><strong>Empresa:</strong> DOBAN PRESTADORA DE SERVICOS LTDA.</td>
+            <td><strong>CNPJ:</strong> 23.292.453/0001-34</td>
+        </tr>
+        <tr>
+            <td colspan="4"><strong>Nome Colaborador:</strong> <span th:text="${pessoa.nome}">NOME</span></td>
+            <td><strong>CPF:</strong> <span th:text="${pessoa.cpf}">CPF</span></td>
+        </tr>
+        <tr>
+            <td colspan="5"><strong>RG:</strong> <span th:text="${pessoa.rg}">RG</span></td>
+        </tr>
+    </table>
 
-    <!-- Tabela de Recursos Devolvidos -->
-    <div class="secao">
-        <div class="secao-titulo">RECURSOS DEVOLVIDOS</div>
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 20%;">Tipo de Recurso</th>
-                    <th style="width: 25%;">Identificador</th>
-                    <th style="width: 20%;">Data de Entrega</th>
-                    <th style="width: 20%;">Data de Devolução</th>
-                    <th style="width: 15%;">Dias de Uso</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:if="${#lists.isEmpty(recursos)}">
-                    <td colspan="5" style="text-align: center; color: #999;">
-                        Nenhum recurso devolvido registrado
-                    </td>
-                </tr>
-                <tr th:each="recurso : ${recursos}">
-                    <td th:text="${recurso.tipoRecursoNome}">CELULAR</td>
-                    <td th:text="${recurso.identificador}">IMEI123456</td>
-                    <td th:text="${#temporals.format(recurso.dataEntrega, 'dd/MM/yyyy')}">01/01/2025</td>
-                    <td th:text="${#temporals.format(recurso.dataDevolucao, 'dd/MM/yyyy')}">12/01/2026</td>
-                    <td th:text="${recurso.diasUso != null ? recurso.diasUso + ' dias' : '-'}">376 dias</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    <h2>2. RECURSOS DEVOLVIDOS</h2>
+    <table class="materiais-tabela">
+        <thead>
+            <tr>
+                <th style="width: 20%;">TIPO</th>
+                <th style="width: 25%;">IDENTIFICADOR</th>
+                <th style="width: 20%;">DATA ENTREGA</th>
+                <th style="width: 20%;">DATA DEVOLUCAO</th>
+                <th style="width: 15%;">DIAS USO</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="recurso : ${recursos}">
+                <td th:text="${recurso.tipoRecursoNome}">CELULAR</td>
+                <td th:text="${recurso.identificador}">IMEI123456</td>
+                <td style="text-align: center;" th:text="${#temporals.format(recurso.dataEntrega, 'dd/MM/yyyy')}">01/01/2025</td>
+                <td style="text-align: center;" th:text="${#temporals.format(recurso.dataDevolucao, 'dd/MM/yyyy')}">12/01/2026</td>
+                <td style="text-align: center;" th:text="${recurso.diasUso != null ? recurso.diasUso + ' dias' : '-'}">376 dias</td>
+            </tr>
+            <tr th:if="${recursos == null or #lists.isEmpty(recursos)}">
+                <td colspan="5" style="text-align: center; font-style: italic;">Nenhum recurso devolvido registrado</td>
+            </tr>
+        </tbody>
+    </table>
 
-    <!-- Declaração -->
+    <h2>3. DECLARACAO</h2>
     <div class="declaracao">
         <p>
-            Declaro, para os devidos fins, que recebi e utilizei os recursos listados acima durante o período
-            de vínculo com a empresa DOBAN PRESTADORA DE SERVIÇOS LTDA, e que os devolvi em <strong>perfeito
-            estado de conservação e funcionamento</strong>, conforme estabelecido no termo de responsabilidade
+            Declaro, para os devidos fins, que recebi e utilizei os recursos listados acima durante o periodo
+            de vinculo com a empresa DOBAN PRESTADORA DE SERVICOS LTDA, e que os devolvi em <strong>perfeito
+            estado de conservacao e funcionamento</strong>, conforme estabelecido no termo de responsabilidade
             assinado no ato da entrega.
         </p>
         <p>
-            Declaro ainda que não houve danos, perdas ou extravios dos recursos mencionados, e que os mesmos
-            foram devidamente conferidos pelo setor responsável no momento da devolução.
+            Declaro ainda que nao houve danos, perdas ou extravios dos recursos mencionados, e que os mesmos
+            foram devidamente conferidos pelo setor responsavel no momento da devolucao.
         </p>
     </div>
 
-    <!-- Assinatura -->
-    <div class="assinatura">
-        <div class="linha-assinatura"></div>
-        <p><strong>Assinatura do Colaborador</strong></p>
-        <p th:text="${pessoa.nome}"></p>
-        <p>CPF: <span th:text="${pessoa.cpf}"></span></p>
-    </div>
+    <table style="width: 50%; border-collapse: collapse; margin-top: 50px;">
+        <tr>
+            <td style="width: 45%; text-align: center; padding: 0 10px; vertical-align: top; border: none;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                <span th:text="${pessoa.nome}">NOME</span>
+            </td>
+        </tr>
+    </table>
 
-    <!-- Data -->
-    <div class="footer">
-        <p th:text="${'Maringá/PR, ' + dataAtualExtenso}"></p>
-    </div>
+    <p style="text-align: center; margin-top: 30px;">
+        MARINGA - PR, <strong th:text="${dataAtualExtenso}"></strong>.
+    </p>
 
-    <!-- Rodapé -->
-    <div class="footer" style="margin-top: 50px; border-top: 1px solid #ccc; padding-top: 10px;">
-        <p style="font-size: 8pt;">
-            Este documento comprova a devolução dos recursos listados e isenta o colaborador de
-            responsabilidade sobre os mesmos a partir da data de devolução registrada.
-        </p>
-    </div>
 </body>
+
 </html>

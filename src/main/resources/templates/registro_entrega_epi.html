@@ -26,23 +26,20 @@
             margin-bottom: 10px;
         }
 
-        .header {
-            display: table;
+        .header-table {
             width: 100%;
             margin-bottom: 20px;
+            border-collapse: collapse;
         }
 
-        .header-logo {
-            display: table-cell;
-            width: 20%;
+        .header-table td {
             vertical-align: middle;
+            border: none;
+            padding: 0;
         }
 
         .header-title {
-            display: table-cell;
-            width: 80%;
             text-align: center;
-            vertical-align: middle;
             font-size: 14pt;
             font-weight: bold;
             text-decoration: underline;
@@ -86,14 +83,17 @@
 
 <body>
 
-    <div class="header">
-        <div class="header-logo">
-            <img src="images/logo_doban.png" alt="DOBAN" style="height: 50px;" />
-        </div>
-        <div class="header-title">
-            REGISTRO DE ENTREGA DE EPI
-        </div>
-    </div>
+    <table class="header-table">
+        <tr>
+            <td style="width: 80px;">
+                <img src="logo.jpg" alt="DOBAN" style="height: 50px;" />
+            </td>
+            <td class="header-title">
+                REGISTRO DE ENTREGA DE EPI
+            </td>
+            <td style="width: 80px;"></td>
+        </tr>
+    </table>
 
     <h2>1. QUALIFICACAO DAS PARTES</h2>
     <table class="dados-tabela">

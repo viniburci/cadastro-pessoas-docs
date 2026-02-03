@@ -5,11 +5,9 @@
     <meta charset="UTF-8" />
     <title>Registro de Entrega de EPI</title>
     <style>
-        /* Define o formato A4 e margens */
         @page {
             size: A4;
             margin: 2cm;
-            /* Remover a linha e a numeração do cabeçalho */
             @top-center {
                 content: "";
             }
@@ -22,20 +20,31 @@
             text-align: justify;
         }
 
-        h1 {
-            font-size: 14pt;
-            text-align: center;
-            margin-bottom: 20px;
-            text-decoration: underline;
-        }
-
         h2 {
             font-size: 12pt;
             margin-top: 20px;
             margin-bottom: 10px;
         }
 
-        /* Estilo para tabelas de Dados e Materiais */
+        .header-table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+
+        .header-table td {
+            vertical-align: middle;
+            border: none;
+            padding: 0;
+        }
+
+        .header-title {
+            text-align: center;
+            font-size: 14pt;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
         .dados-tabela,
         .materiais-tabela {
             width: 100%;
@@ -60,25 +69,11 @@
             font-weight: bold;
         }
 
-        /* Estilo para as Assinaturas */
-        .assinatura-container {
-            width: 100%;
-            margin-top: 80px;
-            display: flex; /* Adicionado para layout de impressão */
-            justify-content: space-between;
-        }
-
-        .bloco-assinatura {
-            width: 45%;
-            text-align: center;
-            line-height: 1.5;
-        }
-        
         .termos-uso {
             margin-bottom: 15px;
             padding-left: 20px;
         }
-        
+
         .termo-final {
             margin-top: 20px;
             margin-bottom: 40px;
@@ -88,9 +83,19 @@
 
 <body>
 
-    <h1>REGISTRO DE ENTREGA DE EPI</h1>
+    <table class="header-table">
+        <tr>
+            <td style="width: 80px;">
+                <img src="logo.jpg" alt="DOBAN" style="height: 50px;" />
+            </td>
+            <td class="header-title">
+                REGISTRO DE ENTREGA DE EPI
+            </td>
+            <td style="width: 80px;"></td>
+        </tr>
+    </table>
 
-    <div style="margin-bottom: 20px;">
+    <div style="margin-bottom: 10px;">
         Pelo presente documento, o Colaborador, identificado abaixo, atesta o recebimento dos Equipamentos de Proteção Individual (EPI) e Uniformes.
     </div>
 
@@ -148,11 +153,7 @@
         Estou ciente e de pleno acordo que o <strong>não uso do EPI caracteriza-se como ato faltoso</strong>, estando sujeito às sanções disciplinares previstas na legislação trabalhista vigente. Minha assinatura ou rúbrica posta no local indicado no Termo, confirma minha concordância.
     </div>
 
-    <br />
-    <br />
-
-
-    <table style="width: 50%; border-collapse: collapse; margin-top: 50px; ">
+    <table style="width: 50%; border-collapse: collapse; margin-top: 50px;">
         <tr>
             <td style="width: 45%; text-align: center; padding: 0 10px; vertical-align: top;">
                 <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
@@ -160,10 +161,6 @@
             </td>
         </tr>
     </table>
-
-    <br />
-    <br />
-    <br />
 
     <h2>3. EPI's E UNIFORMES RECEBIDOS</h2>
     <table class="materiais-tabela">

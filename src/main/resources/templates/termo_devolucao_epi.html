@@ -20,32 +20,17 @@
             text-align: justify;
         }
 
+        h1 {
+            font-size: 14pt;
+            text-align: center;
+            margin-bottom: 20px;
+            text-decoration: underline;
+        }
+
         h2 {
             font-size: 12pt;
             margin-top: 20px;
             margin-bottom: 10px;
-        }
-
-        .header {
-            display: table;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .header-logo {
-            display: table-cell;
-            width: 20%;
-            vertical-align: middle;
-        }
-
-        .header-title {
-            display: table-cell;
-            width: 80%;
-            text-align: center;
-            vertical-align: middle;
-            font-size: 14pt;
-            font-weight: bold;
-            text-decoration: underline;
         }
 
         .dados-tabela,
@@ -96,23 +81,12 @@
             text-align: justify;
         }
 
-        .assinatura-section {
-            margin-top: 40px;
-            font-size: 10pt;
-        }
     </style>
 </head>
 
 <body>
 
-    <div class="header">
-        <div class="header-logo">
-            <img src="images/logo_doban.png" alt="DOBAN" style="height: 50px;" />
-        </div>
-        <div class="header-title">
-            TERMO DE DEVOLUCAO DE UNIFORMES E EPI
-        </div>
-    </div>
+    <h1>TERMO DE DEVOLUCAO DE UNIFORMES E EPI</h1>
 
     <h2>1. QUALIFICACAO DAS PARTES</h2>
     <table class="dados-tabela">
@@ -183,23 +157,21 @@
         </tbody>
     </table>
 
-    <div class="assinatura-section">
-        <p>Data _____/_____/_____</p>
-        <br/>
-        <table style="width: 100%; border-collapse: collapse;">
-            <tr>
-                <td style="width: 50%; text-align: center; padding: 0 10px; vertical-align: top;">
-                    <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
-                    <span th:text="${empregado.nome}">NOME DO COLABORADOR</span>
-                    <br/><small>Assinatura do Colaborador</small>
-                </td>
-                <td style="width: 50%; text-align: center; padding: 0 10px; vertical-align: top;">
-                    <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
-                    Recebido por
-                </td>
-            </tr>
-        </table>
-    </div>
+    <p style="margin-top: 40px; font-size: 10pt;">Data _____/_____/_____</p>
+
+    <table style="width: 100%; border-collapse: collapse; margin-top: 30px;">
+        <tr>
+            <td style="width: 50%; text-align: center; padding: 0 10px; vertical-align: top; border: none;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                <span th:text="${empregado.nome}">NOME DO COLABORADOR</span>
+                <br/><small>Assinatura do Colaborador</small>
+            </td>
+            <td style="width: 50%; text-align: center; padding: 0 10px; vertical-align: top; border: none;">
+                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                Recebido por
+            </td>
+        </tr>
+    </table>
 
 </body>
 
