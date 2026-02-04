@@ -96,10 +96,6 @@ public class RecursoDinamicoService {
         RecursoDinamico recurso = recursoDinamicoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Empréstimo não encontrado com id: " + id));
 
-        if (recurso.getDataDevolucao() != null) {
-            throw new IllegalArgumentException("Este empréstimo já foi devolvido em: " + recurso.getDataDevolucao());
-        }
-
         if (dto.getDataDevolucao().isBefore(recurso.getDataEntrega())) {
             throw new IllegalArgumentException("Data de devolução não pode ser anterior à data de entrega");
         }

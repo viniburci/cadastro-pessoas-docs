@@ -15,10 +15,17 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.doban.cadastro_pessoas_docs.documentos.dto.ItemMaterialDTO;
+import com.doban.cadastro_pessoas_docs.documentos.dto.TermoResponsabilidadeMateriaisRequest;
+
+import com.doban.cadastro_pessoas_docs.domain.cliente.ClienteDTO;
+import com.doban.cadastro_pessoas_docs.domain.cliente.ClienteService;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaDTO;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaService;
 import com.doban.cadastro_pessoas_docs.domain.vaga.VagaDTO;
@@ -41,15 +48,17 @@ public class ContratoController {
     private final PdfGeneratorService pdfGeneratorService;
     private final TipoVagaRepository tipoVagaRepository;
     private final ItemDinamicoRepository itemDinamicoRepository;
+    private final ClienteService clienteService;
 
     public ContratoController(PdfGeneratorService pdfGeneratorService, VagaService vagaService,
             PessoaService pessoaService, TipoVagaRepository tipoVagaRepository,
-            ItemDinamicoRepository itemDinamicoRepository) {
+            ItemDinamicoRepository itemDinamicoRepository, ClienteService clienteService) {
         this.pdfGeneratorService = pdfGeneratorService;
         this.vagaService = vagaService;
         this.pessoaService = pessoaService;
         this.tipoVagaRepository = tipoVagaRepository;
         this.itemDinamicoRepository = itemDinamicoRepository;
+        this.clienteService = clienteService;
     }
 
     @GetMapping("/contrato/{vagaId}")
@@ -188,14 +197,21 @@ public class ContratoController {
     /**
      * Gera o Termo de Responsabilidade de Materiais baseado em Pessoa e ItemDinamico.
      * @param pessoaId ID da pessoa responsável
-     * @param itemIds Lista de IDs dos itens/equipamentos emprestados
+     * @param request Objeto com clienteId, itemIds (do banco) e itensAdicionais (manuais)
      */
-    @GetMapping("/termo_responsabilidade_materiais/{pessoaId}")
+    @PostMapping("/termo_responsabilidade_materiais/{pessoaId}")
     public ResponseEntity<byte[]> downloadTermoResponsabilidadeMateriaisPdf(
             @PathVariable Long pessoaId,
-            @RequestParam List<Long> itemIds) {
+            @RequestBody TermoResponsabilidadeMateriaisRequest request) {
 
         PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(pessoaId);
+
+        // Buscar nome do cliente se fornecido
+        String clienteNome = "";
+        if (request.getClienteId() != null) {
+            ClienteDTO clienteDTO = clienteService.buscarPorId(request.getClienteId());
+            clienteNome = clienteDTO.getNome();
+        }
 
         Map<String, Object> data = new HashMap<>();
 
@@ -215,43 +231,63 @@ public class ContratoController {
                 entry("telefone", pessoaDTO.getTelefone() != null ? pessoaDTO.getTelefone() : "")
         );
 
-        // Buscar os ItemDinamicos pelos IDs
-        List<ItemDinamico> itensDinamicos = itemDinamicoRepository.findAllById(itemIds);
-
-        // Converter ItemDinamico para formato do template
         List<Map<String, Object>> itens = new ArrayList<>();
         BigDecimal valorTotal = BigDecimal.ZERO;
 
-        for (ItemDinamico item : itensDinamicos) {
-            Map<String, Object> itemMap = new HashMap<>();
-            Map<String, Object> atributos = item.getAtributos();
+        // Buscar os ItemDinamicos pelos IDs (itens do banco)
+        if (request.getItemIds() != null && !request.getItemIds().isEmpty()) {
+            List<ItemDinamico> itensDinamicos = itemDinamicoRepository.findAllById(request.getItemIds());
 
-            // Mapear atributos do ItemDinamico para colunas do template
-            itemMap.put("quantidade", atributos.getOrDefault("quantidade", 1));
-            itemMap.put("marca", atributos.getOrDefault("marca", item.getTipoRecurso().getNome()));
-            itemMap.put("descricao", atributos.getOrDefault("descricao", item.getIdentificador()));
-            itemMap.put("numeroSerie", atributos.getOrDefault("numeroSerie", atributos.getOrDefault("imei", "")));
-            itemMap.put("ddd", atributos.getOrDefault("ddd", ""));
+            for (ItemDinamico item : itensDinamicos) {
+                Map<String, Object> itemMap = new HashMap<>();
+                Map<String, Object> atributos = item.getAtributos();
 
-            Object valorObj = atributos.get("valor");
-            if (valorObj != null) {
-                BigDecimal valor;
-                if (valorObj instanceof BigDecimal) {
-                    valor = (BigDecimal) valorObj;
-                } else if (valorObj instanceof Number) {
-                    valor = BigDecimal.valueOf(((Number) valorObj).doubleValue());
-                } else {
-                    valor = new BigDecimal(valorObj.toString());
+                itemMap.put("quantidade", atributos.getOrDefault("quantidade", 1));
+                itemMap.put("marca", atributos.getOrDefault("marca", item.getTipoRecurso().getNome()));
+                itemMap.put("descricao", atributos.getOrDefault("descricao", item.getIdentificador()));
+                itemMap.put("numeroSerie", atributos.getOrDefault("numeroSerie", atributos.getOrDefault("imei", "")));
+                itemMap.put("ddd", atributos.getOrDefault("ddd", ""));
+
+                Object valorObj = atributos.get("valor");
+                if (valorObj != null) {
+                    BigDecimal valor;
+                    if (valorObj instanceof BigDecimal) {
+                        valor = (BigDecimal) valorObj;
+                    } else if (valorObj instanceof Number) {
+                        valor = BigDecimal.valueOf(((Number) valorObj).doubleValue());
+                    } else {
+                        valor = new BigDecimal(valorObj.toString());
+                    }
+                    itemMap.put("valor", valor);
+                    valorTotal = valorTotal.add(valor);
                 }
-                itemMap.put("valor", valor);
-                valorTotal = valorTotal.add(valor);
-            }
 
-            itens.add(itemMap);
+                itens.add(itemMap);
+            }
+        }
+
+        // Adicionar itens manuais (itensAdicionais)
+        if (request.getItensAdicionais() != null && !request.getItensAdicionais().isEmpty()) {
+            for (ItemMaterialDTO itemDTO : request.getItensAdicionais()) {
+                Map<String, Object> itemMap = new HashMap<>();
+                itemMap.put("quantidade", itemDTO.getQuantidade() != null ? itemDTO.getQuantidade() : 1);
+                itemMap.put("marca", itemDTO.getMarca() != null ? itemDTO.getMarca() : "");
+                itemMap.put("descricao", itemDTO.getDescricao() != null ? itemDTO.getDescricao() : "");
+                itemMap.put("numeroSerie", itemDTO.getNumeroSerie() != null ? itemDTO.getNumeroSerie() : "");
+                itemMap.put("ddd", itemDTO.getDdd() != null ? itemDTO.getDdd() : "");
+
+                if (itemDTO.getValor() != null) {
+                    itemMap.put("valor", itemDTO.getValor());
+                    int qtd = itemDTO.getQuantidade() != null ? itemDTO.getQuantidade() : 1;
+                    valorTotal = valorTotal.add(itemDTO.getValor().multiply(BigDecimal.valueOf(qtd)));
+                }
+
+                itens.add(itemMap);
+            }
         }
 
         data.put("empregado", empregado);
-        data.put("contrato", Map.of("cliente", "")); // Não há contrato/vaga associado
+        data.put("contrato", Map.of("cliente", clienteNome));
         data.put("dataAtualExtenso", obterDataPorExtenso());
         data.put("itens", itens);
         data.put("valorTotal", valorTotal);
@@ -1071,23 +1107,5 @@ public class ContratoController {
         }
 
         return itensResolvidos;
-    }
-
-    /**
-     * Calcula o valor total dos itens.
-     */
-    private BigDecimal calcularValorTotal(List<Map<String, Object>> itens) {
-        BigDecimal total = BigDecimal.ZERO;
-        for (Map<String, Object> item : itens) {
-            Object valor = item.get("valor");
-            if (valor != null) {
-                if (valor instanceof BigDecimal) {
-                    total = total.add((BigDecimal) valor);
-                } else if (valor instanceof Number) {
-                    total = total.add(BigDecimal.valueOf(((Number) valor).doubleValue()));
-                }
-            }
-        }
-        return total;
     }
 }
