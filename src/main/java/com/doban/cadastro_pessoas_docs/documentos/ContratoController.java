@@ -32,6 +32,8 @@ import com.doban.cadastro_pessoas_docs.domain.vaga.VagaDTO;
 import com.doban.cadastro_pessoas_docs.domain.vaga.VagaService;
 import com.doban.cadastro_pessoas_docs.domain.vaga.tipo.TipoVaga;
 import com.doban.cadastro_pessoas_docs.domain.vaga.tipo.TipoVagaRepository;
+import com.doban.cadastro_pessoas_docs.recurso.dinamico.RecursoDinamico;
+import com.doban.cadastro_pessoas_docs.recurso.dinamico.RecursoDinamicoService;
 import com.doban.cadastro_pessoas_docs.recurso.item.ItemDinamico;
 import com.doban.cadastro_pessoas_docs.recurso.item.ItemDinamicoRepository;
 import com.ibm.icu.text.RuleBasedNumberFormat;
@@ -49,16 +51,19 @@ public class ContratoController {
     private final TipoVagaRepository tipoVagaRepository;
     private final ItemDinamicoRepository itemDinamicoRepository;
     private final ClienteService clienteService;
+    private final RecursoDinamicoService recursoDinamicoService;
 
     public ContratoController(PdfGeneratorService pdfGeneratorService, VagaService vagaService,
             PessoaService pessoaService, TipoVagaRepository tipoVagaRepository,
-            ItemDinamicoRepository itemDinamicoRepository, ClienteService clienteService) {
+            ItemDinamicoRepository itemDinamicoRepository, ClienteService clienteService,
+            RecursoDinamicoService recursoDinamicoService) {
         this.pdfGeneratorService = pdfGeneratorService;
         this.vagaService = vagaService;
         this.pessoaService = pessoaService;
         this.tipoVagaRepository = tipoVagaRepository;
         this.itemDinamicoRepository = itemDinamicoRepository;
         this.clienteService = clienteService;
+        this.recursoDinamicoService = recursoDinamicoService;
     }
 
     @GetMapping("/contrato/{vagaId}")
@@ -296,6 +301,205 @@ public class ContratoController {
 
         HttpHeaders headers = new HttpHeaders();
         String nomeArquivo = "termo_responsabilidade_materiais_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+
+        headers.setContentLength(pdfBytes.length);
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + nomeArquivo);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
+    /**
+     * Gera o Termo de Responsabilidade de Materiais a partir de um RecursoDinamico salvo.
+     * Inclui o item principal (do empréstimo) + itens extras salvos.
+     * @param recursoDinamicoId ID do empréstimo
+     */
+    @GetMapping("/termo_responsabilidade_materiais/recurso/{recursoDinamicoId}")
+    public ResponseEntity<byte[]> downloadTermoResponsabilidadeMateriaisDoRecursoPdf(
+            @PathVariable Long recursoDinamicoId) {
+
+        RecursoDinamico recurso = recursoDinamicoService.buscarEntidadePorId(recursoDinamicoId);
+        PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(recurso.getPessoa().getId());
+        ItemDinamico item = recurso.getItem();
+
+        Map<String, Object> data = new HashMap<>();
+
+        Map<String, String> empregado = Map.ofEntries(
+                entry("nome", pessoaDTO.getNome()),
+                entry("estadoCivil", pessoaDTO.getEstadoCivil() != null ? pessoaDTO.getEstadoCivil() : ""),
+                entry("rg", pessoaDTO.getNumeroRg() != null ? pessoaDTO.getNumeroRg() : ""),
+                entry("cpf", pessoaDTO.getCpf() != null ? pessoaDTO.getCpf() : ""),
+                entry("ctps", pessoaDTO.getNumeroCtps() != null ? pessoaDTO.getNumeroCtps() : ""),
+                entry("ctpsSerie", pessoaDTO.getSerieCtps() != null ? pessoaDTO.getSerieCtps() : ""),
+                entry("endereco", pessoaDTO.getEndereco() != null ? pessoaDTO.getEndereco() : ""),
+                entry("bairro", pessoaDTO.getBairro() != null ? pessoaDTO.getBairro() : ""),
+                entry("cidade", pessoaDTO.getCidade() != null ? pessoaDTO.getCidade() : ""),
+                entry("uf", pessoaDTO.getEstado() != null ? pessoaDTO.getEstado() : ""),
+                entry("pix", pessoaDTO.getChavePix() != null ? pessoaDTO.getChavePix() : ""),
+                entry("cep", pessoaDTO.getCep() != null ? pessoaDTO.getCep() : ""),
+                entry("telefone", pessoaDTO.getTelefone() != null ? pessoaDTO.getTelefone() : "")
+        );
+
+        List<Map<String, Object>> itens = new ArrayList<>();
+        BigDecimal valorTotal = BigDecimal.ZERO;
+
+        // Adicionar o item principal (usando atributosSnapshot do empréstimo)
+        Map<String, Object> atributos = recurso.getAtributosSnapshot();
+        Map<String, Object> itemMap = new HashMap<>();
+        itemMap.put("quantidade", atributos.getOrDefault("quantidade", 1));
+        itemMap.put("marca", atributos.getOrDefault("marca", item.getTipoRecurso().getNome()));
+        itemMap.put("descricao", atributos.getOrDefault("descricao", item.getIdentificador()));
+        itemMap.put("numeroSerie", atributos.getOrDefault("numeroSerie", atributos.getOrDefault("imei", "")));
+        itemMap.put("ddd", atributos.getOrDefault("ddd", ""));
+
+        Object valorObj = atributos.get("valor");
+        if (valorObj != null) {
+            BigDecimal valor;
+            if (valorObj instanceof BigDecimal) {
+                valor = (BigDecimal) valorObj;
+            } else if (valorObj instanceof Number) {
+                valor = BigDecimal.valueOf(((Number) valorObj).doubleValue());
+            } else {
+                valor = new BigDecimal(valorObj.toString());
+            }
+            itemMap.put("valor", valor);
+            valorTotal = valorTotal.add(valor);
+        }
+        itens.add(itemMap);
+
+        // Adicionar itens extras do empréstimo
+        List<Map<String, Object>> itensExtras = recurso.getItensExtras();
+        if (itensExtras != null && !itensExtras.isEmpty()) {
+            for (Map<String, Object> extra : itensExtras) {
+                Map<String, Object> extraMap = new HashMap<>();
+                extraMap.put("quantidade", extra.getOrDefault("quantidade", 1));
+                extraMap.put("marca", extra.getOrDefault("marca", ""));
+                extraMap.put("descricao", extra.getOrDefault("descricao", ""));
+                extraMap.put("numeroSerie", extra.getOrDefault("numeroSerie", ""));
+                extraMap.put("ddd", extra.getOrDefault("ddd", ""));
+
+                Object valorExtraObj = extra.get("valor");
+                if (valorExtraObj != null) {
+                    BigDecimal valorExtra;
+                    if (valorExtraObj instanceof BigDecimal) {
+                        valorExtra = (BigDecimal) valorExtraObj;
+                    } else if (valorExtraObj instanceof Number) {
+                        valorExtra = BigDecimal.valueOf(((Number) valorExtraObj).doubleValue());
+                    } else {
+                        valorExtra = new BigDecimal(valorExtraObj.toString());
+                    }
+                    extraMap.put("valor", valorExtra);
+                    int qtd = extra.get("quantidade") != null ? ((Number) extra.get("quantidade")).intValue() : 1;
+                    valorTotal = valorTotal.add(valorExtra.multiply(BigDecimal.valueOf(qtd)));
+                }
+
+                itens.add(extraMap);
+            }
+        }
+
+        data.put("empregado", empregado);
+        data.put("contrato", Map.of("cliente", ""));
+        data.put("dataAtualExtenso", obterDataPorExtenso());
+        data.put("itens", itens);
+        data.put("valorTotal", valorTotal);
+
+        byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("termo_responsabilidade_materiais", data);
+
+        HttpHeaders headers = new HttpHeaders();
+        String nomeArquivo = "termo_responsabilidade_materiais_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+
+        headers.setContentLength(pdfBytes.length);
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + nomeArquivo);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
+    /**
+     * Gera a Declaração de Devolução de Aparelho a partir de um RecursoDinamico salvo.
+     * Inclui o item principal (do empréstimo) + itens extras salvos.
+     * @param recursoDinamicoId ID do empréstimo
+     */
+    @GetMapping("/declaracao_devolucao_aparelho/recurso/{recursoDinamicoId}")
+    public ResponseEntity<byte[]> downloadDeclaracaoDevolucaoAparelhoDoRecursoPdf(
+            @PathVariable Long recursoDinamicoId) {
+
+        RecursoDinamico recurso = recursoDinamicoService.buscarEntidadePorId(recursoDinamicoId);
+        PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(recurso.getPessoa().getId());
+        ItemDinamico item = recurso.getItem();
+
+        Map<String, Object> data = new HashMap<>();
+
+        Map<String, String> empregado = Map.ofEntries(
+                entry("nome", pessoaDTO.getNome() != null ? pessoaDTO.getNome() : ""),
+                entry("rg", pessoaDTO.getNumeroRg() != null ? pessoaDTO.getNumeroRg() : ""),
+                entry("cpf", pessoaDTO.getCpf() != null ? pessoaDTO.getCpf() : "")
+        );
+
+        List<Map<String, Object>> itens = new ArrayList<>();
+
+        // Adicionar o item principal (usando atributosSnapshot do empréstimo)
+        Map<String, Object> atributos = recurso.getAtributosSnapshot();
+        Map<String, Object> itemMap = new HashMap<>();
+        itemMap.put("quantidade", atributos.getOrDefault("quantidade", 1));
+        itemMap.put("marca", atributos.getOrDefault("marca", item.getTipoRecurso().getNome()));
+        itemMap.put("descricao", atributos.getOrDefault("descricao", item.getIdentificador()));
+        itemMap.put("modelo", atributos.getOrDefault("modelo", ""));
+        itemMap.put("numeroSerie", atributos.getOrDefault("numeroSerie", atributos.getOrDefault("imei", "")));
+
+        Object valorObj = atributos.get("valor");
+        if (valorObj != null) {
+            BigDecimal valor;
+            if (valorObj instanceof BigDecimal) {
+                valor = (BigDecimal) valorObj;
+            } else if (valorObj instanceof Number) {
+                valor = BigDecimal.valueOf(((Number) valorObj).doubleValue());
+            } else {
+                valor = new BigDecimal(valorObj.toString());
+            }
+            itemMap.put("valor", valor);
+        }
+        itens.add(itemMap);
+
+        // Adicionar itens extras do empréstimo
+        List<Map<String, Object>> itensExtras = recurso.getItensExtras();
+        if (itensExtras != null && !itensExtras.isEmpty()) {
+            for (Map<String, Object> extra : itensExtras) {
+                Map<String, Object> extraMap = new HashMap<>();
+                extraMap.put("quantidade", extra.getOrDefault("quantidade", 1));
+                extraMap.put("marca", extra.getOrDefault("marca", ""));
+                extraMap.put("descricao", extra.getOrDefault("descricao", ""));
+                extraMap.put("modelo", extra.getOrDefault("modelo", ""));
+                extraMap.put("numeroSerie", extra.getOrDefault("numeroSerie", ""));
+
+                Object valorExtraObj = extra.get("valor");
+                if (valorExtraObj != null) {
+                    BigDecimal valorExtra;
+                    if (valorExtraObj instanceof BigDecimal) {
+                        valorExtra = (BigDecimal) valorExtraObj;
+                    } else if (valorExtraObj instanceof Number) {
+                        valorExtra = BigDecimal.valueOf(((Number) valorExtraObj).doubleValue());
+                    } else {
+                        valorExtra = new BigDecimal(valorExtraObj.toString());
+                    }
+                    extraMap.put("valor", valorExtra);
+                }
+
+                itens.add(extraMap);
+            }
+        }
+
+        data.put("empregado", empregado);
+        data.put("itens", itens);
+
+        byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("declaracao_devolucao_aparelho", data);
+
+        HttpHeaders headers = new HttpHeaders();
+        String nomeArquivo = "declaracao_devolucao_aparelho_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
 
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);

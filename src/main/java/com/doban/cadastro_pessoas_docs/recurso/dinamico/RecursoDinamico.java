@@ -15,7 +15,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,6 +33,7 @@ public class RecursoDinamico {
 
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final TypeReference<Map<String, Object>> MAP_TYPE = new TypeReference<>() {};
+    private static final TypeReference<List<Map<String, Object>>> LIST_MAP_TYPE = new TypeReference<>() {};
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,6 +57,13 @@ public class RecursoDinamico {
     @Transient
     @Builder.Default
     private Map<String, Object> atributosSnapshot = new HashMap<>();
+
+    @Column(columnDefinition = "text")
+    private String itensExtrasJson;
+
+    @Transient
+    @Builder.Default
+    private List<Map<String, Object>> itensExtras = new ArrayList<>();
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -85,22 +95,64 @@ public class RecursoDinamico {
      */
     public void setAtributosSnapshot(Map<String, Object> atributosSnapshot) {
         this.atributosSnapshot = atributosSnapshot;
-        serializarSnapshotParaJson();
+        serializarParaJson();
+    }
+
+    /**
+     * Retorna os itens extras. Se o campo transient estiver vazio mas existir JSON,
+     * deserializa do JSON.
+     */
+    public List<Map<String, Object>> getItensExtras() {
+        if (itensExtras != null && !itensExtras.isEmpty()) {
+            return itensExtras;
+        }
+        if (itensExtrasJson != null && !itensExtrasJson.isEmpty()) {
+            try {
+                itensExtras = mapper.readValue(itensExtrasJson, LIST_MAP_TYPE);
+            } catch (JsonProcessingException e) {
+                System.err.println("Erro ao deserializar itens extras: " + e.getMessage());
+                return new ArrayList<>();
+            }
+        }
+        return itensExtras != null ? itensExtras : new ArrayList<>();
+    }
+
+    /**
+     * Define os itens extras e sincroniza com itensExtrasJson.
+     */
+    public void setItensExtras(List<Map<String, Object>> itensExtras) {
+        this.itensExtras = itensExtras;
+        serializarItensExtrasParaJson();
     }
 
     /**
      * Callback JPA executado antes de persistir ou atualizar.
-     * Garante que atributosSnapshotJson esteja sincronizado com atributosSnapshot.
+     * Garante que os campos JSON estejam sincronizados.
      */
     @PrePersist
     @PreUpdate
-    public void serializarSnapshotParaJson() {
+    public void serializarParaJson() {
         if (atributosSnapshot != null && !atributosSnapshot.isEmpty()) {
             try {
                 this.atributosSnapshotJson = mapper.writeValueAsString(atributosSnapshot);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException("Erro ao serializar atributos snapshot", e);
             }
+        } else {
+            this.atributosSnapshotJson = null;
+        }
+        serializarItensExtrasParaJson();
+    }
+
+    private void serializarItensExtrasParaJson() {
+        if (itensExtras != null && !itensExtras.isEmpty()) {
+            try {
+                this.itensExtrasJson = mapper.writeValueAsString(itensExtras);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("Erro ao serializar itens extras", e);
+            }
+        } else {
+            this.itensExtrasJson = null;
         }
     }
 }

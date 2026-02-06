@@ -85,6 +85,7 @@ public class RecursoDinamicoService {
                 .item(item)
                 .dataEntrega(dto.getDataEntrega())
                 .atributosSnapshot(item.getAtributos())
+                .itensExtras(dto.getItensExtras())
                 .build();
 
         recurso = recursoDinamicoRepository.save(recurso);
@@ -111,5 +112,19 @@ public class RecursoDinamicoService {
             throw new EntityNotFoundException("Empréstimo não encontrado com id: " + id);
         }
         recursoDinamicoRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public RecursoDinamico buscarEntidadePorId(Long id) {
+        return recursoDinamicoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Empréstimo não encontrado com id: " + id));
+    }
+
+    @Transactional
+    public RecursoDinamicoDTO atualizarItensExtras(Long id, ItensExtrasUpdateDTO dto) {
+        RecursoDinamico recurso = buscarEntidadePorId(id);
+        recurso.setItensExtras(dto.getItensExtras());
+        recurso = recursoDinamicoRepository.save(recurso);
+        return new RecursoDinamicoDTO(recurso);
     }
 }

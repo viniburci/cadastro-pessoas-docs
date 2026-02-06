@@ -59,6 +59,13 @@ public class RecursoDinamicoController {
         return ResponseEntity.ok(recursoDinamicoService.registrarDevolucao(id, dto));
     }
 
+    @PutMapping("/{id}/itens-extras")
+    public ResponseEntity<RecursoDinamicoDTO> atualizarItensExtras(
+            @PathVariable Long id,
+            @RequestBody ItensExtrasUpdateDTO dto) {
+        return ResponseEntity.ok(recursoDinamicoService.atualizarItensExtras(id, dto));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         recursoDinamicoService.deletar(id);

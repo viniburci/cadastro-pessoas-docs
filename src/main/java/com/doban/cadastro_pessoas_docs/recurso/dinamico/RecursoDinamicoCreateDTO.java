@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 /**
  * DTO de criação para RecursoDinamico (empréstimo).
@@ -25,4 +27,6 @@ public class RecursoDinamicoCreateDTO {
 
     @NotNull(message = "Data de entrega é obrigatória")
     private LocalDate dataEntrega;
+
+    private List<Map<String, Object>> itensExtras;
 }

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +27,7 @@ public class RecursoDinamicoDTO {
     private LocalDate dataEntrega;
     private LocalDate dataDevolucao;
     private Map<String, Object> atributosSnapshot;
+    private List<Map<String, Object>> itensExtras;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -37,6 +39,7 @@ public class RecursoDinamicoDTO {
         this.dataEntrega = entity.getDataEntrega();
         this.dataDevolucao = entity.getDataDevolucao();
         this.atributosSnapshot = entity.getAtributosSnapshot();
+        this.itensExtras = entity.getItensExtras();
         this.createdAt = entity.getCreatedAt();
         this.updatedAt = entity.getUpdatedAt();
     }
