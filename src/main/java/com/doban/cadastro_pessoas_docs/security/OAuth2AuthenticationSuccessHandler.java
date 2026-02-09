@@ -22,6 +22,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private final JwtService jwtService;
     private final UsuarioRepository usuarioRepository;
     private final EmailPermitidoRepository emailPermitidoRepository;
+    private final RefreshTokenService refreshTokenService;
 
     @Value("${app.oauth2.redirect-uri:http://localhost:4200/auth/callback}")
     private String redirectUri;
@@ -71,12 +72,14 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         usuario.setPictureUrl(pictureUrl);
         usuarioRepository.save(usuario);
 
-        // Gera o token JWT
+        // Gera o token JWT e o refresh token
         String token = jwtService.generateToken(usuario);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(usuario);
 
-        // Redireciona para o frontend com o token
+        // Redireciona para o frontend com os tokens
         String targetUrl = UriComponentsBuilder.fromUriString(redirectUri)
                 .queryParam("token", token)
+                .queryParam("refreshToken", refreshToken.getToken())
                 .build()
                 .toUriString();
 
