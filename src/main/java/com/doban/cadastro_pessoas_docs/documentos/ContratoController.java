@@ -33,6 +33,7 @@ import com.doban.cadastro_pessoas_docs.domain.vaga.VagaService;
 import com.doban.cadastro_pessoas_docs.domain.vaga.tipo.TipoVaga;
 import com.doban.cadastro_pessoas_docs.domain.vaga.tipo.TipoVagaRepository;
 import com.doban.cadastro_pessoas_docs.recurso.dinamico.RecursoDinamico;
+import com.doban.cadastro_pessoas_docs.recurso.dinamico.RecursoDinamicoDTO;
 import com.doban.cadastro_pessoas_docs.recurso.dinamico.RecursoDinamicoService;
 import com.doban.cadastro_pessoas_docs.recurso.item.ItemDinamico;
 import com.doban.cadastro_pessoas_docs.recurso.item.ItemDinamicoRepository;
@@ -500,6 +501,61 @@ public class ContratoController {
 
         HttpHeaders headers = new HttpHeaders();
         String nomeArquivo = "declaracao_devolucao_aparelho_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+
+        headers.setContentLength(pdfBytes.length);
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + nomeArquivo);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+    }
+
+    /**
+     * Gera o Check List de Vistoria de Veículo a partir de um RecursoDinamico (CARRO) salvo.
+     * @param recursoDinamicoId ID do empréstimo do veículo
+     */
+    @GetMapping("/carro_checklist/recurso/{recursoDinamicoId}")
+    public ResponseEntity<byte[]> downloadCarroChecklistPdf(@PathVariable Long recursoDinamicoId) {
+
+        RecursoDinamico recurso = recursoDinamicoService.buscarEntidadePorId(recursoDinamicoId);
+        ItemDinamico item = recurso.getItem();
+
+        String tipoRecursoCodigo = item.getTipoRecurso().getCodigo();
+        if (!"CARRO".equals(tipoRecursoCodigo)) {
+            throw new IllegalArgumentException("O recurso informado não é do tipo CARRO. Tipo encontrado: " + tipoRecursoCodigo);
+        }
+
+        PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(recurso.getPessoa().getId());
+
+        Map<String, Object> atributos = recurso.getAtributosSnapshot();
+
+        Map<String, Object> data = new HashMap<>();
+
+        Map<String, String> empregado = Map.ofEntries(
+                entry("nome", pessoaDTO.getNome() != null ? pessoaDTO.getNome() : ""),
+                entry("rg", pessoaDTO.getNumeroRg() != null ? pessoaDTO.getNumeroRg() : ""),
+                entry("cpf", pessoaDTO.getCpf() != null ? pessoaDTO.getCpf() : ""),
+                entry("cidade", pessoaDTO.getCidade() != null ? pessoaDTO.getCidade() : ""),
+                entry("telefone", pessoaDTO.getTelefone() != null ? pessoaDTO.getTelefone() : "")
+        );
+
+        Map<String, Object> carro = new HashMap<>();
+        carro.put("marca", atributos.getOrDefault("marca", ""));
+        carro.put("modelo", atributos.getOrDefault("modelo", ""));
+        carro.put("cor", atributos.getOrDefault("cor", ""));
+        carro.put("chassi", atributos.getOrDefault("chassi", ""));
+        carro.put("placa", item.getIdentificador());
+        carro.put("anoModelo", atributos.getOrDefault("anoModelo", ""));
+
+        data.put("empregado", empregado);
+        data.put("carro", carro);
+        data.put("dataAtualExtenso", obterDataPorExtenso());
+
+        byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("carro_checklist", data);
+
+        HttpHeaders headers = new HttpHeaders();
+        String nomeArquivo = "carro_checklist_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
 
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
