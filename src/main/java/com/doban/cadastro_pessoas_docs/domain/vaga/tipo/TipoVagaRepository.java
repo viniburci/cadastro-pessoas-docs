@@ -13,6 +13,8 @@ public interface TipoVagaRepository extends JpaRepository<TipoVaga, Long> {
 
     Optional<TipoVaga> findByCodigo(String codigo);
 
+    Optional<TipoVaga> findByNome(String nome);
+
     List<TipoVaga> findByAtivoTrue();
 
     boolean existsByCodigo(String codigo);

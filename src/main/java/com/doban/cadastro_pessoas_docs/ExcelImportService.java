@@ -46,6 +46,8 @@ import com.doban.cadastro_pessoas_docs.domain.vaga.TipoContrato;
 import com.doban.cadastro_pessoas_docs.domain.vaga.Vaga;
 import com.doban.cadastro_pessoas_docs.domain.vaga.VagaDTO;
 import com.doban.cadastro_pessoas_docs.domain.vaga.VagaRepository;
+import com.doban.cadastro_pessoas_docs.domain.vaga.tipo.TipoVaga;
+import com.doban.cadastro_pessoas_docs.domain.vaga.tipo.TipoVagaService;
 import com.doban.cadastro_pessoas_docs.recurso.dinamico.RecursoDinamico;
 import com.doban.cadastro_pessoas_docs.recurso.dinamico.RecursoDinamicoRepository;
 import com.doban.cadastro_pessoas_docs.recurso.item.ItemDinamico;
@@ -59,6 +61,7 @@ public class ExcelImportService {
     private final ItemDinamicoService itemDinamicoService;
     private final RecursoDinamicoRepository recursoDinamicoRepository;
     private final ClienteService clienteService;
+    private final TipoVagaService tipoVagaService;
 
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private final DateTimeFormatter dtfPortugueseAbbr = DateTimeFormatter.ofPattern("dd-MMM-yyyy",
@@ -71,12 +74,14 @@ public class ExcelImportService {
             VagaRepository vagaRepository,
             ItemDinamicoService itemDinamicoService,
             RecursoDinamicoRepository recursoDinamicoRepository,
-            ClienteService clienteService) {
+            ClienteService clienteService,
+            TipoVagaService tipoVagaService) {
         this.pessoaRepository = pessoaRepository;
         this.vagaRepository = vagaRepository;
         this.itemDinamicoService = itemDinamicoService;
         this.recursoDinamicoRepository = recursoDinamicoRepository;
         this.clienteService = clienteService;
+        this.tipoVagaService = tipoVagaService;
     }
 
     public void importar(String caminhoArquivo) throws IOException {
@@ -163,6 +168,10 @@ public class ExcelImportService {
         pessoaDto.setCpf(cpf);
 
         Cliente clienteExistente = clienteService.buscarOuCriarPorNome(getString(row, 26));
+
+        // Buscar ou criar TipoVaga baseado no nome da vaga
+        TipoVaga tipoVagaExistente = tipoVagaService.buscarOuCriarPorNome(getString(row, 29));
+
         VagaDTO vagaDto = VagaDTO.builder()
                 .clienteId(clienteExistente != null ? clienteExistente.getId() : null)
                 .clienteNome(clienteExistente != null ? clienteExistente.getNome() : null)
@@ -174,6 +183,9 @@ public class ExcelImportService {
                 .horarioEntrada(getHorario(row, 50))
                 .horarioSaida(getHorario(row, 51))
                 .contratante(TipoContratante.DOBAN_PRESTADORA_DE_SERVIÇOS_LTDA) // 1 - 2
+                .tipoVagaId(tipoVagaExistente != null ? tipoVagaExistente.getId() : null)
+                .tipoVagaCodigo(tipoVagaExistente != null ? tipoVagaExistente.getCodigo() : null)
+                .tipoVagaNome(tipoVagaExistente != null ? tipoVagaExistente.getNome() : null)
                 .build();
 
         String tipoContratoStr = Optional.ofNullable(getString(row, 32))
@@ -278,6 +290,10 @@ public class ExcelImportService {
                         "CARRO",
                         placa,
                         atributosCarro);
+            
+                if(itemCarro.getAtributos() == null || itemCarro.getAtributos().isEmpty()) {
+                    return;
+                }
 
                 // Criar empréstimo se não existir já um ativo para este item e pessoa
                 if (!recursoDinamicoRepository.existsByItemIdAndPessoaIdAndDataDevolucaoIsNull(

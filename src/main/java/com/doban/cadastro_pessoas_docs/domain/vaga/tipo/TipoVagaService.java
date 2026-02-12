@@ -137,4 +137,33 @@ public class TipoVagaService {
         }
         tipoVagaRepository.deleteById(id);
     }
+
+    /**
+     * Busca ou cria um tipo de vaga pelo nome.
+     * O código é gerado automaticamente em maiúsculo com underscores.
+     * Útil para migração de dados existentes.
+     */
+    @Transactional
+    public TipoVaga buscarOuCriarPorNome(String nome) {
+        if (nome == null || nome.isBlank()) {
+            return null;
+        }
+
+        return tipoVagaRepository.findByNome(nome)
+                .orElseGet(() -> {
+                    // Gera código automaticamente: nome em maiúsculo com underscores
+                    String codigo = nome.trim()
+                            .toUpperCase()
+                            .replaceAll("\\s+", "_")
+                            .replaceAll("[^A-Z0-9_]", "");
+
+                    TipoVaga novoTipo = TipoVaga.builder()
+                            .codigo(codigo)
+                            .nome(nome.trim())
+                            .ativo(true)
+                            .build();
+
+                    return tipoVagaRepository.save(novoTipo);
+                });
+    }
 }
