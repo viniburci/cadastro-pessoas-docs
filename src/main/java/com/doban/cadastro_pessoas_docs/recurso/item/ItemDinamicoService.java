@@ -1,15 +1,18 @@
 package com.doban.cadastro_pessoas_docs.recurso.item;
 
-import com.doban.cadastro_pessoas_docs.recurso.tipo.TipoRecurso;
-import com.doban.cadastro_pessoas_docs.recurso.tipo.TipoRecursoService;
-import com.doban.cadastro_pessoas_docs.shared.validation.SchemaValidatorService;
-import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
+import java.util.HashMap;
+import java.util.List;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.doban.cadastro_pessoas_docs.recurso.tipo.TipoRecurso;
+import com.doban.cadastro_pessoas_docs.recurso.tipo.TipoRecursoService;
+import com.doban.cadastro_pessoas_docs.shared.validation.SchemaValidatorService;
+
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -149,6 +152,10 @@ public class ItemDinamicoService {
         return itemDinamicoRepository
                 .findByTipoRecursoIdAndIdentificador(tipoRecurso.getId(), identificador)
                 .orElseGet(() -> {
+
+                    if(identificador == null || identificador.isBlank() || identificador.equalsIgnoreCase("0")) {
+                        return null; // Não criar item se identificador é inválido
+                    }
                     // Se não existe, criar novo
                     System.out.println("📦 Criando novo item: " + tipoRecursoCodigo + " - " + identificador);
 
@@ -165,7 +172,7 @@ public class ItemDinamicoService {
                     ItemDinamico novoItem = ItemDinamico.builder()
                             .tipoRecurso(tipoRecurso)
                             .identificador(identificador)
-                            .atributos(atributos != null ? atributos : new java.util.HashMap<>())
+                            .atributos(atributos != null ? atributos : new HashMap<>())
                             .ativo(true)
                             .build();
 
