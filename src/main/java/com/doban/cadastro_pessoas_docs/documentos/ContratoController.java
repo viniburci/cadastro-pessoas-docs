@@ -316,7 +316,8 @@ public class ContratoController {
      */
     @GetMapping("/termo_responsabilidade_materiais/recurso/{recursoDinamicoId}")
     public ResponseEntity<byte[]> downloadTermoResponsabilidadeMateriaisDoRecursoPdf(
-            @PathVariable Long recursoDinamicoId) {
+            @PathVariable Long recursoDinamicoId,
+            @RequestParam(required = false) Long clienteId) {
 
         RecursoDinamico recurso = recursoDinamicoService.buscarEntidadePorId(recursoDinamicoId);
         PessoaDTO pessoaDTO = pessoaService.buscarPessoaPorId(recurso.getPessoa().getId());
@@ -397,8 +398,15 @@ public class ContratoController {
             }
         }
 
+        // Buscar nome do cliente se fornecido
+        String clienteNome = "";
+        if (clienteId != null) {
+            ClienteDTO clienteDTO = clienteService.buscarPorId(clienteId);
+            clienteNome = clienteDTO.getNome();
+        }
+
         data.put("empregado", empregado);
-        data.put("contrato", Map.of("cliente", ""));
+        data.put("contrato", Map.of("cliente", clienteNome));
         data.put("dataAtualExtenso", obterDataPorExtenso());
         data.put("itens", itens);
         data.put("valorTotal", valorTotal);
