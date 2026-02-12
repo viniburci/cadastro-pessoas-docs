@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import static java.util.Map.entry;
+import java.util.Optional;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -23,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.doban.cadastro_pessoas_docs.documentos.dto.ItemMaterialDTO;
 import com.doban.cadastro_pessoas_docs.documentos.dto.TermoResponsabilidadeMateriaisRequest;
-
 import com.doban.cadastro_pessoas_docs.domain.cliente.ClienteDTO;
 import com.doban.cadastro_pessoas_docs.domain.cliente.ClienteService;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaDTO;
@@ -33,14 +33,11 @@ import com.doban.cadastro_pessoas_docs.domain.vaga.VagaService;
 import com.doban.cadastro_pessoas_docs.domain.vaga.tipo.TipoVaga;
 import com.doban.cadastro_pessoas_docs.domain.vaga.tipo.TipoVagaRepository;
 import com.doban.cadastro_pessoas_docs.recurso.dinamico.RecursoDinamico;
-import com.doban.cadastro_pessoas_docs.recurso.dinamico.RecursoDinamicoDTO;
 import com.doban.cadastro_pessoas_docs.recurso.dinamico.RecursoDinamicoService;
 import com.doban.cadastro_pessoas_docs.recurso.item.ItemDinamico;
 import com.doban.cadastro_pessoas_docs.recurso.item.ItemDinamicoRepository;
 import com.ibm.icu.text.RuleBasedNumberFormat;
 import com.ibm.icu.util.ULocale;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/documentos")
@@ -276,7 +273,7 @@ public class ContratoController {
         if (request.getItensAdicionais() != null && !request.getItensAdicionais().isEmpty()) {
             for (ItemMaterialDTO itemDTO : request.getItensAdicionais()) {
                 Map<String, Object> itemMap = new HashMap<>();
-                itemMap.put("quantidade", itemDTO.getQuantidade() != null ? itemDTO.getQuantidade() : 1);
+                itemMap.put("quantidade", itemDTO.getQuantidade() != null ? itemDTO.getQuantidade() : Integer.valueOf(1));
                 itemMap.put("marca", itemDTO.getMarca() != null ? itemDTO.getMarca() : "");
                 itemMap.put("descricao", itemDTO.getDescricao() != null ? itemDTO.getDescricao() : "");
                 itemMap.put("numeroSerie", itemDTO.getNumeroSerie() != null ? itemDTO.getNumeroSerie() : "");
@@ -284,7 +281,7 @@ public class ContratoController {
 
                 if (itemDTO.getValor() != null) {
                     itemMap.put("valor", itemDTO.getValor());
-                    int qtd = itemDTO.getQuantidade() != null ? itemDTO.getQuantidade() : 1;
+                    int qtd = Optional.ofNullable(itemDTO.getQuantidade()).orElse(1);
                     valorTotal = valorTotal.add(itemDTO.getValor().multiply(BigDecimal.valueOf(qtd)));
                 }
 
