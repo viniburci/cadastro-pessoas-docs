@@ -8,8 +8,7 @@ import org.thymeleaf.templateresolver.StringTemplateResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import java.io.ByteArrayOutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -89,16 +88,11 @@ public class PdfGeneratorService {
      * @return Array de bytes do PDF
      */
     public byte[] generatePdfWithPhoto(String templateName, Map<String, Object> data, byte[] foto) {
-        Path tempFotoPath = null;
-
         try {
-            // Se há foto, salva como arquivo temporário
+            // Se há foto, converte para Base64 data URI (suportado nativamente pelo Flying Saucer 10.x)
             if (foto != null && foto.length > 0) {
-                tempFotoPath = Files.createTempFile("cracha_foto_", ".jpg");
-                Files.write(tempFotoPath, foto);
-
-                // Adiciona o caminho da foto aos dados
-                data.put("fotoPath", tempFotoPath.toUri().toString());
+                String base64 = Base64.getEncoder().encodeToString(foto);
+                data.put("fotoPath", "data:image/jpeg;base64," + base64);
             }
 
             // Processa o Template com os Dados (Thymeleaf)
@@ -122,15 +116,6 @@ public class PdfGeneratorService {
             }
         } catch (Exception e) {
             throw new RuntimeException("Erro ao gerar PDF a partir do HTML com foto.", e);
-        } finally {
-            // Limpa o arquivo temporário
-            if (tempFotoPath != null) {
-                try {
-                    Files.deleteIfExists(tempFotoPath);
-                } catch (Exception e) {
-                    // Log, mas não falha se não conseguir deletar
-                }
-            }
         }
     }
 

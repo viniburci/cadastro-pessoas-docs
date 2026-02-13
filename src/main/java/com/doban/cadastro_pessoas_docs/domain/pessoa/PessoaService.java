@@ -1,7 +1,12 @@
 package com.doban.cadastro_pessoas_docs.domain.pessoa;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -90,9 +95,36 @@ public class PessoaService {
             throw new IllegalArgumentException("Foto muito grande. Tamanho máximo: 5MB");
         }
 
+        // Converte para JPEG para garantir compatibilidade com geração de PDF
+        byte[] fotoJpeg = converterParaJpeg(foto);
+
         Pessoa pessoa = buscarEntidadePessoaPorId(pessoaId);
-        pessoa.setFoto(foto);
+        pessoa.setFoto(fotoJpeg);
         pessoaRepository.save(pessoa);
+    }
+
+    private byte[] converterParaJpeg(byte[] imagemOriginal) {
+        try {
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(imagemOriginal));
+            if (image == null) {
+                throw new IllegalArgumentException(
+                    "Formato de imagem não suportado. Envie JPEG, PNG, BMP ou GIF.");
+            }
+
+            // Remove canal alpha (transparência) para compatibilidade com JPEG
+            BufferedImage rgbImage = new BufferedImage(
+                    image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+            rgbImage.createGraphics().drawImage(image, 0, 0, java.awt.Color.WHITE, null);
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ImageIO.write(rgbImage, "jpg", bos);
+            return bos.toByteArray();
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                "Erro ao processar imagem. Envie JPEG, PNG, BMP ou GIF.", e);
+        }
     }
 
     public byte[] buscarFoto(Long pessoaId) {

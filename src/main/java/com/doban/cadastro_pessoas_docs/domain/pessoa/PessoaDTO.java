@@ -173,6 +173,6 @@ public class PessoaDTO {
         pessoa.setTamanhoCalcado(this.tamanhoCalcado);
         pessoa.setTamanhoLuva(this.tamanhoLuva);
         pessoa.setTamanhoCapacete(this.tamanhoCapacete);
-        pessoa.setFoto(this.foto);
+        // Foto não é atualizada aqui - é gerenciada via endpoint separado (POST /foto)
     }
 }
