@@ -396,10 +396,15 @@ public class ExcelImportService {
     }
 
     private static final DataFormatter formatter = new DataFormatter();
+    private static final LocalDate DATA_INDEFINIDA = LocalDate.of(1889, 12, 31);
 
     private String getString(Row row, int index) {
         Cell cell = row.getCell(index);
-        return (cell != null) ? formatter.formatCellValue(cell).trim() : null;
+        if (cell == null || cell.getCellType() == CellType.BLANK) return null;
+        if (cell.getCellType() == CellType.NUMERIC && !DateUtil.isCellDateFormatted(cell)
+                && cell.getNumericCellValue() == 0) return null;
+        String value = formatter.formatCellValue(cell).trim();
+        return value.isEmpty() ? null : value;
     }
 
     private LocalDate parseDate(Row row, int index) {
@@ -412,6 +417,7 @@ public class ExcelImportService {
         try {
             if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
                 LocalDate date = cell.getLocalDateTimeCellValue().toLocalDate();
+                if (DATA_INDEFINIDA.equals(date)) return null;
                 // System.out.println("Data numérica detectada: " + date);
                 return date;
             }
@@ -434,6 +440,7 @@ public class ExcelImportService {
             for (DateTimeFormatter formatter : formatters) {
                 try {
                     LocalDate parsedDate = LocalDate.parse(valorLimpo, formatter);
+                    if (DATA_INDEFINIDA.equals(parsedDate)) return null;
                     // System.out.println("Data convertida com formato '" + formatter + "': " +
                     // parsedDate);
                     return parsedDate;

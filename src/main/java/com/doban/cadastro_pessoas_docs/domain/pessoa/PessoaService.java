@@ -17,9 +17,11 @@ import jakarta.persistence.EntityNotFoundException;
 public class PessoaService {
 
     private final PessoaRepository pessoaRepository;
+    private final DadosBancariosService dadosBancariosService;
 
-    PessoaService(PessoaRepository pessoaRepository) {
+    PessoaService(PessoaRepository pessoaRepository, DadosBancariosService dadosBancariosService) {
         this.pessoaRepository = pessoaRepository;
+        this.dadosBancariosService = dadosBancariosService;
     }
 
     public List<PessoaDTO> buscarTodasPessoas() {
@@ -40,6 +42,10 @@ public class PessoaService {
         try {
             Pessoa pessoa = pessoaDTO.toEntity();
             Pessoa pessoaSalva = pessoaRepository.save(pessoa);
+            if (pessoaDTO.getDadosBancarios() != null && !pessoaDTO.getDadosBancarios().isEmpty()) {
+                dadosBancariosService.salvar(pessoaSalva.getId(), pessoaDTO.getDadosBancarios());
+                pessoaSalva = pessoaRepository.findById(pessoaSalva.getId()).orElse(pessoaSalva);
+            }
             return new PessoaDTO(pessoaSalva);
         } catch (DataIntegrityViolationException e) {
             throw new IllegalArgumentException("Violação de integridade: dados inválidos ou duplicados.");
@@ -57,8 +63,13 @@ public class PessoaService {
                 .orElseThrow(() -> new RuntimeException("Pessoa não encontrada com id: " + id));
 
         dto.atualizarEntidade(pessoa);
-        
         pessoa = pessoaRepository.save(pessoa);
+
+        if (dto.getDadosBancarios() != null && !dto.getDadosBancarios().isEmpty()) {
+            dadosBancariosService.salvar(id, dto.getDadosBancarios());
+            pessoa = pessoaRepository.findById(id).orElse(pessoa);
+        }
+
         return new PessoaDTO(pessoa);
     }
 

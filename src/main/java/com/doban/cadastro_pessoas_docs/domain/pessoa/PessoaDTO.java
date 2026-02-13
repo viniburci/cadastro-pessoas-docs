@@ -52,6 +52,8 @@ public class PessoaDTO {
 
     private byte[] foto;
 
+    private DadosBancariosDTO dadosBancarios;
+
     public PessoaDTO() {
     }
 
@@ -92,6 +94,9 @@ public class PessoaDTO {
         this.tamanhoLuva = pessoa.getTamanhoLuva();
         this.tamanhoCapacete = pessoa.getTamanhoCapacete();
         this.foto = pessoa.getFoto();
+        if (pessoa.getDadosBancarios() != null) {
+            this.dadosBancarios = new DadosBancariosDTO(pessoa.getDadosBancarios());
+        }
     }
 
     public Pessoa toEntity() {
