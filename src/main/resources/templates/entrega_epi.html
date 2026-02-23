@@ -51,6 +51,7 @@
             border-collapse: collapse;
             margin-top: 15px;
             margin-bottom: 25px;
+            -fs-table-paginate: paginate;
         }
 
         .dados-tabela td,
@@ -67,6 +68,10 @@
             text-align: center;
             background-color: #f0f0f0;
             font-weight: bold;
+        }
+
+        .materiais-tabela tbody tr {
+            page-break-inside: avoid;
         }
 
         .termos-uso {

@@ -39,6 +39,7 @@
             border-collapse: collapse;
             margin-top: 15px;
             margin-bottom: 25px;
+            -fs-table-paginate: paginate;
         }
 
         .dados-tabela td,
@@ -55,6 +56,10 @@
             text-align: center;
             background-color: #f0f0f0;
             font-weight: bold;
+        }
+
+        .materiais-tabela tbody tr {
+            page-break-inside: avoid;
         }
 
         .motivos {
@@ -157,21 +162,23 @@
         </tbody>
     </table>
 
-    <p style="margin-top: 40px; font-size: 10pt;">Data _____/_____/_____</p>
+    <div style="page-break-inside: avoid;">
+        <p style="margin-top: 40px; font-size: 10pt;">Data _____/_____/_____</p>
 
-    <table style="width: 100%; border-collapse: collapse; margin-top: 30px;">
-        <tr>
-            <td style="width: 50%; text-align: center; padding: 0 10px; vertical-align: top; border: none;">
-                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
-                <span th:text="${empregado.nome}">NOME DO COLABORADOR</span>
-                <br/><small>Assinatura do Colaborador</small>
-            </td>
-            <td style="width: 50%; text-align: center; padding: 0 10px; vertical-align: top; border: none;">
-                <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
-                Recebido por
-            </td>
-        </tr>
-    </table>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 60px;">
+            <tr>
+                <td style="width: 50%; text-align: center; padding: 0 10px; vertical-align: top; border: none;">
+                    <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                    <span th:text="${empregado.nome}">NOME DO COLABORADOR</span>
+                    <br/><small>Assinatura do Colaborador</small>
+                </td>
+                <td style="width: 50%; text-align: center; padding: 0 10px; vertical-align: top; border: none;">
+                    <span style="display: block; border-bottom: 1px solid black; margin-bottom: 5px; height: 1px;"></span>
+                    Recebido por
+                </td>
+            </tr>
+        </table>
+    </div>
 
 </body>
 
