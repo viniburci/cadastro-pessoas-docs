@@ -73,25 +73,25 @@ public class ContratoController {
 
         Map<String, Object> data = new HashMap<>();
 
-        Map<String, String> empregado = Map.of(
-                "nome", pessoaDTO.getNome(),
-                "estadoCivil", pessoaDTO.getEstadoCivil(),
-                "rg", pessoaDTO.getNumeroRg(),
-                "cpf", pessoaDTO.getCpf(),
-                "ctps", pessoaDTO.getNumeroCtps(),
-                "ctpsSerie", pessoaDTO.getSerieCtps(),
-                "endereco", pessoaDTO.getEndereco(),
-                "cidade", pessoaDTO.getCidade(),
-                "uf", pessoaDTO.getEstado());
+        Map<String, String> empregado = Map.ofEntries(
+                entry("nome", pessoaDTO.getNome() != null ? pessoaDTO.getNome() : ""),
+                entry("estadoCivil", pessoaDTO.getEstadoCivil() != null ? pessoaDTO.getEstadoCivil() : ""),
+                entry("rg", pessoaDTO.getNumeroRg() != null ? pessoaDTO.getNumeroRg() : ""),
+                entry("cpf", pessoaDTO.getCpf() != null ? pessoaDTO.getCpf() : ""),
+                entry("ctps", pessoaDTO.getNumeroCtps() != null ? pessoaDTO.getNumeroCtps() : ""),
+                entry("ctpsSerie", pessoaDTO.getSerieCtps() != null ? pessoaDTO.getSerieCtps() : ""),
+                entry("endereco", pessoaDTO.getEndereco() != null ? pessoaDTO.getEndereco() : ""),
+                entry("cidade", pessoaDTO.getCidade() != null ? pessoaDTO.getCidade() : ""),
+                entry("uf", pessoaDTO.getEstado() != null ? pessoaDTO.getEstado() : ""));
 
-        Map<String, Object> contrato = Map.of(
-                "funcao", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "N/A",
-                "salario", vagaDTO.getSalario(),
-                "cidadeTrabalho", vagaDTO.getCidade(),
-                "dataInicio", vagaDTO.getDataAdmissao(),
-                "dataFim", vagaDTO.getDataDemissao(),
-                "horarioEntrada", vagaDTO.getHorarioEntrada(),
-                "horarioSaida", vagaDTO.getHorarioSaida());
+        Map<String, Object> contrato = new HashMap<>();
+        contrato.put("funcao", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "N/A");
+        contrato.put("salario", vagaDTO.getSalario());
+        contrato.put("cidadeTrabalho", vagaDTO.getCidade() != null ? vagaDTO.getCidade() : "");
+        contrato.put("dataInicio", vagaDTO.getDataAdmissao() != null ? vagaDTO.getDataAdmissao() : "");
+        contrato.put("dataFim", vagaDTO.getDataDemissao() != null ? vagaDTO.getDataDemissao() : "");
+        contrato.put("horarioEntrada", vagaDTO.getHorarioEntrada() != null ? vagaDTO.getHorarioEntrada() : "");
+        contrato.put("horarioSaida", vagaDTO.getHorarioSaida() != null ? vagaDTO.getHorarioSaida() : "");
 
         data.put("empregado", empregado);
         data.put("contrato", contrato);
@@ -120,17 +120,17 @@ public class ContratoController {
         Map<String, Object> data = new HashMap<>();
 
         Map<String, String> cliente = Map.of(
-                "nome", vagaDTO.getClienteNome());
+                "nome", vagaDTO.getClienteNome() != null ? vagaDTO.getClienteNome() : "");
 
-        Map<String, Object> funcionario = Map.of(
-                "nome", pessoaDTO.getNome(),
-                "cpf", pessoaDTO.getCpf(),
-                "endereço", pessoaDTO.getEndereco(),
-                "bairro", pessoaDTO.getBairro(),
-                "cidade", pessoaDTO.getCidade(),
-                "uf", pessoaDTO.getEstado(),
-                "cep", pessoaDTO.getCep(),
-                "telefone", pessoaDTO.getTelefone());
+        Map<String, Object> funcionario = new HashMap<>();
+        funcionario.put("nome", pessoaDTO.getNome() != null ? pessoaDTO.getNome() : "");
+        funcionario.put("cpf", pessoaDTO.getCpf() != null ? pessoaDTO.getCpf() : "");
+        funcionario.put("endereço", pessoaDTO.getEndereco() != null ? pessoaDTO.getEndereco() : "");
+        funcionario.put("bairro", pessoaDTO.getBairro() != null ? pessoaDTO.getBairro() : "");
+        funcionario.put("cidade", pessoaDTO.getCidade() != null ? pessoaDTO.getCidade() : "");
+        funcionario.put("uf", pessoaDTO.getEstado() != null ? pessoaDTO.getEstado() : "");
+        funcionario.put("cep", pessoaDTO.getCep() != null ? pessoaDTO.getCep() : "");
+        funcionario.put("telefone", pessoaDTO.getTelefone() != null ? pessoaDTO.getTelefone() : "");
 
         data.put("cliente", cliente);
         data.put("funcionario", funcionario);
@@ -158,27 +158,27 @@ public class ContratoController {
 
         Map<String, Object> data = new HashMap<>();
 
-        Map<String, String> empregado = Map.of(
-                "nome", pessoaDTO.getNome(),
-                "estadoCivil", pessoaDTO.getEstadoCivil(),
-                "rg", pessoaDTO.getNumeroRg(),
-                "cpf", pessoaDTO.getCpf(),
-                "ctps", pessoaDTO.getNumeroCtps(),
-                "ctpsSerie", pessoaDTO.getSerieCtps(),
-                "endereco", pessoaDTO.getEndereco(),
-                "cidade", pessoaDTO.getCidade(),
-                "uf", pessoaDTO.getEstado(),
-                "pix", pessoaDTO.getChavePix());
+        Map<String, String> empregado = Map.ofEntries(
+                entry("nome", pessoaDTO.getNome() != null ? pessoaDTO.getNome() : ""),
+                entry("estadoCivil", pessoaDTO.getEstadoCivil() != null ? pessoaDTO.getEstadoCivil() : ""),
+                entry("rg", pessoaDTO.getNumeroRg() != null ? pessoaDTO.getNumeroRg() : ""),
+                entry("cpf", pessoaDTO.getCpf() != null ? pessoaDTO.getCpf() : ""),
+                entry("ctps", pessoaDTO.getNumeroCtps() != null ? pessoaDTO.getNumeroCtps() : ""),
+                entry("ctpsSerie", pessoaDTO.getSerieCtps() != null ? pessoaDTO.getSerieCtps() : ""),
+                entry("endereco", pessoaDTO.getEndereco() != null ? pessoaDTO.getEndereco() : ""),
+                entry("cidade", pessoaDTO.getCidade() != null ? pessoaDTO.getCidade() : ""),
+                entry("uf", pessoaDTO.getEstado() != null ? pessoaDTO.getEstado() : ""),
+                entry("pix", pessoaDTO.getChavePix() != null ? pessoaDTO.getChavePix() : ""));
 
-        Map<String, Object> contrato = Map.of(
-                "funcao", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "N/A",
-                "salario", vagaDTO.getSalario(),
-                "salarioExtenso", converterParaValorExtenso(vagaDTO.getSalario()),
-                "cidadeTrabalho", vagaDTO.getCidade(),
-                "dataInicio", vagaDTO.getDataAdmissao(),
-                "dataFim", vagaDTO.getDataDemissao(),
-                "horarioEntrada", vagaDTO.getHorarioEntrada(),
-                "horarioSaida", vagaDTO.getHorarioSaida());
+        Map<String, Object> contrato = new HashMap<>();
+        contrato.put("funcao", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "N/A");
+        contrato.put("salario", vagaDTO.getSalario());
+        contrato.put("salarioExtenso", converterParaValorExtenso(vagaDTO.getSalario()));
+        contrato.put("cidadeTrabalho", vagaDTO.getCidade() != null ? vagaDTO.getCidade() : "");
+        contrato.put("dataInicio", vagaDTO.getDataAdmissao() != null ? vagaDTO.getDataAdmissao() : "");
+        contrato.put("dataFim", vagaDTO.getDataDemissao() != null ? vagaDTO.getDataDemissao() : "");
+        contrato.put("horarioEntrada", vagaDTO.getHorarioEntrada() != null ? vagaDTO.getHorarioEntrada() : "");
+        contrato.put("horarioSaida", vagaDTO.getHorarioSaida() != null ? vagaDTO.getHorarioSaida() : "");
 
         data.put("empregado", empregado);
         data.put("contrato", contrato);
@@ -650,32 +650,32 @@ public class ContratoController {
         Map<String, Object> data = new HashMap<>();
 
         Map<String, String> empregado = Map.ofEntries(
-                entry("nome", pessoaDTO.getNome()),
-                entry("estadoCivil", pessoaDTO.getEstadoCivil()),
-                entry("rg", pessoaDTO.getNumeroRg()),
-                entry("cpf", pessoaDTO.getCpf()),
-                entry("ctps", pessoaDTO.getNumeroCtps()),
-                entry("ctpsSerie", pessoaDTO.getSerieCtps()),
-                entry("endereco", pessoaDTO.getEndereco()),
-                entry("bairro", pessoaDTO.getBairro()),
-                entry("cidade", pessoaDTO.getCidade()),
-                entry("uf", pessoaDTO.getEstado()),
-                entry("pix", pessoaDTO.getChavePix()),
-                entry("cep", pessoaDTO.getCep()),
-                entry("telefone", pessoaDTO.getTelefone())
+                entry("nome", pessoaDTO.getNome() != null ? pessoaDTO.getNome() : ""),
+                entry("estadoCivil", pessoaDTO.getEstadoCivil() != null ? pessoaDTO.getEstadoCivil() : ""),
+                entry("rg", pessoaDTO.getNumeroRg() != null ? pessoaDTO.getNumeroRg() : ""),
+                entry("cpf", pessoaDTO.getCpf() != null ? pessoaDTO.getCpf() : ""),
+                entry("ctps", pessoaDTO.getNumeroCtps() != null ? pessoaDTO.getNumeroCtps() : ""),
+                entry("ctpsSerie", pessoaDTO.getSerieCtps() != null ? pessoaDTO.getSerieCtps() : ""),
+                entry("endereco", pessoaDTO.getEndereco() != null ? pessoaDTO.getEndereco() : ""),
+                entry("bairro", pessoaDTO.getBairro() != null ? pessoaDTO.getBairro() : ""),
+                entry("cidade", pessoaDTO.getCidade() != null ? pessoaDTO.getCidade() : ""),
+                entry("uf", pessoaDTO.getEstado() != null ? pessoaDTO.getEstado() : ""),
+                entry("pix", pessoaDTO.getChavePix() != null ? pessoaDTO.getChavePix() : ""),
+                entry("cep", pessoaDTO.getCep() != null ? pessoaDTO.getCep() : ""),
+                entry("telefone", pessoaDTO.getTelefone() != null ? pessoaDTO.getTelefone() : "")
         );
 
-        Map<String, Object> contrato = Map.of(
-                "cliente", vagaDTO.getClienteNome(),
-                "funcao", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "N/A",
-                "salario", vagaDTO.getSalario(),
-                "salarioExtenso", converterParaValorExtenso(vagaDTO.getSalario()),
-                "cidadeTrabalho", vagaDTO.getCidade(),
-                "estadoTrabalho", vagaDTO.getUf(),
-                "dataInicio", vagaDTO.getDataAdmissao(),
-                "dataFim", vagaDTO.getDataDemissao(),
-                "horarioEntrada", vagaDTO.getHorarioEntrada(),
-                "horarioSaida", vagaDTO.getHorarioSaida());
+        Map<String, Object> contrato = new HashMap<>();
+        contrato.put("cliente", vagaDTO.getClienteNome() != null ? vagaDTO.getClienteNome() : "");
+        contrato.put("funcao", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "N/A");
+        contrato.put("salario", vagaDTO.getSalario());
+        contrato.put("salarioExtenso", converterParaValorExtenso(vagaDTO.getSalario()));
+        contrato.put("cidadeTrabalho", vagaDTO.getCidade() != null ? vagaDTO.getCidade() : "");
+        contrato.put("estadoTrabalho", vagaDTO.getUf() != null ? vagaDTO.getUf() : "");
+        contrato.put("dataInicio", vagaDTO.getDataAdmissao() != null ? vagaDTO.getDataAdmissao() : "");
+        contrato.put("dataFim", vagaDTO.getDataDemissao() != null ? vagaDTO.getDataDemissao() : "");
+        contrato.put("horarioEntrada", vagaDTO.getHorarioEntrada() != null ? vagaDTO.getHorarioEntrada() : "");
+        contrato.put("horarioSaida", vagaDTO.getHorarioSaida() != null ? vagaDTO.getHorarioSaida() : "");
 
         data.put("empregado", empregado);
         data.put("contrato", contrato);
@@ -1306,9 +1306,11 @@ public class ContratoController {
             // Se o item tem campoTamanhoPessoa, resolve o tamanho
             Object campoTamanho = itemCopia.get("campoTamanhoPessoa");
             if (campoTamanho != null && !campoTamanho.toString().isEmpty()) {
-                String valorTamanho = tamanhosPessoa.get(campoTamanho.toString());
-                if (valorTamanho != null && !valorTamanho.isEmpty()) {
-                    itemCopia.put("tamanho", valorTamanho);
+                if ("tamanhoUnico".equals(campoTamanho.toString())) {
+                    itemCopia.put("tamanho", "UNICO");
+                } else {
+                    String valorTamanho = tamanhosPessoa.get(campoTamanho.toString());
+                    itemCopia.put("tamanho", valorTamanho != null ? valorTamanho : "");
                 }
             }
 
@@ -1379,9 +1381,11 @@ public class ContratoController {
             // Se o item tem campoTamanhoPessoa, resolve o tamanho
             Object campoTamanho = itemCopia.get("campoTamanhoPessoa");
             if (campoTamanho != null && !campoTamanho.toString().isEmpty()) {
-                String valorTamanho = tamanhosPessoa.get(campoTamanho.toString());
-                if (valorTamanho != null && !valorTamanho.isEmpty()) {
-                    itemCopia.put("tamanho", valorTamanho);
+                if ("tamanhoUnico".equals(campoTamanho.toString())) {
+                    itemCopia.put("tamanho", "UNICO");
+                } else {
+                    String valorTamanho = tamanhosPessoa.get(campoTamanho.toString());
+                    itemCopia.put("tamanho", valorTamanho != null ? valorTamanho : "");
                 }
             }
 
