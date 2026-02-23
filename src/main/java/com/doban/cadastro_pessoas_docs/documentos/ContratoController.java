@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -1130,6 +1131,22 @@ public class ContratoController {
                 data.put("dataAtualExtenso", obterDataPorExtenso());
                 List<Map<String, Object>> itensRec = buscarItensComTamanhosEValores(vagaDTO, pessoaDTO);
                 data.put("itens", itensRec);
+                break;
+
+            case "cracha":
+                data.put("pessoa", Map.of(
+                        "nome", pessoaDTO.getNome() != null ? pessoaDTO.getNome() : "",
+                        "cpf", pessoaDTO.getCpf() != null ? pessoaDTO.getCpf() : ""
+                ));
+                data.put("contrato", Map.of(
+                        "funcao", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "N/A",
+                        "numero", vagaDTO.getDataAdmissao() != null ? vagaDTO.getDataAdmissao().toString() : ""
+                ));
+                data.put("contato", Map.of("email", "dobanmaringa@gmail.com"));
+                byte[] foto = pessoaDTO.getFoto();
+                if (foto != null && foto.length > 0) {
+                    data.put("fotoPath", "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(foto));
+                }
                 break;
 
             case "recibo_pagamento":

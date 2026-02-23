@@ -180,7 +180,7 @@
             <tr th:each="item : ${itens}">
                 <td style="text-align: center;" th:text="${item['quantidade'] ?: 1}">01</td>
                 <td th:text="${item['descricao'] ?: '-'}">DESCRIÇÃO DO EPI</td>
-                <td style="text-align: center;" th:text="${item['tamanho'] ?: 'ÚNICO'}">ÚNICO</td>
+                <td style="text-align: center;" th:text="${#strings.isEmpty(item['tamanho']) ? 'ÚNICO' : item['tamanho']}">ÚNICO</td>
             </tr>
             <tr th:if="${itens == null or #lists.isEmpty(itens)}">
                 <td colspan="3" style="text-align: center; font-style: italic;">Nenhum EPI registrado</td>
