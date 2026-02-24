@@ -15,15 +15,16 @@ public interface ItemDinamicoRepository extends JpaRepository<ItemDinamico, Long
 
     List<ItemDinamico> findByTipoRecursoCodigo(String codigo);
 
-    List<ItemDinamico> findByTipoRecursoCodigoAndAtivoTrue(String codigo);
+    List<ItemDinamico> findByTipoRecursoCodigoAndAtivoTrueOrderByIdAsc(String codigo);
 
     Optional<ItemDinamico> findByTipoRecursoIdAndIdentificador(Long tipoRecursoId, String identificador);
 
     boolean existsByTipoRecursoIdAndIdentificador(Long tipoRecursoId, String identificador);
 
     @Query("SELECT i FROM ItemDinamico i WHERE i.tipoRecurso.codigo = :codigo AND i.ativo = true " +
-           "AND NOT EXISTS (SELECT r FROM RecursoDinamico r WHERE r.item = i AND r.dataDevolucao IS NULL)")
+           "AND NOT EXISTS (SELECT r FROM RecursoDinamico r WHERE r.item = i AND r.dataDevolucao IS NULL) " +
+           "ORDER BY i.id ASC")
     List<ItemDinamico> findDisponiveis(@Param("codigo") String tipoRecursoCodigo);
 
-    List<ItemDinamico> findByAtivoTrue();
+    List<ItemDinamico> findByAtivoTrueOrderByIdAsc();
 }

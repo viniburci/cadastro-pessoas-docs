@@ -11,7 +11,7 @@ public interface TipoRecursoRepository extends JpaRepository<TipoRecurso, Long> 
 
     Optional<TipoRecurso> findByCodigo(String codigo);
 
-    List<TipoRecurso> findByAtivoTrue();
+    List<TipoRecurso> findByAtivoTrueOrderByIdAsc();
 
     boolean existsByCodigo(String codigo);
 }

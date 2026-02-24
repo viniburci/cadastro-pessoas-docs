@@ -13,12 +13,13 @@ public interface TemplateDocumentoRepository extends JpaRepository<TemplateDocum
 
     Optional<TemplateDocumento> findByCodigo(String codigo);
 
-    List<TemplateDocumento> findByAtivoTrue();
+    List<TemplateDocumento> findByAtivoTrueOrderByIdAsc();
 
     boolean existsByCodigo(String codigo);
 
     @Query("SELECT t FROM TemplateDocumento t WHERE t.ativo = true AND " +
-           "(t.tiposVagaPermitidos IS EMPTY OR :tipoVagaId IN (SELECT tv.id FROM t.tiposVagaPermitidos tv))")
+           "(t.tiposVagaPermitidos IS EMPTY OR :tipoVagaId IN (SELECT tv.id FROM t.tiposVagaPermitidos tv)) " +
+           "ORDER BY t.id ASC")
     List<TemplateDocumento> findAtivosByTipoVaga(@Param("tipoVagaId") Long tipoVagaId);
 
     @Query("SELECT t FROM TemplateDocumento t LEFT JOIN FETCH t.tiposVagaPermitidos WHERE t.id = :id")

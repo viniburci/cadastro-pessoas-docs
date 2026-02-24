@@ -11,17 +11,17 @@ import java.util.Optional;
 @Repository
 public interface RecursoDinamicoRepository extends JpaRepository<RecursoDinamico, Long> {
 
-    List<RecursoDinamico> findByPessoaId(Long pessoaId);
+    List<RecursoDinamico> findByPessoaIdOrderByIdAsc(Long pessoaId);
 
-    List<RecursoDinamico> findByItemId(Long itemId);
+    List<RecursoDinamico> findByItemIdOrderByIdAsc(Long itemId);
 
-    @Query("SELECT r FROM RecursoDinamico r WHERE r.pessoa.id = :pessoaId AND r.dataDevolucao IS NULL")
+    @Query("SELECT r FROM RecursoDinamico r WHERE r.pessoa.id = :pessoaId AND r.dataDevolucao IS NULL ORDER BY r.id ASC")
     List<RecursoDinamico> findAtivosParaPessoa(@Param("pessoaId") Long pessoaId);
 
     @Query("SELECT r FROM RecursoDinamico r WHERE r.item.id = :itemId AND r.dataDevolucao IS NULL")
     Optional<RecursoDinamico> findAtivoParaItem(@Param("itemId") Long itemId);
 
-    @Query("SELECT r FROM RecursoDinamico r WHERE r.item.tipoRecurso.codigo = :tipoRecursoCodigo")
+    @Query("SELECT r FROM RecursoDinamico r WHERE r.item.tipoRecurso.codigo = :tipoRecursoCodigo ORDER BY r.id ASC")
     List<RecursoDinamico> findByTipoRecurso(@Param("tipoRecursoCodigo") String tipoRecursoCodigo);
 
     boolean existsByItemIdAndDataDevolucaoIsNull(Long itemId);
