@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -146,7 +147,7 @@ public class DocumentoGeracaoController {
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtmlString(template.getConteudoHtml(), dados);
 
         HttpHeaders headers = new HttpHeaders();
-        String nomeArquivo = template.getCodigo().toLowerCase() + "_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+        String nomeArquivo = template.getCodigo().toLowerCase() + "_" + nomeSafeParaArquivo(pessoaDTO) + ".pdf";
 
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -224,7 +225,7 @@ public class DocumentoGeracaoController {
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtmlString(htmlContent, dados);
 
         HttpHeaders headers = new HttpHeaders();
-        String nomeArquivo = "documento_custom_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+        String nomeArquivo = "documento_custom_" + nomeSafeParaArquivo(pessoaDTO) + ".pdf";
 
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -233,6 +234,14 @@ public class DocumentoGeracaoController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(pdfBytes);
+    }
+
+    private String nomeSafeParaArquivo(PessoaDTO pessoaDTO) {
+        if (pessoaDTO.getNome() == null || pessoaDTO.getNome().isBlank()) {
+            throw new IllegalArgumentException(
+                    "Não é possível gerar o documento. Campo ausente na pessoa: nome");
+        }
+        return pessoaDTO.getNome().replaceAll(" ", "_");
     }
 
     private Map<String, Object> criarMapPessoa(PessoaDTO pessoaDTO) {
