@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -219,6 +220,10 @@ public class ContratoController {
 
         Map<String, Object> data = new HashMap<>();
 
+        Map<String, String> validacaoNome = new LinkedHashMap<>();
+        validacaoNome.put("nome", pessoaDTO.getNome());
+        validarCampos(validacaoNome);
+
         Map<String, String> empregado = Map.ofEntries(
                 entry("nome", pessoaDTO.getNome()),
                 entry("estadoCivil", pessoaDTO.getEstadoCivil() != null ? pessoaDTO.getEstadoCivil() : ""),
@@ -299,7 +304,7 @@ public class ContratoController {
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("termo_responsabilidade_materiais", data);
 
         HttpHeaders headers = new HttpHeaders();
-        String nomeArquivo = "termo_responsabilidade_materiais_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+        String nomeArquivo = "termo_responsabilidade_materiais_" + nomeSafeParaArquivo(pessoaDTO) + ".pdf";
 
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -325,6 +330,10 @@ public class ContratoController {
         ItemDinamico item = recurso.getItem();
 
         Map<String, Object> data = new HashMap<>();
+
+        Map<String, String> validacaoNome = new LinkedHashMap<>();
+        validacaoNome.put("nome", pessoaDTO.getNome());
+        validarCampos(validacaoNome);
 
         Map<String, String> empregado = Map.ofEntries(
                 entry("nome", pessoaDTO.getNome()),
@@ -415,7 +424,7 @@ public class ContratoController {
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("termo_responsabilidade_materiais", data);
 
         HttpHeaders headers = new HttpHeaders();
-        String nomeArquivo = "termo_responsabilidade_materiais_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+        String nomeArquivo = "termo_responsabilidade_materiais_" + nomeSafeParaArquivo(pessoaDTO) + ".pdf";
 
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -506,7 +515,7 @@ public class ContratoController {
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("declaracao_devolucao_aparelho", data);
 
         HttpHeaders headers = new HttpHeaders();
-        String nomeArquivo = "declaracao_devolucao_aparelho_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+        String nomeArquivo = "declaracao_devolucao_aparelho_" + nomeSafeParaArquivo(pessoaDTO) + ".pdf";
 
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -561,7 +570,7 @@ public class ContratoController {
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("carro_checklist", data);
 
         HttpHeaders headers = new HttpHeaders();
-        String nomeArquivo = "carro_checklist_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+        String nomeArquivo = "carro_checklist_" + nomeSafeParaArquivo(pessoaDTO) + ".pdf";
 
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -630,7 +639,7 @@ public class ContratoController {
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("declaracao_devolucao_aparelho", data);
 
         HttpHeaders headers = new HttpHeaders();
-        String nomeArquivo = "declaracao_devolucao_aparelho_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+        String nomeArquivo = "declaracao_devolucao_aparelho_" + nomeSafeParaArquivo(pessoaDTO) + ".pdf";
 
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -688,7 +697,7 @@ public class ContratoController {
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("entrega_epi", data);
 
         HttpHeaders headers = new HttpHeaders();
-        String nomeArquivo = "entrega_epi_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+        String nomeArquivo = "entrega_epi_" + nomeSafeParaArquivo(pessoaDTO) + ".pdf";
 
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -734,7 +743,7 @@ public class ContratoController {
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("registro_entrega_epi", data);
 
         HttpHeaders headers = new HttpHeaders();
-        String nomeArquivo = "registro_entrega_epi_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+        String nomeArquivo = "registro_entrega_epi_" + nomeSafeParaArquivo(pessoaDTO) + ".pdf";
 
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -779,7 +788,7 @@ public class ContratoController {
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("termo_devolucao_epi", data);
 
         HttpHeaders headers = new HttpHeaders();
-        String nomeArquivo = "termo_devolucao_epi_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+        String nomeArquivo = "termo_devolucao_epi_" + nomeSafeParaArquivo(pessoaDTO) + ".pdf";
 
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -823,7 +832,7 @@ public class ContratoController {
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("termo_recebimento_epi", data);
 
         HttpHeaders headers = new HttpHeaders();
-        String nomeArquivo = "termo_recebimento_epi_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+        String nomeArquivo = "termo_recebimento_epi_" + nomeSafeParaArquivo(pessoaDTO) + ".pdf";
 
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -874,11 +883,11 @@ public class ContratoController {
 
         Map<String, Object> data = new HashMap<>();
 
-        Map<String, String> empregado = Map.of(
-                "nome", pessoaDTO.getNome(),
-                "cpf", pessoaDTO.getCpf(),
-                "cargo", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "N/A"
-        );
+        Map<String, String> empregado = new LinkedHashMap<>();
+        empregado.put("nome", pessoaDTO.getNome());
+        empregado.put("cpf", pessoaDTO.getCpf());
+        empregado.put("cargo", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "N/A");
+        validarCampos(empregado);
 
         // Determinar mês de referência (mês atual ou mês da vaga)
         String mesReferencia = LocalDate.now().getMonth().toString() + "/" + LocalDate.now().getYear();
@@ -897,7 +906,7 @@ public class ContratoController {
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("recibo_pagamento", data);
 
         HttpHeaders headers = new HttpHeaders();
-        String nomeArquivo = "recibo_pagamento_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+        String nomeArquivo = "recibo_pagamento_" + nomeSafeParaArquivo(pessoaDTO) + ".pdf";
 
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -923,11 +932,11 @@ public class ContratoController {
 
         Map<String, Object> data = new HashMap<>();
 
-        Map<String, String> pessoa = Map.of(
-                "nome", pessoaDTO.getNome(),
-                "cpf", pessoaDTO.getCpf(),
-                "rg", pessoaDTO.getNumeroRg() != null ? pessoaDTO.getNumeroRg() : "N/A"
-        );
+        Map<String, String> pessoa = new LinkedHashMap<>();
+        pessoa.put("nome", pessoaDTO.getNome());
+        pessoa.put("cpf", pessoaDTO.getCpf());
+        validarCampos(pessoa);
+        pessoa.put("rg", pessoaDTO.getNumeroRg() != null ? pessoaDTO.getNumeroRg() : "N/A");
 
         data.put("pessoa", pessoa);
         data.put("recursos", recursosDevolvidos);
@@ -936,7 +945,7 @@ public class ContratoController {
         byte[] pdfBytes = pdfGeneratorService.generatePdfFromHtml1("termo_devolucao", data);
 
         HttpHeaders headers = new HttpHeaders();
-        String nomeArquivo = "termo_devolucao_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+        String nomeArquivo = "termo_devolucao_" + nomeSafeParaArquivo(pessoaDTO) + ".pdf";
 
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -955,10 +964,10 @@ public class ContratoController {
 
         Map<String, Object> data = new HashMap<>();
 
-        Map<String, String> pessoa = Map.of(
-                "nome", pessoaDTO.getNome(),
-                "cpf", pessoaDTO.getCpf()
-        );
+        Map<String, String> pessoa = new LinkedHashMap<>();
+        pessoa.put("nome", pessoaDTO.getNome());
+        pessoa.put("cpf", pessoaDTO.getCpf());
+        validarCampos(pessoa);
 
         Map<String, String> contrato = Map.of(
                 "funcao", vagaDTO.getTipoVagaNome() != null ? vagaDTO.getTipoVagaNome() : "N/A",
@@ -976,7 +985,7 @@ public class ContratoController {
         byte[] pdfBytes = pdfGeneratorService.generatePdfWithPhoto("cracha", data, pessoaDTO.getFoto());
 
         HttpHeaders headers = new HttpHeaders();
-        String nomeArquivo = "cracha_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+        String nomeArquivo = "cracha_" + nomeSafeParaArquivo(pessoaDTO) + ".pdf";
 
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -1013,7 +1022,7 @@ public class ContratoController {
         byte[] pdfBytes = pdfGeneratorService.generateMultiplePdfs(templates, dataList);
 
         HttpHeaders headers = new HttpHeaders();
-        String nomeArquivo = "documentos_" + pessoaDTO.getNome().replaceAll(" ", "_") + ".pdf";
+        String nomeArquivo = "documentos_" + nomeSafeParaArquivo(pessoaDTO) + ".pdf";
 
         headers.setContentLength(pdfBytes.length);
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -1035,16 +1044,18 @@ public class ContratoController {
                 break;
 
             case "vt":
-                data.put("cliente", Map.of("nome", vagaDTO.getClienteNome()));
-                data.put("funcionario", Map.of(
-                        "nome", pessoaDTO.getNome(),
-                        "cpf", pessoaDTO.getCpf(),
-                        "endereço", pessoaDTO.getEndereco(),
-                        "bairro", pessoaDTO.getBairro(),
-                        "cidade", pessoaDTO.getCidade(),
-                        "uf", pessoaDTO.getEstado(),
-                        "cep", pessoaDTO.getCep(),
-                        "telefone", pessoaDTO.getTelefone()));
+                Map<String, String> funcionarioVt = new LinkedHashMap<>();
+                funcionarioVt.put("nome", pessoaDTO.getNome());
+                funcionarioVt.put("cpf", pessoaDTO.getCpf());
+                funcionarioVt.put("endereço", pessoaDTO.getEndereco());
+                funcionarioVt.put("bairro", pessoaDTO.getBairro());
+                funcionarioVt.put("cidade", pessoaDTO.getCidade());
+                funcionarioVt.put("uf", pessoaDTO.getEstado());
+                funcionarioVt.put("cep", pessoaDTO.getCep());
+                funcionarioVt.put("telefone", pessoaDTO.getTelefone());
+                validarCampos(funcionarioVt);
+                data.put("cliente", Map.of("nome", vagaDTO.getClienteNome() != null ? vagaDTO.getClienteNome() : ""));
+                data.put("funcionario", funcionarioVt);
                 data.put("dataAtual", obterDataPorExtenso());
                 break;
 
@@ -1182,16 +1193,18 @@ public class ContratoController {
     }
 
     private Map<String, String> criarMapEmpregadoBasico(PessoaDTO pessoaDTO) {
-        return Map.of(
-                "nome", pessoaDTO.getNome(),
-                "estadoCivil", pessoaDTO.getEstadoCivil(),
-                "rg", pessoaDTO.getNumeroRg(),
-                "cpf", pessoaDTO.getCpf(),
-                "ctps", pessoaDTO.getNumeroCtps(),
-                "ctpsSerie", pessoaDTO.getSerieCtps(),
-                "endereco", pessoaDTO.getEndereco(),
-                "cidade", pessoaDTO.getCidade(),
-                "uf", pessoaDTO.getEstado());
+        Map<String, String> campos = new LinkedHashMap<>();
+        campos.put("nome", pessoaDTO.getNome());
+        campos.put("estadoCivil", pessoaDTO.getEstadoCivil());
+        campos.put("rg", pessoaDTO.getNumeroRg());
+        campos.put("cpf", pessoaDTO.getCpf());
+        campos.put("ctps", pessoaDTO.getNumeroCtps());
+        campos.put("ctpsSerie", pessoaDTO.getSerieCtps());
+        campos.put("endereco", pessoaDTO.getEndereco());
+        campos.put("cidade", pessoaDTO.getCidade());
+        campos.put("uf", pessoaDTO.getEstado());
+        validarCampos(campos);
+        return campos;
     }
 
     private Map<String, String> criarMapEmpregadoCompleto(PessoaDTO pessoaDTO) {
@@ -1393,5 +1406,24 @@ public class ContratoController {
         }
 
         return itensResolvidos;
+    }
+
+    private void validarCampos(Map<String, String> campos) {
+        List<String> faltando = campos.entrySet().stream()
+                .filter(e -> e.getValue() == null || e.getValue().isBlank())
+                .map(Map.Entry::getKey)
+                .toList();
+        if (!faltando.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Não é possível gerar o documento. Campos ausentes na pessoa: " + String.join(", ", faltando));
+        }
+    }
+
+    private String nomeSafeParaArquivo(PessoaDTO pessoaDTO) {
+        if (pessoaDTO.getNome() == null || pessoaDTO.getNome().isBlank()) {
+            throw new IllegalArgumentException(
+                    "Não é possível gerar o documento. Campo ausente na pessoa: nome");
+        }
+        return pessoaDTO.getNome().replaceAll(" ", "_");
     }
 }
