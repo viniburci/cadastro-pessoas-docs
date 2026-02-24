@@ -6,6 +6,7 @@ import com.doban.cadastro_pessoas_docs.recurso.item.ItemDinamico;
 import com.doban.cadastro_pessoas_docs.recurso.item.ItemDinamicoService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,14 +22,14 @@ public class RecursoDinamicoService {
 
     @Transactional(readOnly = true)
     public List<RecursoDinamicoDTO> listarTodos() {
-        return recursoDinamicoRepository.findAll().stream()
+        return recursoDinamicoRepository.findAll(Sort.by("id").ascending()).stream()
                 .map(RecursoDinamicoDTO::new)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public List<RecursoDinamicoDTO> listarPorPessoa(Long pessoaId) {
-        return recursoDinamicoRepository.findByPessoaId(pessoaId).stream()
+        return recursoDinamicoRepository.findByPessoaIdOrderByIdAsc(pessoaId).stream()
                 .map(RecursoDinamicoDTO::new)
                 .toList();
     }

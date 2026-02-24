@@ -24,14 +24,14 @@ public class ItemDinamicoService {
 
     @Transactional(readOnly = true)
     public List<ItemDinamicoDTO> listarTodos() {
-        return itemDinamicoRepository.findByAtivoTrue().stream()
+        return itemDinamicoRepository.findByAtivoTrueOrderByIdAsc().stream()
                 .map(ItemDinamicoDTO::new)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public List<ItemDinamicoDTO> listarPorTipo(String tipoRecursoCodigo) {
-        return itemDinamicoRepository.findByTipoRecursoCodigoAndAtivoTrue(tipoRecursoCodigo).stream()
+        return itemDinamicoRepository.findByTipoRecursoCodigoAndAtivoTrueOrderByIdAsc(tipoRecursoCodigo).stream()
                 .map(ItemDinamicoDTO::new)
                 .toList();
     }

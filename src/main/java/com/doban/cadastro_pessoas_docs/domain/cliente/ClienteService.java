@@ -2,6 +2,7 @@ package com.doban.cadastro_pessoas_docs.domain.cliente;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,14 +16,14 @@ public class ClienteService {
 
     @Transactional(readOnly = true)
     public List<ClienteDTO> listarTodos() {
-        return clienteRepository.findAll().stream()
+        return clienteRepository.findAll(Sort.by("id").ascending()).stream()
                 .map(ClienteDTO::new)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public List<ClienteDTO> listarAtivos() {
-        return clienteRepository.findByAtivoTrue().stream()
+        return clienteRepository.findByAtivoTrueOrderByIdAsc().stream()
                 .map(ClienteDTO::new)
                 .toList();
     }

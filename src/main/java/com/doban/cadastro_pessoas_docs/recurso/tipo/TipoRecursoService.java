@@ -3,6 +3,7 @@ package com.doban.cadastro_pessoas_docs.recurso.tipo;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,14 +17,14 @@ public class TipoRecursoService {
 
     @Transactional(readOnly = true)
     public List<TipoRecursoDTO> listarTodos() {
-        return tipoRecursoRepository.findAll().stream()
+        return tipoRecursoRepository.findAll(Sort.by("id").ascending()).stream()
                 .map(TipoRecursoDTO::new)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public List<TipoRecursoDTO> listarAtivos() {
-        return tipoRecursoRepository.findByAtivoTrue().stream()
+        return tipoRecursoRepository.findByAtivoTrueOrderByIdAsc().stream()
                 .map(TipoRecursoDTO::new)
                 .toList();
     }

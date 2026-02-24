@@ -5,6 +5,7 @@ import com.doban.cadastro_pessoas_docs.recurso.tipo.TipoRecursoService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,14 +20,14 @@ public class TipoVagaService {
 
     @Transactional(readOnly = true)
     public List<TipoVagaDTO> listarTodos() {
-        return tipoVagaRepository.findAll().stream()
+        return tipoVagaRepository.findAll(Sort.by("id").ascending()).stream()
                 .map(TipoVagaDTO::new)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public List<TipoVagaDTO> listarAtivos() {
-        return tipoVagaRepository.findByAtivoTrue().stream()
+        return tipoVagaRepository.findByAtivoTrueOrderByIdAsc().stream()
                 .map(TipoVagaDTO::new)
                 .toList();
     }

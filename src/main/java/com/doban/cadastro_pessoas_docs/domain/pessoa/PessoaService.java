@@ -9,6 +9,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -25,7 +26,7 @@ public class PessoaService {
     }
 
     public List<PessoaDTO> buscarTodasPessoas() {
-        return pessoaRepository.findAll().stream().map(PessoaDTO::new).toList();
+        return pessoaRepository.findAll(Sort.by("id").ascending()).stream().map(PessoaDTO::new).toList();
     }
 
     public Pessoa buscarEntidadePessoaPorId(Long id) {
@@ -79,7 +80,7 @@ public class PessoaService {
 
     public List<PessoaDTO> buscarPessoasAtivas() {
         LocalDate hoje = LocalDate.now();
-        return pessoaRepository.findAll().stream()
+        return pessoaRepository.findAll(Sort.by("id").ascending()).stream()
                 .filter(pessoa -> pessoa.getVagas().stream()
                         .anyMatch(vaga -> vaga.getDataDemissao() == null || vaga.getDataDemissao().isAfter(hoje)))
                 .map(PessoaDTO::new)
@@ -88,7 +89,7 @@ public class PessoaService {
 
     public List<PessoaDTO> buscarPessoasInativas() {
         LocalDate hoje = LocalDate.now();
-        return pessoaRepository.findAll().stream()
+        return pessoaRepository.findAll(Sort.by("id").ascending()).stream()
                 .filter(pessoa -> pessoa.getVagas().isEmpty() ||
                         pessoa.getVagas().stream()
                                 .allMatch(vaga -> vaga.getDataDemissao() != null && !vaga.getDataDemissao().isAfter(hoje)))

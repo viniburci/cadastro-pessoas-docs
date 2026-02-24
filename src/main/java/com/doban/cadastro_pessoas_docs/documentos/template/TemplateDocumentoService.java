@@ -32,7 +32,7 @@ public class TemplateDocumentoService {
 
     @Transactional(readOnly = true)
     public List<TemplateDocumentoDTO> listarAtivos() {
-        return templateDocumentoRepository.findByAtivoTrue().stream()
+        return templateDocumentoRepository.findByAtivoTrueOrderByIdAsc().stream()
                 .map(TemplateDocumentoDTO::new)
                 .collect(Collectors.toList());
     }
