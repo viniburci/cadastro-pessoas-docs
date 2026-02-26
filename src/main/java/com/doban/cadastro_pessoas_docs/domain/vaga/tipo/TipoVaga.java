@@ -1,6 +1,5 @@
 package com.doban.cadastro_pessoas_docs.domain.vaga.tipo;
 
-import com.doban.cadastro_pessoas_docs.recurso.tipo.TipoRecurso;
 import com.doban.cadastro_pessoas_docs.shared.schema.FieldSchema;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -15,10 +14,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Entidade que representa um tipo de vaga dinâmico.
@@ -143,35 +140,9 @@ public class TipoVaga {
         }
     }
 
-    @Builder.Default
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "tipo_vaga_tipo_recurso",
-            joinColumns = @JoinColumn(name = "tipo_vaga_id"),
-            inverseJoinColumns = @JoinColumn(name = "tipo_recurso_id")
-    )
-    private Set<TipoRecurso> recursosPermitidos = new HashSet<>();
-
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    public void adicionarRecursoPermitido(TipoRecurso tipoRecurso) {
-        recursosPermitidos.add(tipoRecurso);
-    }
-
-    public void removerRecursoPermitido(TipoRecurso tipoRecurso) {
-        recursosPermitidos.remove(tipoRecurso);
-    }
-
-    public boolean permiteRecurso(TipoRecurso tipoRecurso) {
-        return recursosPermitidos.contains(tipoRecurso);
-    }
-
-    public boolean permiteRecurso(String tipoRecursoCodigo) {
-        return recursosPermitidos.stream()
-                .anyMatch(tr -> tr.getCodigo().equals(tipoRecursoCodigo));
-    }
 }

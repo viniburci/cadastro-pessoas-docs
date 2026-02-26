@@ -49,20 +49,6 @@ public class TipoVagaController {
         return ResponseEntity.ok(tipoVagaService.atualizar(id, dto));
     }
 
-    @PostMapping("/{tipoVagaId}/recursos-permitidos/{tipoRecursoId}")
-    public ResponseEntity<TipoVagaDTO> adicionarRecursoPermitido(
-            @PathVariable Long tipoVagaId,
-            @PathVariable Long tipoRecursoId) {
-        return ResponseEntity.ok(tipoVagaService.adicionarRecursoPermitido(tipoVagaId, tipoRecursoId));
-    }
-
-    @DeleteMapping("/{tipoVagaId}/recursos-permitidos/{tipoRecursoId}")
-    public ResponseEntity<TipoVagaDTO> removerRecursoPermitido(
-            @PathVariable Long tipoVagaId,
-            @PathVariable Long tipoRecursoId) {
-        return ResponseEntity.ok(tipoVagaService.removerRecursoPermitido(tipoVagaId, tipoRecursoId));
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> desativar(@PathVariable Long id) {
         tipoVagaService.desativar(id);

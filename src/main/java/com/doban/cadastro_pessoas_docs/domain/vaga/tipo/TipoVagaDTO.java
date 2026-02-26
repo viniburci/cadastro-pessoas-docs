@@ -3,7 +3,6 @@ package com.doban.cadastro_pessoas_docs.domain.vaga.tipo;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.doban.cadastro_pessoas_docs.shared.schema.FieldSchema;
 
@@ -28,7 +27,6 @@ public class TipoVagaDTO {
     private Boolean ativo;
     private FieldSchema schema;
     private List<Map<String, Object>> itensPadrao;
-    private List<TipoRecursoResumoDTO> recursosPermitidos;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -42,11 +40,5 @@ public class TipoVagaDTO {
         this.itensPadrao = entity.getItensPadrao();
         this.createdAt = entity.getCreatedAt();
         this.updatedAt = entity.getUpdatedAt();
-
-        if (entity.getRecursosPermitidos() != null) {
-            this.recursosPermitidos = entity.getRecursosPermitidos().stream()
-                    .map(TipoRecursoResumoDTO::new)
-                    .collect(Collectors.toList());
-        }
     }
 }

@@ -38,8 +38,6 @@ public class TipoVagaCreateDTO {
 
     private List<Map<String, Object>> itensPadrao;
 
-    private List<Long> recursosPermitidosIds;
-
     public TipoVaga toEntity() {
         TipoVaga tipoVaga = TipoVaga.builder()
                 .codigo(this.codigo)

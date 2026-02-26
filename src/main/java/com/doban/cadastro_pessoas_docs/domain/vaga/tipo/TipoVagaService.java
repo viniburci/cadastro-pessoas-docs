@@ -1,7 +1,5 @@
 package com.doban.cadastro_pessoas_docs.domain.vaga.tipo;
 
-import com.doban.cadastro_pessoas_docs.recurso.tipo.TipoRecurso;
-import com.doban.cadastro_pessoas_docs.recurso.tipo.TipoRecursoService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,7 +14,6 @@ import java.util.List;
 public class TipoVagaService {
 
     private final TipoVagaRepository tipoVagaRepository;
-    private final TipoRecursoService tipoRecursoService;
 
     @Transactional(readOnly = true)
     public List<TipoVagaDTO> listarTodos() {
@@ -34,27 +31,27 @@ public class TipoVagaService {
 
     @Transactional(readOnly = true)
     public TipoVagaDTO buscarPorId(Long id) {
-        TipoVaga tipoVaga = tipoVagaRepository.findByIdWithRecursos(id)
+        TipoVaga tipoVaga = tipoVagaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de vaga não encontrado com id: " + id));
         return new TipoVagaDTO(tipoVaga);
     }
 
     @Transactional(readOnly = true)
     public TipoVagaDTO buscarPorCodigo(String codigo) {
-        TipoVaga tipoVaga = tipoVagaRepository.findByCodigoWithRecursos(codigo)
+        TipoVaga tipoVaga = tipoVagaRepository.findByCodigo(codigo)
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de vaga não encontrado com código: " + codigo));
         return new TipoVagaDTO(tipoVaga);
     }
 
     @Transactional(readOnly = true)
     public TipoVaga buscarEntidadePorId(Long id) {
-        return tipoVagaRepository.findByIdWithRecursos(id)
+        return tipoVagaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de vaga não encontrado com id: " + id));
     }
 
     @Transactional(readOnly = true)
     public TipoVaga buscarEntidadePorCodigo(String codigo) {
-        return tipoVagaRepository.findByCodigoWithRecursos(codigo)
+        return tipoVagaRepository.findByCodigo(codigo)
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de vaga não encontrado com código: " + codigo));
     }
 
@@ -65,15 +62,6 @@ public class TipoVagaService {
         }
 
         TipoVaga entity = dto.toEntity();
-
-        // Adicionar recursos permitidos se especificados
-        if (dto.getRecursosPermitidosIds() != null) {
-            for (Long tipoRecursoId : dto.getRecursosPermitidosIds()) {
-                TipoRecurso tipoRecurso = tipoRecursoService.buscarEntidadePorId(tipoRecursoId);
-                entity.adicionarRecursoPermitido(tipoRecurso);
-            }
-        }
-
         entity = tipoVagaRepository.save(entity);
         return new TipoVagaDTO(entity);
     }
@@ -86,40 +74,6 @@ public class TipoVagaService {
         dto.atualizarEntidade(entity);
         entity = tipoVagaRepository.save(entity);
         return new TipoVagaDTO(entity);
-    }
-
-    @Transactional
-    public TipoVagaDTO adicionarRecursoPermitido(Long tipoVagaId, Long tipoRecursoId) {
-        TipoVaga tipoVaga = tipoVagaRepository.findByIdWithRecursos(tipoVagaId)
-                .orElseThrow(() -> new EntityNotFoundException("Tipo de vaga não encontrado com id: " + tipoVagaId));
-
-        TipoRecurso tipoRecurso = tipoRecursoService.buscarEntidadePorId(tipoRecursoId);
-
-        if (tipoVaga.permiteRecurso(tipoRecurso)) {
-            throw new DataIntegrityViolationException(
-                    "Tipo de recurso " + tipoRecurso.getNome() + " já está associado a este tipo de vaga");
-        }
-
-        tipoVaga.adicionarRecursoPermitido(tipoRecurso);
-        tipoVaga = tipoVagaRepository.save(tipoVaga);
-        return new TipoVagaDTO(tipoVaga);
-    }
-
-    @Transactional
-    public TipoVagaDTO removerRecursoPermitido(Long tipoVagaId, Long tipoRecursoId) {
-        TipoVaga tipoVaga = tipoVagaRepository.findByIdWithRecursos(tipoVagaId)
-                .orElseThrow(() -> new EntityNotFoundException("Tipo de vaga não encontrado com id: " + tipoVagaId));
-
-        TipoRecurso tipoRecurso = tipoRecursoService.buscarEntidadePorId(tipoRecursoId);
-
-        if (!tipoVaga.permiteRecurso(tipoRecurso)) {
-            throw new IllegalArgumentException(
-                    "Tipo de recurso " + tipoRecurso.getNome() + " não está associado a este tipo de vaga");
-        }
-
-        tipoVaga.removerRecursoPermitido(tipoRecurso);
-        tipoVaga = tipoVagaRepository.save(tipoVaga);
-        return new TipoVagaDTO(tipoVaga);
     }
 
     @Transactional
