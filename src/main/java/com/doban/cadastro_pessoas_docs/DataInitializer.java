@@ -17,7 +17,7 @@ import java.util.List;
 @Configuration
 public class DataInitializer {
 
-	@Value("${DOBAN_EXCEL_FOLDER}")
+	@Value("${DOBAN_EXCEL_FOLDER:}")
 	private String excelFolder;
 
 	@Bean
