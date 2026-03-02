@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         // Endpoints públicos
-                        .requestMatchers("/api/v1/auth/**", "/oauth2/**", "/login/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**", "/oauth2/**", "/login/**", "/actuator/health").permitAll()
                         // Endpoints de admin
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         // Todos os outros endpoints requerem autenticação
