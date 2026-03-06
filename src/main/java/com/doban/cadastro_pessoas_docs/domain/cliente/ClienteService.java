@@ -2,12 +2,14 @@ package com.doban.cadastro_pessoas_docs.domain.cliente;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ClienteService {
@@ -44,6 +46,7 @@ public class ClienteService {
 
     @Transactional
     public ClienteDTO criar(ClienteDTO dto) {
+        log.info("Criando cliente: {}", dto.getNome());
         if (clienteRepository.existsByNome(dto.getNome())) {
             throw new IllegalArgumentException("Já existe um cliente com o nome: " + dto.getNome());
         }
@@ -56,6 +59,7 @@ public class ClienteService {
 
     @Transactional
     public ClienteDTO atualizar(Long id, ClienteDTO dto) {
+        log.info("Atualizando cliente com id: {}", id);
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com id: " + id));
 
@@ -76,6 +80,7 @@ public class ClienteService {
 
     @Transactional
     public void deletar(Long id) {
+        log.info("Deletando cliente com id: {}", id);
         if (!clienteRepository.existsById(id)) {
             throw new EntityNotFoundException("Cliente não encontrado com id: " + id);
         }
@@ -84,6 +89,7 @@ public class ClienteService {
 
     @Transactional
     public ClienteDTO alternarAtivo(Long id) {
+        log.info("Alternando status ativo do cliente com id: {}", id);
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com id: " + id));
 

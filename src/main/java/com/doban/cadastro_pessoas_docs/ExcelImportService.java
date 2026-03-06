@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.doban.cadastro_pessoas_docs.domain.cliente.Cliente;
+import lombok.extern.slf4j.Slf4j;
 import com.doban.cadastro_pessoas_docs.domain.cliente.ClienteService;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.DadosBancarios;
 import com.doban.cadastro_pessoas_docs.domain.pessoa.DadosBancariosDTO;
@@ -53,6 +54,7 @@ import com.doban.cadastro_pessoas_docs.recurso.dinamico.RecursoDinamicoRepositor
 import com.doban.cadastro_pessoas_docs.recurso.item.ItemDinamico;
 import com.doban.cadastro_pessoas_docs.recurso.item.ItemDinamicoService;
 
+@Slf4j
 @Service
 public class ExcelImportService {
 
@@ -93,7 +95,7 @@ public class ExcelImportService {
 
             // Detectar última linha com dados (máximo 309)
             int ultimaLinha = 46;
-            System.out.println("📊 Iniciando importação do Excel. Linhas para processar: " + (ultimaLinha - 10));
+            log.info("Iniciando importacao do Excel. Linhas para processar: {}", (ultimaLinha - 10));
 
             int importadas = 0;
             int puladas = 0;
@@ -113,15 +115,14 @@ public class ExcelImportService {
                     importadas++;
 
                     if (importadas % 10 == 0) {
-                        System.out.println("✓ Importadas: " + importadas + " pessoas");
+                        log.info("Importadas: {} pessoas", importadas);
                     }
                 } catch (Exception e) {
-                    System.out.println("⚠ Erro ao importar linha " + (i + 1) + ": " + e.getMessage());
+                    log.error("Erro ao importar linha {}: {}", (i + 1), e.getMessage());
                 }
             }
 
-            System.out.println("✅ Importação concluída! Total: " + importadas + " pessoas importadas, " + puladas
-                    + " linhas vazias puladas.");
+            log.info("Importacao concluida. Total: {} pessoas importadas, {} linhas vazias puladas.", importadas, puladas);
         }
     }
 
@@ -312,7 +313,7 @@ public class ExcelImportService {
                     recursoDinamicoRepository.save(emprestimoCarro);
                 }
             } catch (Exception e) {
-                System.out.println("⚠️ Erro ao importar carro: " + e.getMessage());
+                log.error("Erro ao importar carro: {}", e.getMessage());
             }
         }
 
@@ -348,7 +349,7 @@ public class ExcelImportService {
                     recursoDinamicoRepository.save(emprestimoCelular);
                 }
             } catch (Exception e) {
-                System.out.println("⚠️ Erro ao importar celular: " + e.getMessage());
+                log.error("Erro ao importar celular: {}", e.getMessage());
             }
         }
 
@@ -424,14 +425,12 @@ public class ExcelImportService {
 
             // Se for texto, limpa antes de qualquer verificação
             String valorOriginal = cell.toString().trim();
-            System.out.println("Valor original da célula: '" + valorOriginal + "'");
 
             // Remove pontos e espaços extras
             String valorLimpo = valorOriginal.replace(".", "").trim();
             // System.out.println("Valor limpo para parsing: '" + valorLimpo + "'");
 
             if (valorLimpo.isEmpty()) {
-                System.out.println("Valor da célula está vazio após limpeza.");
                 return null;
             }
 
@@ -450,11 +449,11 @@ public class ExcelImportService {
                 }
             }
 
-            System.out.println("❌ Nenhum formato conseguiu converter a data: '" + valorOriginal + "'");
+            log.warn("Nenhum formato conseguiu converter a data: '{}'", valorOriginal);
             return null;
 
         } catch (Exception e) {
-            System.out.println("Erro inesperado ao processar data na coluna " + index + ": " + e.getMessage());
+            log.warn("Erro ao processar data na coluna {}: {}", index, e.getMessage());
             return null;
         }
     }
@@ -493,7 +492,7 @@ public class ExcelImportService {
             return parsed.setScale(2, RoundingMode.HALF_UP);
 
         } catch (Exception e) {
-            System.out.println("Erro ao parsear valor monetário: " + value);
+            log.warn("Erro ao parsear valor monetario: {}", value);
             return null;
         }
     }
@@ -533,7 +532,7 @@ public class ExcelImportService {
                     }
                     return time;
                 } catch (Exception e) {
-                    System.out.println("Erro ao parsear horário: " + valor);
+                    log.warn("Erro ao parsear horario: {}", valor);
                 }
             }
         }

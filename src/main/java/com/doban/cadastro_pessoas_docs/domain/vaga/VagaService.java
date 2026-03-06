@@ -14,7 +14,9 @@ import com.doban.cadastro_pessoas_docs.domain.pessoa.PessoaService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class VagaService {
@@ -50,6 +52,7 @@ public class VagaService {
 
     @Transactional
     public VagaDTO criarVaga(Long pessoaId, VagaDTO vagaDTO) {
+        log.info("Criando vaga para pessoa com id: {}", pessoaId);
         if (vagaDTO == null) {
             throw new IllegalArgumentException("Dados da vaga não podem ser nulos.");
         }
@@ -80,11 +83,13 @@ public class VagaService {
                     "Erro ao salvar a vaga: dados inválidos ou violação de integridade.");
         }
 
+        log.info("Vaga criada com id: {}", vagaSalva.getId());
         return new VagaDTO(vagaSalva);
     }
 
     @Transactional
     public VagaDTO atualizarVaga(Long vagaId, VagaDTO vagaAtualizada) {
+        log.info("Atualizando vaga com id: {}", vagaId);
         Vaga vagaExistente = vagaRepository.findById(vagaId)
                 .orElseThrow(() -> new EntityNotFoundException("Vaga não encontrada"));
 
@@ -104,6 +109,7 @@ public class VagaService {
 
     @Transactional
     public void deletarVaga(Long vagaId) {
+        log.info("Deletando vaga com id: {}", vagaId);
         if (!vagaRepository.existsById(vagaId)) {
             throw new EntityNotFoundException("Vaga não encontrada");
         }

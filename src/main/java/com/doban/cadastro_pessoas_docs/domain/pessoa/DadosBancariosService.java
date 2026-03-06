@@ -2,12 +2,14 @@ package com.doban.cadastro_pessoas_docs.domain.pessoa;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service para gerenciamento de dados bancários.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DadosBancariosService {
@@ -39,6 +41,7 @@ public class DadosBancariosService {
      */
     @Transactional
     public DadosBancariosDTO salvar(Long pessoaId, DadosBancariosDTO dto) {
+        log.info("Salvando dados bancarios para pessoa com id: {}", pessoaId);
         Pessoa pessoa = pessoaRepository.findById(pessoaId)
                 .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada com ID: " + pessoaId));
 
@@ -62,6 +65,7 @@ public class DadosBancariosService {
      */
     @Transactional
     public void deletar(Long pessoaId) {
+        log.info("Deletando dados bancarios da pessoa com id: {}", pessoaId);
         if (!dadosBancariosRepository.existsByPessoaId(pessoaId)) {
             throw new EntityNotFoundException(
                     "Dados bancários não encontrados para pessoa ID: " + pessoaId);

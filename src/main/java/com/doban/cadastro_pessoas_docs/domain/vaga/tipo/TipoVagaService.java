@@ -2,6 +2,7 @@ package com.doban.cadastro_pessoas_docs.domain.vaga.tipo;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TipoVagaService {
@@ -57,6 +59,7 @@ public class TipoVagaService {
 
     @Transactional
     public TipoVagaDTO criar(TipoVagaCreateDTO dto) {
+        log.info("Criando tipo de vaga: {} ({})", dto.getNome(), dto.getCodigo());
         if (tipoVagaRepository.existsByCodigo(dto.getCodigo())) {
             throw new DataIntegrityViolationException("Já existe um tipo de vaga com o código: " + dto.getCodigo());
         }
@@ -68,6 +71,7 @@ public class TipoVagaService {
 
     @Transactional
     public TipoVagaDTO atualizar(Long id, TipoVagaUpdateDTO dto) {
+        log.info("Atualizando tipo de vaga com id: {}", id);
         TipoVaga entity = tipoVagaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de vaga não encontrado com id: " + id));
 
@@ -78,6 +82,7 @@ public class TipoVagaService {
 
     @Transactional
     public void desativar(Long id) {
+        log.info("Desativando tipo de vaga com id: {}", id);
         TipoVaga entity = tipoVagaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de vaga não encontrado com id: " + id));
 
@@ -87,6 +92,7 @@ public class TipoVagaService {
 
     @Transactional
     public void deletar(Long id) {
+        log.info("Deletando tipo de vaga com id: {}", id);
         if (!tipoVagaRepository.existsById(id)) {
             throw new EntityNotFoundException("Tipo de vaga não encontrado com id: " + id);
         }
@@ -106,6 +112,7 @@ public class TipoVagaService {
 
         return tipoVagaRepository.findByNome(nome)
                 .orElseGet(() -> {
+                    log.info("Criando novo tipo de vaga: {}", nome);
                     // Gera código automaticamente: nome em maiúsculo com underscores
                     String codigo = nome.trim()
                             .toUpperCase()

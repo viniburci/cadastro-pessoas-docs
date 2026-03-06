@@ -1,5 +1,6 @@
 package com.doban.cadastro_pessoas_docs.documentos;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
@@ -12,6 +13,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class PdfGeneratorService {
 
@@ -29,7 +31,7 @@ public class PdfGeneratorService {
      * arquivo PDF
      */
     public byte[] generatePdfFromHtml(String templateName, Map<String, Object> data) {
-
+        log.info("Gerando PDF do template: {}", templateName);
         // 1. Processa o Template com os Dados (Thymeleaf)
         Context context = new Context();
         context.setVariables(data);
@@ -88,6 +90,7 @@ public class PdfGeneratorService {
      * @return Array de bytes do PDF
      */
     public byte[] generatePdfWithPhoto(String templateName, Map<String, Object> data, byte[] foto) {
+        log.info("Gerando PDF com foto do template: {}", templateName);
         try {
             // Se há foto, converte para Base64 data URI (suportado nativamente pelo Flying Saucer 10.x)
             if (foto != null && foto.length > 0) {

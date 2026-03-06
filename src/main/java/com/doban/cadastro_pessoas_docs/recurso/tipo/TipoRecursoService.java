@@ -2,6 +2,7 @@ package com.doban.cadastro_pessoas_docs.recurso.tipo;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TipoRecursoService {
@@ -57,6 +59,7 @@ public class TipoRecursoService {
 
     @Transactional
     public TipoRecursoDTO criar(TipoRecursoCreateDTO dto) {
+        log.info("Criando tipo de recurso: {} ({})", dto.getNome(), dto.getCodigo());
         if (tipoRecursoRepository.existsByCodigo(dto.getCodigo())) {
             throw new DataIntegrityViolationException("Já existe um tipo de recurso com o código: " + dto.getCodigo());
         }
@@ -68,6 +71,7 @@ public class TipoRecursoService {
 
     @Transactional
     public TipoRecursoDTO atualizar(Long id, TipoRecursoUpdateDTO dto) {
+        log.info("Atualizando tipo de recurso com id: {}", id);
         TipoRecurso entity = tipoRecursoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de recurso não encontrado com id: " + id));
 
@@ -78,6 +82,7 @@ public class TipoRecursoService {
 
     @Transactional
     public void desativar(Long id) {
+        log.info("Desativando tipo de recurso com id: {}", id);
         TipoRecurso entity = tipoRecursoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tipo de recurso não encontrado com id: " + id));
 
@@ -87,6 +92,7 @@ public class TipoRecursoService {
 
     @Transactional
     public void deletar(Long id) {
+        log.info("Deletando tipo de recurso com id: {}", id);
         if (!tipoRecursoRepository.existsById(id)) {
             throw new EntityNotFoundException("Tipo de recurso não encontrado com id: " + id);
         }

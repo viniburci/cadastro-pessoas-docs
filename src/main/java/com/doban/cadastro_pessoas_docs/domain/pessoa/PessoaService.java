@@ -13,7 +13,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class PessoaService {
 
@@ -40,6 +42,7 @@ public class PessoaService {
     }
 
     public PessoaDTO salvarPessoa(PessoaDTO pessoaDTO) {
+        log.info("Salvando pessoa: {}", pessoaDTO.getNome());
         try {
             Pessoa pessoa = pessoaDTO.toEntity();
             Pessoa pessoaSalva = pessoaRepository.save(pessoa);
@@ -47,6 +50,7 @@ public class PessoaService {
                 dadosBancariosService.salvar(pessoaSalva.getId(), pessoaDTO.getDadosBancarios());
                 pessoaSalva = pessoaRepository.findById(pessoaSalva.getId()).orElse(pessoaSalva);
             }
+            log.info("Pessoa salva com id: {}", pessoaSalva.getId());
             return new PessoaDTO(pessoaSalva);
         } catch (DataIntegrityViolationException e) {
             throw new IllegalArgumentException("Violação de integridade: dados inválidos ou duplicados.");
@@ -56,6 +60,7 @@ public class PessoaService {
     }
 
     public PessoaDTO atualizarPessoa(Long id, PessoaDTO dto) {
+        log.info("Atualizando pessoa com id: {}", id);
         if (dto.getId() != null && !dto.getId().equals(id)) {
             throw new IllegalArgumentException("ID do DTO não corresponde ao ID do parâmetro");
         }
@@ -75,6 +80,7 @@ public class PessoaService {
     }
 
     public void deletarPessoa(Long id) {
+        log.info("Deletando pessoa com id: {}", id);
         pessoaRepository.deleteById(id);
     }
 
@@ -98,6 +104,7 @@ public class PessoaService {
     }
 
     public void salvarFoto(Long pessoaId, byte[] foto) {
+        log.info("Salvando foto para pessoa com id: {}", pessoaId);
         if (foto == null || foto.length == 0) {
             throw new IllegalArgumentException("Foto não pode ser vazia");
         }
