@@ -1,6 +1,7 @@
 package com.doban.cadastro_pessoas_docs.security;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService {
@@ -19,6 +21,7 @@ public class RefreshTokenService {
 
     @Transactional
     public RefreshToken createRefreshToken(Usuario usuario) {
+        log.info("Criando refresh token para usuario: {}", usuario.getEmail());
         // Remove tokens anteriores do usuário
         refreshTokenRepository.deleteByUsuario(usuario);
 
@@ -32,6 +35,7 @@ public class RefreshTokenService {
 
     public RefreshToken verifyExpiration(RefreshToken token) {
         if (token.getExpiryDate().isBefore(Instant.now())) {
+            log.warn("Refresh token expirado para usuario: {}", token.getUsuario().getEmail());
             refreshTokenRepository.delete(token);
             throw new RuntimeException("Refresh token expirado. Faça login novamente.");
         }

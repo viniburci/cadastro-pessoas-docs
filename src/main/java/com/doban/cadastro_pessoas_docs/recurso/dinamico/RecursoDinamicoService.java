@@ -6,12 +6,14 @@ import com.doban.cadastro_pessoas_docs.recurso.item.ItemDinamico;
 import com.doban.cadastro_pessoas_docs.recurso.item.ItemDinamicoService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RecursoDinamicoService {
@@ -64,6 +66,7 @@ public class RecursoDinamicoService {
 
     @Transactional
     public RecursoDinamicoDTO emprestar(RecursoDinamicoCreateDTO dto) {
+        log.info("Registrando emprestimo de item {} para pessoa {}", dto.getItemId(), dto.getPessoaId());
         // Verificar se a pessoa existe
         Pessoa pessoa = pessoaRepository.findById(dto.getPessoaId())
                 .orElseThrow(() -> new EntityNotFoundException("Pessoa não encontrada com id: " + dto.getPessoaId()));
@@ -95,6 +98,7 @@ public class RecursoDinamicoService {
 
     @Transactional
     public RecursoDinamicoDTO registrarDevolucao(Long id, DevolucaoDTO dto) {
+        log.info("Registrando devolucao do emprestimo com id: {}", id);
         RecursoDinamico recurso = recursoDinamicoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Empréstimo não encontrado com id: " + id));
 
@@ -109,6 +113,7 @@ public class RecursoDinamicoService {
 
     @Transactional
     public void deletar(Long id) {
+        log.info("Deletando emprestimo com id: {}", id);
         if (!recursoDinamicoRepository.existsById(id)) {
             throw new EntityNotFoundException("Empréstimo não encontrado com id: " + id);
         }
@@ -123,6 +128,7 @@ public class RecursoDinamicoService {
 
     @Transactional
     public RecursoDinamicoDTO atualizarItensExtras(Long id, ItensExtrasUpdateDTO dto) {
+        log.info("Atualizando itens extras do emprestimo com id: {}", id);
         RecursoDinamico recurso = buscarEntidadePorId(id);
         recurso.setItensExtras(dto.getItensExtras());
         recurso = recursoDinamicoRepository.save(recurso);

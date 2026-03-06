@@ -13,7 +13,9 @@ import com.doban.cadastro_pessoas_docs.shared.validation.SchemaValidatorService;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ItemDinamicoService {
@@ -58,6 +60,7 @@ public class ItemDinamicoService {
 
     @Transactional
     public ItemDinamicoDTO criar(ItemDinamicoCreateDTO dto) {
+        log.info("Criando item '{}' do tipo {}", dto.getIdentificador(), dto.getTipoRecursoCodigo());
         TipoRecurso tipoRecurso = tipoRecursoService.buscarEntidadePorCodigo(dto.getTipoRecursoCodigo());
 
         // Validar se já existe item com mesmo identificador para este tipo
@@ -86,6 +89,7 @@ public class ItemDinamicoService {
 
     @Transactional
     public ItemDinamicoDTO atualizar(Long id, ItemDinamicoUpdateDTO dto) {
+        log.info("Atualizando item com id: {}", id);
         ItemDinamico item = itemDinamicoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Item não encontrado com id: " + id));
 
@@ -117,6 +121,7 @@ public class ItemDinamicoService {
 
     @Transactional
     public void desativar(Long id) {
+        log.info("Desativando item com id: {}", id);
         ItemDinamico item = itemDinamicoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Item não encontrado com id: " + id));
         item.setAtivo(false);
@@ -125,6 +130,7 @@ public class ItemDinamicoService {
 
     @Transactional
     public void deletar(Long id) {
+        log.info("Deletando item com id: {}", id);
         if (!itemDinamicoRepository.existsById(id)) {
             throw new EntityNotFoundException("Item não encontrado com id: " + id);
         }
@@ -157,15 +163,14 @@ public class ItemDinamicoService {
                         return null; // Não criar item se identificador é inválido
                     }
                     // Se não existe, criar novo
-                    System.out.println("📦 Criando novo item: " + tipoRecursoCodigo + " - " + identificador);
+                    log.info("Criando novo item: {} - {}", tipoRecursoCodigo, identificador);
 
                     // Validar atributos contra o schema do tipo (se houver)
                     if (tipoRecurso.getSchema() != null && atributos != null && !atributos.isEmpty()) {
                         try {
                             schemaValidatorService.validarOuLancarExcecao(atributos, tipoRecurso.getSchema());
                         } catch (Exception e) {
-                            System.out.println("⚠️ Aviso: Atributos não passaram na validação do schema, " +
-                                    "mas o item será criado mesmo assim: " + e.getMessage());
+                            log.warn("Atributos nao passaram na validacao do schema, mas o item sera criado: {}", e.getMessage());
                         }
                     }
 
